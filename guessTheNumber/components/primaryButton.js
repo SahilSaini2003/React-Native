@@ -1,6 +1,6 @@
 import {View, StyleSheet, Pressable, Text} from 'react-native';
 
-function primaryButton(props: any) {
+function primaryButton(props) {
   return (
     <View style={styles.center}>
     <View style={styles.border}>

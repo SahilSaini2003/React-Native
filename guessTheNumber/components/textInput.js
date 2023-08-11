@@ -1,8 +1,8 @@
 import {View, StyleSheet, TextInput} from 'react-native';
 
-import PrimaryButton from '../components/primaryButton';
+import PrimaryButton from './primaryButton';
 
-function textInput(props: any) {
+function textInput(props) {
   return (
     <View style={styles.center}>
       <View style={styles.view}>

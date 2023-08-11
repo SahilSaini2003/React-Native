@@ -1,41 +1,37 @@
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Alert} from 'react-native';
 import React, {useState} from 'react';
 
 import TextInput from '../components/textInput';
 
-type guessNumberScreen = {
-  randNum: number;
-  changeScreen: () => void;
-};
-
-function guessNumberScreen({
-  randNum,
-  changeScreen,
-}): React.FC<guessNumberScreen> {
+function guessNumberScreen({randNum, changeScreen}) {
   let [userNum, setUserNum] = useState('');
   let [warning, setWarning] = useState('');
   let [color, setColor] = useState([styles.text]);
-  let [nums, setNums]: any = useState([]);
+  let [nums, setNums] = useState([]);
 
-  function changeInput(num: any) {
+  function changeInput(num) {
     setUserNum(num);
   }
 
   const onPressSubmit = () => {
-    console.log('Im running');
-    setNums((nums: any) => [...nums, {text: userNum}]);
     if (userNum == randNum) {
-      console.log('Equal');
-
-      changeScreen();
-      console.log(randNum);
+      changeScreen(nums.length);
     } else if (userNum > randNum) {
       setColor([styles.blue]);
       setWarning('Lower Number Plzz!!');
+    } else if (userNum <= 0) {
+      Alert.alert('Invalid Input!', 'Enter a Number between 1 to 99.', [
+        {text: 'Okay!'},
+      ]);
+      return;
     } else if (userNum < randNum) {
       setColor([styles.red]);
       setWarning('Higher Number Plzz!!');
     }
+    setNums(nums => [...nums, {text: userNum}]);
+    setTimeout(() => {
+      setWarning('');
+    }, 2000);
   };
 
   return (
@@ -81,15 +77,15 @@ let styles = StyleSheet.create({
     marginTop: 40,
   },
   inputView: {
-    backgroundColor: 'black',
+    backgroundColor: '#ffc4009a',
+    borderRadius: 100,
   },
   warning: {
     fontFamily: 'Merriweather-Bold',
-    fontSize: 30,
+    fontSize: 33,
   },
   warningView: {
     marginTop: 20,
-    backgroundColor: 'black',
   },
   red: {
     fontSize: 30,
@@ -106,7 +102,7 @@ let styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 4,
     borderRadius: 10,
-    backgroundColor: '#bd7dbd',
+    backgroundColor: '#ff88009a',
     width: 300,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -120,7 +116,6 @@ let styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     marginBottom: 2,
-    backgroundColor: 'black',
   },
 });
 

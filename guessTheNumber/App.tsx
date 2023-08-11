@@ -6,16 +6,20 @@ import StartGameScreen from './screen/startGameScreen';
 import GuessNumberScreen from './screen/guessNumberScreen';
 import GameOverScreen from './screen/gameOverScreen';
 
-function App():React.FC {
+function App(): JSX.Element {
   let [screen, setScreen] = useState(
     <StartGameScreen onPressStart={onPressStart} />,
   );
-  let randNum : number;
+  let randNum: number;
 
-  function changeGameOverScreen() {
-    console.log('here');
-
-    setScreen(<GameOverScreen />);
+  function changeGameOverScreen(rounds: number) {
+    setScreen(
+      <GameOverScreen
+        rounds={rounds + 1}
+        randNum={randNum}
+        onPressStart={onPressStart}
+      />,
+    );
   }
 
   function onPressStart() {
@@ -26,7 +30,6 @@ function App():React.FC {
         changeScreen={changeGameOverScreen}
       />,
     );
-    console.log(randNum);
   }
 
   return (
