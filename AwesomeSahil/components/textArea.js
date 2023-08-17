@@ -17,6 +17,8 @@ const App = props => {
         placeholder="Enter Your Note Here..."
         placeholderTextColor="rgba(0, 0, 0, 0.5)"
         onChangeText={props.newNote}
+        multiline={true}
+        numberOfLines={5}
       />
       <View style={styles.buttons}>
         <Pressable style={styles.button} onPress={props.newList}>
@@ -33,7 +35,7 @@ const App = props => {
 const styles = StyleSheet.create({
   view: {
     alignItems: "center",
-    marginTop: "50%",
+    marginTop: "40%",
   },
   textArea: {
     color: 'white',
@@ -41,12 +43,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 8,
     padding: 1.5,
-    paddingLeft: 6,
-    paddingRight: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     borderRadius: 10,
     fontSize: 20,
-    height: 50,
-    width: "85%"
+    width: "85%",
+    textAlignVertical: 'top'
   },
   button: {
     marginTop: 10,

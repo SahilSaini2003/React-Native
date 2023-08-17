@@ -50,10 +50,15 @@ const App = () => {
           />
         </View>
       </Modal>
-      <View style={styles.display}>
-        <ListNote list={list} id={list.id} deleteNote={deleteNote} />
-      </View>
-      <CustomButton changeModelTrue={changeModelTrue} />
+      <ImageBackground
+        source={require('./asset/main.png')}
+        style={styles.bgImg}
+        imageStyle={styles.img}>
+        <View style={styles.display}>
+          <ListNote list={list} id={list.id} deleteNote={deleteNote} />
+        </View>
+        <CustomButton changeModelTrue={changeModelTrue} />
+      </ImageBackground>
     </View>
   );
 };
@@ -65,11 +70,21 @@ const styles = StyleSheet.create({
   },
   header: {
     borderBottomWidth: 1,
-    marginBottom: 15
+    marginBottom: 15,
   },
   textArea: {
     flex: 1,
-    backgroundColor: '#993399'
+    backgroundColor: '#993399',
+  },
+  bgImg: {
+    flex: 1,
+  },
+  img: {
+    resizeMode: 'stretch',
+    marginVertical: 80,
+    // marginTop: 150,
+    // elevation: 2
+    opacity: 0.4
   },
 });
 
