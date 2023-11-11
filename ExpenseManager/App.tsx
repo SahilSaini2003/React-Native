@@ -32,26 +32,25 @@ function App(): JSX.Element {
           tabBarInactiveBackgroundColor: '#F4BA94',
           tabBarActiveBackgroundColor: '#ffb07d',
           tabBarStyle: {
-            height: 70,
+            height: 75,
             borderColor: 'black',
-      
           },
           headerStyle: {
             backgroundColor: '#ffb07d',
             borderColor: 'black',
             borderBottomWidth: 1,
             height: 60,
-
           },
           headerTitleStyle: {
             fontSize: 25,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            
           },
           headerTitleAlign: 'center',
-          // hel
-          // headerLeft: () => (
-          //   <FontAwesome5 name='home' size='10' color='black' />
-          // )
+          // h
+          // headerLeft: prop => <Image source={require('./src/assets/images/home.png')} style={{width:50, height: 50, marginLeft: 30}} />,
+          // headerRight: prop+> 
+          
         }}
         sceneContainerStyle={{ backgroundColor: '#FFFDD0' }}
       >
@@ -66,7 +65,8 @@ function App(): JSX.Element {
               paddingBottom: 5,
             },
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name='home' size={size} color={color} />
+              // <FontAwesome5 name='home' size={size} color={color} />
+              <Image source={require('./src/assets/images/home.png')} style={{width: 45, height:45, marginTop: 5}} />
             ),
               // tab
           
@@ -82,8 +82,12 @@ function App(): JSX.Element {
               paddingBottom: 5
             },
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name='clock' size={size} color={color} />
-            )
+              // <FontAwesome5 name='clock' size={size} color={color} />
+              <Image source={require('./src/assets/images/wall-clock.png')} style={{width: 45, height:45, marginTop: 5}} />
+            ),
+            // header(props) {
+            //   <Image source={require('./src/assets/images/home.png')} style={{width:50, height: 50, marginLeft: 100}} />
+            // },
           }} />
       </Tab.Navigator>
     </NavigationContainer>

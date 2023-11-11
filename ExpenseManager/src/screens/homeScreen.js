@@ -1,5 +1,7 @@
-const { Text, View, StyleSheet, Pressable } = require("react-native");
+const { Text, View, StyleSheet, Pressable, Image } = require("react-native");
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+
 
 function HomeScreen() {
 
@@ -8,86 +10,34 @@ function HomeScreen() {
             <View style={style.portfolioBox}>
                 {/* // My portfolio */}
                 <View style={style.portfolioMainBox}>
-                    <Text>My Portfolio</Text>
-                    <FontAwesome5 name='search' size={50} color='black' />
-                    <Text>5000</Text>
+                    <View style={{flexDirection:'row', marginHorizontal: 20, marginVertical: 30}}>
+                        <Text style={{ fontSize: 30, alignSelf: 'flex-start', color: 'black' }}>Overall Portfolio</Text>
+                        <Image source={require('../assets/images/loupe.png')} style={{width:50, height:50, marginHorizontal:20}} />
+                    </View>
+                    <Text style={{ fontSize: 50, marginHorizontal: 20, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
                 </View>
             </View>
             <View style={style.debitCreditBox}>
                 {/* // Debit Credit */}
                 <View style={style.debitCreditMainBox}>
-                    <Text>Overall Credit</Text>
-                    <Text>5000</Text>
+                    <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Debit</Text>
+                    <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
                 </View>
                 <View style={style.debitCreditMainBox}>
-                    <Text>Overall Debit</Text>
-                    <Text>5000</Text>
+                    <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Credit</Text>
+                    <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#0CF107' }}>5000</Text>
                 </View>
             </View>
             <View style={style.buttonBox}>
                 {/* //Buttons */}
-                {/* <View style={style.pressableView}>
-                <Pressable android_ripple={{ color: '#F08000', radius: 100,foreground: true}} style={style.pressable}>
-                    <View style={style.buttonMainBox}> */}
-                {/* <Text style={styles.text}>{props.title}</Text> */}
-                {/* </View>
-                </Pressable>
-                </View> */}
-                {/* <Pressable android_ripple={{ color: '#F08000', borderless: true }} style={style.pressable}>
-                    <View style={style.buttonMainBox}>
-                        {/* <Text style={styles.text}>{props.title}</Text> */}
-                {/* </View>
-                </Pressable> */}
-                <View style={{
-                    flex: 1,
-                    // position: 'absolute',
-                    bottom: 250,
-                    borderRadius: 100,
-                    overflow: 'hidden',
-                    alignSelf: 'center',
-                    width: '90%'
-                }}>
-                    <Pressable
-                        style={{
-                            height: 100,
-                            width: '90%',
-                            borderRadius: 50,
-                            backgroundColor: 'red',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            elevation: 4,
-                        }}
-                        android_ripple={{
-                            color: 'black',
-                        }}
-                        onPress={() => { console.log('om') }}>
-                        <Text>O</Text>
+                <View style={style.pressableView}>
+                    <Pressable style={[style.pressable, { backgroundColor: '#FF0000' }]} android_ripple={{ color: 'white', borderless: true }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>DEBIT</Text>
                     </Pressable>
                 </View>
-                <View style={{
-                    flex: 1,
-                    // position: 'absolute',
-                    bottom: 250,
-                    borderRadius: 50,
-                    overflow: 'hidden',
-                    alignSelf: 'center',
-                    width: '100%'
-                }}>
-                    <Pressable
-                        style={{
-                            height: 100,
-                            width: '100%',
-                            borderRadius: 50,
-                            backgroundColor: 'red',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            elevation: 4,
-                        }}
-                        android_ripple={{
-                            color: 'black',
-                        }}
-                        onPress={() => { console.log('om') }}>
-                        <Text>O</Text>
+                <View style={style.pressableView}>
+                    <Pressable style={[style.pressable, { backgroundColor: '#0CF107' }]} android_ripple={{ color: 'white', borderless: true }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'black' }}>CREDIT</Text>
                     </Pressable>
                 </View>
             </View>
@@ -136,23 +86,30 @@ const style = StyleSheet.create({
     },
     buttonBox: {
         flex: 1,
-        justifyContent: 'space-betweem',
+        // justifyContent: 'space-betweem',
         flexDirection: 'row-reverse',
         // backgroundColor: 'blue'
     },
     pressableView: {
-        width: '95%',
-        height: '80%',
-        borderRadius: 200
+        width: '45%',
+        height: '60%',
+        borderRadius: 200,
+        margin: 10,
+        // marginEnd: 10,
+        // backgroundColor: 'black'
     },
     pressable: {
         // flex:1,
-        width: '45%',
-        height: '60%',
+        width: '100%',
+        height: '95%',
+        // margin: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'black',
-        borderRadius: 25
+        borderRadius: 200,
+        borderWidth: 2,
+        elevation: 25,
+        backgroundColor: 'blue',
+        // borderRadius: 25
         // justifyContent: 'space-evenly',
         // flexDirection: 'row-reverse',
         // borderRadius: 25,
