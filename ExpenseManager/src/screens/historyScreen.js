@@ -1,7 +1,9 @@
-const { Text, View, StyleSheet } = require("react-native");
+const { Text, View, StyleSheet, TouchableOpacity,Image } = require("react-native");
+import { useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 function HistoryScreen() {
+  const [monthIsClicked, setMonthIsClicked] = useState(false);
 
   return (
     // <Text>HistoryScreen</Text>
@@ -9,24 +11,23 @@ function HistoryScreen() {
       <View style={styles.mainBox}>
         <View style={styles.filterBox}>
           <View style={styles.filterButton}>
-            <View>
-
-            <Text style={{color:'black', alignSelf:'flex-start',fontSize:20, marginLeft: 10}}>Month</Text>
-            </View>
-            <View>
-
-            <FontAwesome5 name='chevron-down' size={10} color={'black'} style={{alignSelf:'flex-end'}} />
-            </View>
-          </View>
-          <View style={styles.filterButton}>
-
-          </View>
-          <View style={styles.filterButton}>
+            <TouchableOpacity style={{width: 100, height: 30, flexDirection: 'row'}} onPress={()=>{setMonthIsClicked(!monthIsClicked)}}>
+            <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10}}>Month</Text>
+            {monthIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{width: 20, height:20, marginLeft: 6, marginTop: 6}} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{width: 20, height:20, marginLeft: 6, marginTop: 6}} />)}
+            </TouchableOpacity>
             
           </View>
+          <View style={styles.filterButton}>
+
+          </View>
+          <View style={styles.filterButton}>
+
+          </View>
         </View>
-        <View style={styles.line}></View>
+        {/* <View style={styles.filterBreifBox}></View> */}
+        <View style={styles.contentBox}>
         <View></View>
+        </View>
       </View>
     </View>
   );
@@ -40,35 +41,45 @@ const styles = StyleSheet.create({
   },
   mainBox: {
     width: '95%',
-    height:'95%',
+    height: '95%',
     // margin: 10,
     backgroundColor: '#F3E0AC',
-    borderWidth:2,
+    borderWidth: 2,
     borderRadius: 10
   },
-  line:{
-    // borderTopWidth: '100%'
-    width: '100%',
-    // height: 100,
-    backgroundColor: 'black',
-    // marginTop:30,
-    borderWidth:1,
-  },
-  filterBox:{
+  filterBox: {
     flexDirection: 'row',
-    alignContent:'space-between',
-    alignItems:'center',
-    justifyContent:'center'
+    alignContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute'
+
   },
   filterButton: {
     backgroundColor: '#FFF49C',
     width: 110,
-    height: 30,
+    height: 100,
     margin: 5,
-    borderRadius: 50,
+    borderRadius: 10,
     borderWidth: 2,
-    // justifyContent: 'center',
+    justifyContent: 'space-between',
+    // alignItems:'center',
     flexDirection: 'row'
+  },
+  filterBreifBox:{
+    width: 15,
+    height: 15,
+    backgroundColor: 'blue',
+    position:'absolute',
+    right:10,
+    left: 100,
+    top: 100
+  },
+  contentBox: {
+    flex: 1,
+    borderTopWidth:2,
+    marginTop: 45
+    // backgroundColor: 'black'
   }
 
 });
