@@ -1,38 +1,28 @@
 const { Text, View, StyleSheet, TouchableOpacity, Image, SectionList } = require("react-native");
-// import { CheckBox } from '@react-native-community/checkbox';
-import CheckBox from '@react-native-community/checkbox';
 import { useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import ListView from '../components/listView.js'
 
 function HistoryScreen() {
   const [monthIsClicked, setMonthIsClicked] = useState(false);
+  const [monthIsSelected, setMonthIsSelected] = useState(false);
   const month = [{ data: ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }];
+  const monthDilogBoxHeight = monthIsClicked ? (month[0].data.length * 28) : 30;
   const length = month.length;
+  const selectedMonth = [];
+
+  
   return (
     // <Text>HistoryScreen</Text>
     <View style={styles.main}>
       <View style={styles.mainBox}>
         <View style={styles.filterBox}>
-          <View style={[styles.filterButton, { height: 364 }]}>
+          <View style={[styles.filterButton, { height: monthDilogBoxHeight }]}>
             <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row' }} onPress={() => { setMonthIsClicked(!monthIsClicked) }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Month</Text>
               {monthIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            <View style={{ borderTopWidth: 2 }}>
-              <SectionList
-                sections={month}
-                renderItem={({ item }) => <View>
-                  <Text style={{ color: 'black', fontSize: 15, margin: 2, alignSelf: 'center' }}>{item}</Text>
-                                 </View>
-                }
-                keyExtractor={(item, index) => index}
-              />
-            </View>
-            <CheckBox
-                    disabled={false}
-                    value={monthIsClicked}
-                    // onValueChange={(newValue) => setToggleCheckBox(newValue)}
-                  /> 
+            {monthIsClicked ? (<ListView data={month}></ListView>) : null}
           </View>
           <View style={[styles.filterButton, { height: 30 }]}>
 
