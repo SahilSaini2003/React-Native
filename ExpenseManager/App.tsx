@@ -1,10 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 
 import HomeScreen from './src/screens/homeScreen';
 import HistoryScreen from './src/screens/historyScreen';
@@ -16,6 +13,16 @@ import HistoryScreen from './src/screens/historyScreen';
 
 function App(): JSX.Element {
 
+  let a ='hii';
+  let mainData = [
+    {'id':1, 'amount': 1200, 'title': 'Bus Fair', 'description': 'Traveled from Home to College', 'type': 'Credit', 'date':'08-11-2023', 'dateDay': '08', 'dateMonth': '11', 'dateYear': '2023'},
+    {'id':2, 'amount': 800, 'title': 'Bought Cloth', 'description': 'Bought Shirt and pant for Diwali', 'type': 'Credit', 'date':'10-11-2023', 'dateDay': '10', 'dateMonth': '11', 'dateYear': '2023'},
+    {'id':3, 'amount': 500, 'title': 'Mouse', 'description': 'Bought Dell Mouse', 'type': 'Debit', 'date':'13-12-2023', 'dateDay': '13', 'dateMonth': '12', 'dateYear': '2023'},
+    {'id':4, 'amount': 200, 'title': 'Cap', 'description': 'Bought a White Cap', 'type': 'Debit', 'date':'15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023'},
+  ]
+
+  // const navigation = useNavigation();
+  // navigation.navigate('HistoryScree', {mainData});
   let Tab = createBottomTabNavigator()
   // let Tab1 = createIconSetFromIcoMoon()
 
@@ -47,10 +54,6 @@ function App(): JSX.Element {
             
           },
           headerTitleAlign: 'center',
-          // h
-          // headerLeft: prop => <Image source={require('./src/assets/images/home.png')} style={{width:50, height: 50, marginLeft: 30}} />,
-          // headerRight: prop+> 
-          
         }}
         sceneContainerStyle={{ backgroundColor: '#FFFDD0' }}
       >
@@ -74,6 +77,7 @@ function App(): JSX.Element {
         <Tab.Screen
           name="History"
           component={HistoryScreen}
+          initialParams={{mainData}}
           options={{
             tabBarLabelStyle: {
               fontSize: 15,

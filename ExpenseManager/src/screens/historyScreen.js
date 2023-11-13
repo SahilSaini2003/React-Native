@@ -1,30 +1,37 @@
 const { Text, View, StyleSheet, TouchableOpacity, Image, SectionList } = require("react-native");
 import { useState } from 'react';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ListView from '../components/listView.js'
 
-function HistoryScreen() {
+import ListView from '../components/listView.js';
+import HistoryData from '../components/historyData.js'
+
+function HistoryScreen({route}) {
+  //Main data
+  let {mainData}= route.params;
+
+  //States for activating and closing filter
   const [monthIsClicked, setMonthIsClicked] = useState(false);
   const [yearIsClicked, setYearIsClicked] = useState(false);
   const [transactionTypeIsClicked, setTransactionTypeIsClicked] = useState(false);
-  const [monthIsSelected, setMonthIsSelected] = useState(false);
+
+  //Data for Filters
   const month = [{ data: ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }];
   const year = [{ data: ['All', '2022', '2023'] }]
   const transactionType = [{ data: ['All', 'Debit', 'Credit'] }]
+
+  //Height of Filter Box
   const monthDilogBoxHeight = monthIsClicked ? ((month[0].data.length * 25) + 75) : 35;
   const yearDilogBoxHeight = yearIsClicked ? ((year[0].data.length * 25) + 75) : 35;
   const transactionTypeDilogBoxHeight = transactionTypeIsClicked ? ((transactionType[0].data.length * 25) + 75) : 35;
 
+  //Function for fetching selected data
   fetchSelectedMonth = (monthArray) => {
     console.log(monthArray);
     setMonthIsClicked(false);
   }
-  
   fetchSelectedYear = (yearArray) => {
     console.log(yearArray);
     setYearIsClicked(false);
   }
-  
   fetchSelectedTransactionType = (transactionTypeArray) => {
     console.log(transactionTypeArray);
     setTransactionTypeIsClicked(false);
@@ -59,7 +66,7 @@ function HistoryScreen() {
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}
         <View style={styles.contentBox}>
-          <View></View>
+          <HistoryData mainData={mainData}/>
         </View>
       </View>
     </View>
@@ -113,7 +120,7 @@ const styles = StyleSheet.create({
   contentBox: {
     flex: 1,
     borderTopWidth: 2,
-    marginTop: 45
+    marginTop: 45,
     // backgroundColor: 'black'
   }
 
