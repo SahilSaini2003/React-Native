@@ -1,9 +1,8 @@
 import { Text, View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 
-function historyData({ mainData }) {
+function historyData({ mainData, callDataBreifScreen }) {
 
-    let a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
     const TypeStyle = (type) => {
         if (type == 'Debit') {
             return (
@@ -26,7 +25,7 @@ function historyData({ mainData }) {
             <FlatList
                 data={mainData}
                 renderItem={({ item }) =>
-                    <TouchableOpacity style={{ width: '100%', height: 70, backgroundColor: '#F3E0D6', borderRadius: 20, borderBottomColor:'black', borderBottomWidth: 2, borderWidth: 1, borderTopColor:'white',borderRightColor: 'white', borderLeftColor: 'white'}}>
+                    <TouchableOpacity style={{ width: '100%', height: 70, backgroundColor: '#F3E0D6', borderRadius: 20, borderBottomColor:'black', borderBottomWidth: 2, borderWidth: 1, borderTopColor:'white',borderRightColor: 'white', borderLeftColor: 'white'}} onPress={()=>{callDataBreifScreen(item.id)}}>
                         <View style={{ flexDirection: 'row', justifyContent:'space-between', marginHorizontal: 20  }}>
                             <Text style={{fontSize: 20, color: 'black'}}>{item.title}</Text>
                             <Text style={{color: '#666362'}}>{item.date}</Text>

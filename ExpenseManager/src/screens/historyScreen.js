@@ -4,9 +4,17 @@ import { useState } from 'react';
 import ListView from '../components/listView.js';
 import HistoryData from '../components/historyData.js'
 
-function HistoryScreen({route}) {
+function HistoryScreen({route, navigation}) {
   //Main data
   let {mainData}= route.params;
+
+  callDataBreifScreen = (id) => {
+    let itemData = mainData.filter((item)=>{
+      return item.id == id;
+    });
+    console.log(itemData);
+    navigation.navigate('Data - Breif', {itemData});
+  }
 
   //States for activating and closing filter
   const [monthIsClicked, setMonthIsClicked] = useState(false);
@@ -66,7 +74,7 @@ function HistoryScreen({route}) {
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}
         <View style={styles.contentBox}>
-          <HistoryData mainData={mainData}/>
+          <HistoryData mainData={mainData} callDataBreifScreen={this.callDataBreifScreen}/>
         </View>
       </View>
     </View>
