@@ -17,8 +17,8 @@ function App(): JSX.Element {
   let mainData = [
     {'id':1, 'amount': 1200, 'title': 'Bus Fair', 'description': 'Traveled from Home to College', 'type': 'Credit', 'date':'08-11-2023', 'dateDay': '08', 'dateMonth': '11', 'dateYear': '2023'},
     {'id':2, 'amount': 800, 'title': 'Bought Cloth', 'description': 'Bought Shirt and pant for Diwali', 'type': 'Credit', 'date':'10-11-2023', 'dateDay': '10', 'dateMonth': '11', 'dateYear': '2023'},
-    {'id':3, 'amount': 500, 'title': 'Mouse', 'description': 'Bought Dell Mouse', 'type': 'Debit', 'date':'13-12-2023', 'dateDay': '13', 'dateMonth': '12', 'dateYear': '2023'},
-    {'id':4, 'amount': 200, 'title': 'Cap', 'description': 'Bought a White Cap', 'type': 'Debit', 'date':'15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023'},
+    {'id':3, 'amount': 500, 'title': 'QQQQQQQQQQQQQQQ', 'description': 'Bought Dell Mouse', 'type': 'Debit', 'date':'13-12-2023', 'dateDay': '13', 'dateMonth': '12', 'dateYear': '2023'},
+    {'id':4, 'amount': 10000000, 'title': 'Cap', 'description': 'Bought a White Cap', 'type': 'Debit', 'date':'15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023'},
   ]
 
   // const navigation = useNavigation();
