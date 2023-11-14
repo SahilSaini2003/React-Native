@@ -1,5 +1,5 @@
 import { Text, View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 function historyData({ mainData, callDataBreifScreen }) {
 
