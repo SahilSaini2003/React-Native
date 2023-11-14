@@ -1,32 +1,38 @@
-const { Text, View, StyleSheet, Pressable, Image } = require("react-native");
+const { Text, View, StyleSheet, Pressable, Image, TouchableOpacity } = require("react-native");
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 
-function HomeScreen() {
+function HomeScreen({ route, navigation }) {
+
+    callGraphScreen = () => {
+        navigation.navigate('Progress');
+    }
 
     return (
         <View style={style.main}>
             <View style={style.portfolioBox}>
                 {/* // My portfolio */}
-                <View style={style.portfolioMainBox}>
-                    <View style={{flexDirection:'row', marginHorizontal: 20, marginVertical: 30}}>
+                <TouchableOpacity style={style.portfolioMainBox}>
+                    <View style={{ flexDirection: 'row', marginHorizontal: 20, marginVertical: 30 }}>
                         <Text style={{ fontSize: 30, alignSelf: 'flex-start', color: 'black' }}>Overall Portfolio</Text>
-                        <Image source={require('../assets/images/loupe.png')} style={{width:50, height:50, marginHorizontal:20}} />
+                        <TouchableOpacity onPress={() => callGraphScreen()}>
+                            <Image source={require('../assets/images/loupe.png')} style={{ width: 50, height: 50, marginHorizontal: 20 }} />
+                        </TouchableOpacity>
                     </View>
                     <Text style={{ fontSize: 50, marginHorizontal: 20, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
-                </View>
+                </TouchableOpacity>
             </View>
             <View style={style.debitCreditBox}>
                 {/* // Debit Credit */}
-                <View style={style.debitCreditMainBox}>
+                <TouchableOpacity style={style.debitCreditMainBox}>
                     <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Debit</Text>
                     <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
-                </View>
-                <View style={style.debitCreditMainBox}>
+                </TouchableOpacity>
+                <TouchableOpacity style={style.debitCreditMainBox}>
                     <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Credit</Text>
                     <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#0CF107' }}>5000</Text>
-                </View>
+                </TouchableOpacity>
             </View>
             <View style={style.buttonBox}>
                 {/* //Buttons */}

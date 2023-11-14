@@ -8,7 +8,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import HomeScreen from './src/screens/homeScreen';
 import HistoryScreen from './src/screens/historyScreen';
-import DataBreifScreen from './src/screens/dataBreifScreen'
+import DataBreifScreen from './src/screens/dataBreifScreen';
+import GraphScreen from './src/screens/graphScreen';
 
 function App(): JSX.Element {
 
@@ -19,16 +20,8 @@ function App(): JSX.Element {
     { 'id': 4, 'amount': 10000000, 'title': 'Cap', 'description': 'We live in an age of science. Science has made us civilized. Every progress in human civilization is the gift of science. Science has solved our probl', 'type': 'Debit', 'date': '15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023' },
   ]
 
-  // const navigation = useNavigation();
   const Stack = createStackNavigator();
   const Tab = createBottomTabNavigator()
-
-  const callDataBreifScreen = (id: number) => {
-    let itemData = mainData.filter((item) => {
-      return item.id == id;
-    });
-    // navigation.navigate('Breif', {mainData});
-  }
 
   function MainScreen() {
     return (<Tab.Navigator initialRouteName="Home"
@@ -90,8 +83,7 @@ function App(): JSX.Element {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'
-      // screenOptions={{bc}}
+      <Stack.Navigator initialRouteName='MainScreen'
       >
         <Stack.Screen
           name="MainScreen"
@@ -116,9 +108,27 @@ function App(): JSX.Element {
             cardStyle: {backgroundColor: '#FFFDD0'}
           }}
         />
+        <Stack.Screen
+          name="Progress"
+          component={GraphScreen}
+          initialParams={{ mainData }}
+          options={{
+            headerStyle: {
+              backgroundColor: '#ffb07d',
+              borderColor: 'black',
+              borderBottomWidth: 1,
+              height: 60,
+            },
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+            headerTitleAlign: 'center',
+            cardStyle: {backgroundColor: '#FFFDD0'}
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
-    // <HomeScreen/>
   );
 }
 
