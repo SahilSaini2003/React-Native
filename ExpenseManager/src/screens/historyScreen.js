@@ -1,7 +1,7 @@
 const { Text, View, StyleSheet, TouchableOpacity, Image, SectionList } = require("react-native");
 import { useState } from 'react';
 
-import ListView from '../components/listView.js';
+import ListViewMultipleSelect from '../components/listViewMultipleSelect.js';
 import HistoryData from '../components/historyData.js'
 
 function HistoryScreen({route, navigation}) {
@@ -55,21 +55,21 @@ function HistoryScreen({route, navigation}) {
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Month</Text>
               {monthIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {monthIsClicked ? (<ListView data={month} fetchSelectedData={this.fetchSelectedMonth}></ListView>) : null}
+            {monthIsClicked ? (<ListViewMultipleSelect data={month} fetchSelectedData={this.fetchSelectedMonth}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: yearDilogBoxHeight }]}>
             <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setYearIsClicked(!yearIsClicked) }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Year</Text>
               {yearIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {yearIsClicked ? (<ListView data={year} fetchSelectedData={this.fetchSelectedYear}></ListView>) : null}
+            {yearIsClicked ? (<ListViewMultipleSelect data={year} fetchSelectedData={this.fetchSelectedYear}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: transactionTypeDilogBoxHeight }]}>
             <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setTransactionTypeIsClicked(!transactionTypeIsClicked) }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>T-Type</Text>
               {transactionTypeIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {transactionTypeIsClicked ? (<ListView data={transactionType} fetchSelectedData={this.fetchSelectedTransactionType}></ListView>) : null}
+            {transactionTypeIsClicked ? (<ListViewMultipleSelect data={transactionType} fetchSelectedData={this.fetchSelectedTransactionType}></ListViewMultipleSelect>) : null}
           </View>
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}

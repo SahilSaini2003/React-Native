@@ -1,7 +1,7 @@
 import { View, SectionList, Text, TouchableOpacity, Image } from 'react-native'
 import { useState } from 'react';
 
-function listView({ data, fetchSelectedData }) {
+function listViewMultipleSelect({ data, fetchSelectedData }) {
 
     const [dataSelected, setDataSelected] = useState({});
     const [dataArray, setDataArray] = useState([]);
@@ -50,4 +50,4 @@ function listView({ data, fetchSelectedData }) {
     )
 }
 
-export default listView;
+export default listViewMultipleSelect;

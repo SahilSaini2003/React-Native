@@ -1,5 +1,5 @@
 const { Text, View, StyleSheet, Modal, Image, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard } = require("react-native");
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -7,24 +7,28 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 function HomeScreen({ route, navigation }) {
 
-    // componentWillMount = () => {
-    //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-    //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    // }
-
-    // componentWillUnmount = () => {
-    //     this.keyboardDidShowListener.remove();
-    //     this.keyboardDidHideListener.remove();
-    // }
-
-    // _keyboardDidShow() {
-    //     alert('Keyboard Shown');
-    // }
-
-    // _keyboardDidHide() {
-    //     alert('Keyboard Hidden');
-    // }
-
+    // Used to check weather keyboard is active or not
+    const [isKeyboardActive, setKeyboardActive] = useState(false);
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                setKeyboardActive(true);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                setKeyboardActive(false);
+            }
+        );
+        //Clean up listeners when the component unmounts
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+    
     callGraphScreen = () => {
         navigation.navigate('Progress');
     }
@@ -69,15 +73,16 @@ function HomeScreen({ route, navigation }) {
                     </Pressable>
                 </View>
             </View>
-            <Modal visible={true} animationType='slide' transparent={true}>
+            <Modal visible={false} animationType='slide' transparent={true}>
                 <KeyboardAvoidingView
                     style={{ flex: 1, justifyContent: 'flex-end' }}
                     behavior={'padding'}
                     keyboardVerticalOffset={-1000}>
                     <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                        <View style={styles.modelView}>
+                        <View style={isKeyboardActive ? [styles.modelView, {flex: 1}] : styles.modelView}>
                             <View style={{ width: 120, height: 35, backgroundColor: 'red', alignItems: "center", marginTop: 10, borderRadius: 20, borderWidth: 2, borderColor: 'black' }}>
-                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>DEBIT</Text>
+                                {isKeyboardActive ? (<Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>DEBIT</Text>) :
+                                (<Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Credit</Text>)}
                             </View>
                             <View style={[styles.dataBox, styles.date]}>
                                 <TextInput placeholder='Date' placeholderTextColor={'#666362'} textAlign='center' maxLength={10} style={{ fontSize: 20, color: 'black' }}></TextInput>
@@ -92,12 +97,12 @@ function HomeScreen({ route, navigation }) {
                             <View style={[styles.dataBox, styles.description]}>
                                 <TextInput multiline numberOfLines={5} placeholder='Enter Description(If needed)' placeholderTextColor={'#666362'} textAlign='center' maxLength={150} style={{ fontSize: 20, color: 'black', textAlignVertical: 'top' }}></TextInput>
                             </View>
-                            <View style={{flex: 1, flexDirection: 'row', marginTop: 20}}>
+                            <View style={{ flex: 1, flexDirection: 'row', marginTop: 20 }}>
                                 <TouchableOpacity>
-                                    <Image source={require('../assets/images/cross.png')} style={{width: 100, height: 100, borderRadius: 20, marginHorizontal: 20}} />
+                                    <Image source={require('../assets/images/cross.png')} style={{ width: 100, height: 100, borderRadius: 20, marginHorizontal: 20 }} />
                                 </TouchableOpacity>
                                 <TouchableOpacity>
-                                    <Image source={require('../assets/images/tick.png')} style={{width: 100, height: 100, borderRadius: 20,marginHorizontal: 20}} />
+                                    <Image source={require('../assets/images/tick.png')} style={{ width: 100, height: 100, borderRadius: 20, marginHorizontal: 20 }} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -111,7 +116,8 @@ function HomeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        // backgroundColor: 'black'
+        // backgroundColor: 'black',
+        // overflow: 'scroll'
     },
     portfolioBox: {
         flex: 2,
@@ -193,7 +199,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderWidth: 2,
         alignItems: 'center',
-        flex: 0
     },
     dataBox: {
         backgroundColor: '#FFFDD0',
