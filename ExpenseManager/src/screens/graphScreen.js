@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Image, Modal } from 'react-na
 
 import CustomFilterModel from '../components/customFilterModel.js';
 import CompareDataModel from '../components/compareDataModel.js'
+import AdvancedFilterModel from '../components/advancedFilterModel.js'
 
 function GraphScreen({ route, navigation }) {
 
@@ -9,9 +10,11 @@ function GraphScreen({ route, navigation }) {
     const type = [{data :['All', 'Credit', 'Debit']}];
     const time = [{data :['Overall', 'Today', 'Tomarrow', 'Last 15 Days', 'Last 30 Days', 'This Month', 'This Year']}];
     const timeLine = ['Year By Year', 'Month By Month', 'Day By Day']
-    const year = [{data : ['2023']}];
-    const month = [{ data: ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }];
-    const date = [{data : [1,2,3,4]}];
+    const year = ['2023', '2003'];
+    const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const date = [1,2,3,4];
+    const count =['Single(One)', 'Range(From)'];
+
     const x = () => {
         console.log(mainData);
     }
@@ -33,11 +36,17 @@ function GraphScreen({ route, navigation }) {
                     <Text style={styles.filterText}>Compare Data</Text>
                 </TouchableOpacity>
             </View>
-            <Modal visible={false} animationType='fade' transparent={true}>
+            {/* Custom Filter Model */}
+            <Modal visible={false} animationType='slide' transparent={true}>
                 <CustomFilterModel timeData={time} typeData={type}/>
-            </Modal >
-            <Modal  visible={true} animationType='fade' transparent={true}>
-                <CompareDataModel timeLine={timeLine} />
+            </Modal>
+            {/* Advanced Filter Model */}
+            <Modal visible={true} animationType='slide' transparent={true}>
+                <AdvancedFilterModel timeLine={timeLine} year={year} month={month} date={date} count={count}/>
+            </Modal>
+            {/* Compare Data Model */}
+            <Modal visible={false} animationType='fade' transparent={true}>
+                <CompareDataModel timeLine={timeLine} year={year} month={month} date={date}/>
             </Modal>
         </View>
     )
