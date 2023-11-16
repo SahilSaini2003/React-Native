@@ -55,7 +55,6 @@ function advancedFilterModel({ timeLine, year, month, date, count }) {
 
     ContentDecider = () => {
         if (countData == 'Single(One)') {
-            console.log('i am in');
             return (
                 <>
                     {/* Type DropDown */}
@@ -86,7 +85,6 @@ function advancedFilterModel({ timeLine, year, month, date, count }) {
             )
         }
         else if (countData == 'Range(From)') {
-            console.log('i am in');
             return (
                 <>
                     {/* Type DropDown */}
