@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'react-native-gesture-handler';
 import { Image, StyleSheet, View } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import moment from 'moment-timezone';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,16 +11,39 @@ import HomeScreen from './src/screens/homeScreen';
 import HistoryScreen from './src/screens/historyScreen';
 import DataBreifScreen from './src/screens/dataBreifScreen';
 import GraphScreen from './src/screens/graphScreen';
+import { DataProvider } from './src/context/dataContext';
+
 
 function App(): JSX.Element {
+  let id = 5;
+  // let id = 1;
+  interface mainType {
+    id: number,
+    amount: number,
+    title: string,
+    description: string | null,
+    type: string, date: string,
+    dateDay: string,
+    dateMonth: string,
+    dateYear: string
+  }
 
-  let mainData = [
-    { 'id': 1, 'amount': 1200, 'title': 'Bus Fair', 'description': 'We live in an age of science. Science has made uss', 'type': 'Credit', 'date': '08-11-2023', 'dateDay': '08', 'dateMonth': '11', 'dateYear': '2023' },
-    { 'id': 2, 'amount': 800, 'title': 'Bought Cloth', 'description': 'We live in an age of science. Science has made us civilized. Every progress in human civilization is', 'type': 'Credit', 'date': '10-11-2023', 'dateDay': '10', 'dateMonth': '11', 'dateYear': '2023' },
-    { 'id': 3, 'amount': 500, 'title': 'QQQQQQQQQQQQQQQ', 'description': 'Bought Dell Mouse', 'type': 'Debit', 'date': '13-12-2023', 'dateDay': '13', 'dateMonth': '12', 'dateYear': '2023' },
-    { 'id': 4, 'amount': 10000000, 'title': 'Cap', 'description': 'We live in an age of science. Science has made us civilized. Every progress in human civilization is the gift of science. Science has solved our probl', 'type': 'Debit', 'date': '15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023' },
-  ]
+  let [mainData, setMainData] = useState<mainType[]>([{ 'id': 1, 'amount': 1200, 'title': 'Bus Fair', 'description': 'We live in an age of science. Science has made uss', 'type': 'Credit', 'date': '08-11-2023', 'dateDay': '08', 'dateMonth': '11', 'dateYear': '2023' },
+  { 'id': 2, 'amount': 800, 'title': 'Bought Cloth', 'description': 'We live in an age of science. Science has made us civilized. Every progress in human civilization is', 'type': 'Credit', 'date': '10-11-2023', 'dateDay': '10', 'dateMonth': '11', 'dateYear': '2023' },
+  { 'id': 3, 'amount': 500, 'title': 'QQQQQQQQQQQQQQQ', 'description': 'Bought Dell Mouse', 'type': 'Debit', 'date': '13-12-2023', 'dateDay': '13', 'dateMonth': '12', 'dateYear': '2023' },
+  { 'id': 4, 'amount': 10000000, 'title': 'Cap', 'description': 'We live in an age of science. Science has made us civilized. Every progress in human civilization is the gift of science. Science has solved our probl', 'type': 'Debit', 'date': '15-08-2023', 'dateDay': '15', 'dateMonth': '08', 'dateYear': '2023' }]);
 
+  // const insertData = (amount: number, title: string, description: string | null, type: string, date: string, dateDay: string, dateMonth: string, dateYear: string) => {
+  //   let newData = { 'id': id++, 'amount': amount, 'title': title, 'description': description, 'type': type, 'date': date, 'dateDay': dateDay, 'dateMonth': dateMonth, 'dateYear': dateYear };
+  //   setMainData([...mainData, newData]);
+  // }
+
+  // const deleteData = (id: number) => {
+  //   let newData = mainData.filter((item) => {
+  //     return item.id != id;
+  //   })
+  //   setMainData(newData);
+  // }
   const Stack = createStackNavigator();
   const Tab = createBottomTabNavigator()
 
@@ -52,6 +76,7 @@ function App(): JSX.Element {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
+        // initialParams={{ insertData, deleteData }}
         options={{
           tabBarLabelStyle: {
             fontSize: 15,
@@ -82,53 +107,56 @@ function App(): JSX.Element {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='MainScreen'
-      >
-        <Stack.Screen
-          name="MainScreen"
-          component={MainScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Data - Breif"
-          component={DataBreifScreen}
-          options={{
-            headerStyle: {
-              backgroundColor: '#ffb07d',
-              borderColor: 'black',
-              borderBottomWidth: 1,
-              height: 60,
-            },
-            headerTitleStyle: {
-              fontSize: 25,
-              fontWeight: 'bold',
-            },
-            headerTitleAlign: 'center',
-            cardStyle: {backgroundColor: '#FFFDD0'}
-          }}
-        />
-        <Stack.Screen
-          name="Progress"
-          component={GraphScreen}
-          initialParams={{ mainData }}
-          options={{
-            headerStyle: {
-              backgroundColor: '#ffb07d',
-              borderColor: 'black',
-              borderBottomWidth: 1,
-              height: 60,
-            },
-            headerTitleStyle: {
-              fontSize: 25,
-              fontWeight: 'bold',
-            },
-            headerTitleAlign: 'center',
-            cardStyle: {backgroundColor: '#FFFDD0'}
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <DataProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='MainScreen'
+        >
+          <Stack.Screen
+            name="MainScreen"
+            component={MainScreen}
+            options={{ headerShown: false }}
+          // initialParams={{ insertData, deleteData }}
+          />
+          <Stack.Screen
+            name="Data - Breif"
+            component={DataBreifScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: '#ffb07d',
+                borderColor: 'black',
+                borderBottomWidth: 1,
+                height: 60,
+              },
+              headerTitleStyle: {
+                fontSize: 25,
+                fontWeight: 'bold',
+              },
+              headerTitleAlign: 'center',
+              cardStyle: { backgroundColor: '#FFFDD0' }
+            }}
+          />
+          <Stack.Screen
+            name="Progress"
+            component={GraphScreen}
+            initialParams={{ mainData }}
+            options={{
+              headerStyle: {
+                backgroundColor: '#ffb07d',
+                borderColor: 'black',
+                borderBottomWidth: 1,
+                height: 60,
+              },
+              headerTitleStyle: {
+                fontSize: 25,
+                fontWeight: 'bold',
+              },
+              headerTitleAlign: 'center',
+              cardStyle: { backgroundColor: '#FFFDD0' }
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </DataProvider>
   );
 }
 
