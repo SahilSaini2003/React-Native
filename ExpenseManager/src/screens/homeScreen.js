@@ -38,9 +38,21 @@ function HomeScreen({ route, navigation }) {
     let verifyData = () => {
         // setAmount(text);
         // let date = '18-10-2023';
+        let maxAllowdedDate = moment().subtract(5,'Y').format('DD-MM-YYYY');
+
+        /**
+         * Date Should Not be greater than current date
+         * Max 5 year data entry is allowded
+         * jan march may july august octber decmber - 31
+         * feb - 28 & 29
+         * april june september nov - 30 
+         */
         const dateParts = date.split('-');
         const formattedDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
         console.log(formattedDate);
+        if (condition) {
+            
+        }
         
         if (!!isNaN(formattedDate.getTime())) {
             // This will run When Date is incorrect
