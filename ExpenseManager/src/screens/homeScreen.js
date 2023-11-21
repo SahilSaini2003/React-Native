@@ -2,13 +2,13 @@ const { Text, View, StyleSheet, Modal, Image, TouchableOpacity, Pressable, TextI
 import { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
 
-import { useDataContext } from '../context/dataContext'
+import { useDataContext } from '../context/dataContext';
 
 
 
 function HomeScreen({ route, navigation }) {
 
-    let { insertData, deleteData } = useDataContext();
+    let { insertData, mainData } = useDataContext();
     // Used to check weather keyboard is active or not
     const [isKeyboardActive, setKeyboardActive] = useState(false);
     useEffect(() => {
@@ -38,7 +38,7 @@ function HomeScreen({ route, navigation }) {
     let verifyData = () => {
         // setAmount(text);
         // let date = '18-10-2023';
-        let maxAllowdedDate = moment().subtract(5,'Y').format('DD-MM-YYYY');
+        let maxAllowdedDate = moment().subtract(5, 'Y').format('DD-MM-YYYY');
 
         /**
          * Date Should Not be greater than current date
@@ -47,24 +47,59 @@ function HomeScreen({ route, navigation }) {
          * feb - 28 & 29
          * april june september nov - 30 
          */
-        const dateParts = date.split('-');
-        const formattedDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
-        console.log(formattedDate);
-        if (condition) {
-            
+        if (!date) {
+            Alert.alert('Invalid Date!', 'Date Required!', [{ text: 'Okay!' },]);
+            return;
         }
-        
-        if (!!isNaN(formattedDate.getTime())) {
-            // This will run When Date is incorrect
-            Alert.alert('Invalid Date!', 'Please Enter Date in Format(DD-MM-YYYY)!', [
-                { text: 'Okay!' },
-            ]);
+        const dateParts = date.split('-');
+
+        let day = dateParts[2];
+        let month = dateParts[1];
+        let textMonth = new Date(date).toLocaleString('en-US', { month: 'long' });
+        console.log(textMonth);
+        let year = dateParts[0];
+        if ( year.length != 4  || month.length != 2 || day.length != 2) {
+            Alert.alert('Invalid Date!', 'Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD) \n\t\t\tExample :- 2020-05-02', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (month > 12 || month < 1) {
+            Alert.alert('Invalid Month!', 'We only have 1 to 12 Months in a Year!', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            if (day > 30) {
+                let dummyDate = new Date(date);
+                dummyDate.setMonth(month - 1);
+                Alert.alert('Invalid Date!', `We only have 30 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
+                return;
+            }
+        }
+        if (month == 2) {
+            let dummyDate = new Date(date);
+            dummyDate.setMonth(month - 1);
+            if (year % 4 == 0 && day > 29) {
+                Alert.alert('Invalid Date!', `We only have 29 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })}/${year}!`, [{ text: 'Okay!' },]);
+                return;
+            }
+            if (year % 4 != 0 && day > 28) {
+                Alert.alert('Invalid Date!', `We only have 28 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })}/${year}!`, [{ text: 'Okay!' },]);
+                return;
+            }
+        }
+        if (month == 4 || month == 6 || month == 9 || month == 11) {
+            if (day > 31) {
+                let dummyDate = new Date(date);
+                dummyDate.setMonth(month - 1);
+                Alert.alert('Invalid Date!', `We only have 31 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
+                return;
+            }
+        }
+        if (date > moment().format('YYYY-MM-DD')) {
+            Alert.alert('Invalid Date!', 'Sorry! But You can\'t add Future Transactions!', [{ text: 'Okay!' },]);
             return;
         }
         if (!amount) {
-            Alert.alert('Invalid Amount!', 'Amount can be of Type Number Only!', [
-                { text: 'Okay!' },
-            ]);
+            Alert.alert('Invalid Amount!', 'Amount can be of Type Number Only!', [{ text: 'Okay!' },]);
             return;
         }
         if (title.length < 5) {
@@ -73,14 +108,16 @@ function HomeScreen({ route, navigation }) {
             ]);
             return;
         }
-        console.log(amount, title, description, type, date, dateParts[0], formattedDate.toLocaleString('en-US', {month: 'long'}), dateParts[2]);
+        insertData(amount, title, description == undefined ? null : description, type, date, day, textMonth, year);
+        // console.log(mainData.length);
+        // console.log(mainData);
         // insertData: (amount: number, title: string, description: string | null, type: string, date: string, dateDay: string, dateMonth: string, dateYear: string) => void;
         // insertData()
     }
 
     const [modelIsVisible, setModelIsVisible] = useState(false);
     const [type, setType] = useState();
-    const [date, setDate] = useState(moment().format('DD-MM-YYYY'));
+    const [date, setDate] = useState(moment().format('YYYY-MM-DD hh:mm:ss'));
     const [amount, setAmount] = useState();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState();
@@ -138,7 +175,7 @@ function HomeScreen({ route, navigation }) {
                                     <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Credit</Text>
                                 </View>)}
                             <View style={[styles.dataBox, styles.date]}>
-                                <TextInput placeholder='Date' placeholderTextColor={'#666362'} textAlign='center' maxLength={10} style={{ fontSize: 20, color: 'black' }} defaultValue={date} onChangeText={(text) => { setDate(text); }}></TextInput>
+                                <TextInput placeholder='Date' placeholderTextColor={'#666362'} textAlign='center' maxLength={19} style={{ fontSize: 20, color: 'black' }} defaultValue={date} onChangeText={(text) => { setDate(text); }}></TextInput>
                             </View>
                             <View style={[styles.dataBox, styles.amount]}>
                                 <TextInput placeholder='Enter Amount' placeholderTextColor={'#666362'} textAlign='center' keyboardType='number-pad' maxLength={8} style={{ fontSize: 20, color: 'black' }} onChangeText={(text) => { setAmount(parseInt(text)); }}></TextInput>
@@ -261,7 +298,7 @@ const styles = StyleSheet.create({
         height: 45,
     },
     date: {
-        width: '50%',
+        width: '65%',
         color: 'black',
         borderTopRightRadius: 15,
         borderTopLeftRadius: 15,

@@ -2,11 +2,12 @@ const { Text, View, StyleSheet, TouchableOpacity, Image, SectionList } = require
 import { useState } from 'react';
 
 import ListViewMultipleSelect from '../components/listViewMultipleSelect.js';
-import HistoryData from '../components/historyData.js'
+import HistoryData from '../components/historyData.js';
+import { useDataContext } from '../context/dataContext';
 
 function HistoryScreen({route, navigation}) {
   //Main data
-  let {mainData}= route.params;
+  let {mainData}= useDataContext();
 
   callDataBreifScreen = (id) => {
     let itemData = mainData.filter((item)=>{

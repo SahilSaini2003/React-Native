@@ -19,6 +19,11 @@ function historyData({ mainData, callDataBreifScreen }) {
             )
         }
     }
+
+    function dateFormatter(date) {
+        let datePart = date.split(' ');
+        return datePart[0];
+    }
     return (
         // <Text>Histoy Data</Text>
         <View style={{ flex: 1, margin: 10 }}>
@@ -28,7 +33,7 @@ function historyData({ mainData, callDataBreifScreen }) {
                     <TouchableOpacity style={{ width: '100%', height: 70, backgroundColor: '#F3E0D6', borderRadius: 20, borderBottomColor:'black', borderBottomWidth: 2, borderWidth: 1, borderTopColor:'white',borderRightColor: 'white', borderLeftColor: 'white'}} onPress={()=>{callDataBreifScreen(item.id)}}>
                         <View style={{ flexDirection: 'row', justifyContent:'space-between', marginHorizontal: 20  }}>
                             <Text style={{fontSize: 20, color: 'black'}}>{item.title}</Text>
-                            <Text style={{color: '#666362'}}>{item.date}</Text>
+                            <Text style={{color: '#666362'}}>{dateFormatter(item.date)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent:'space-between', marginHorizontal: 20 }}>
                             <Text>{TypeStyle(item.type)}</Text>
