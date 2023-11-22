@@ -36,30 +36,22 @@ function HomeScreen({ route, navigation }) {
     }
 
     let verifyData = () => {
-        // setAmount(text);
-        // let date = '18-10-2023';
-        let maxAllowdedDate = moment().subtract(5, 'Y').format('DD-MM-YYYY');
-
-        /**
-         * Date Should Not be greater than current date
-         * Max 5 year data entry is allowded
-         * jan march may july august octber decmber - 31
-         * feb - 28 & 29
-         * april june september nov - 30 
-         */
         if (!date) {
             Alert.alert('Invalid Date!', 'Date Required!', [{ text: 'Okay!' },]);
             return;
         }
-        const dateParts = date.split('-');
-
-        let day = dateParts[2];
-        let month = dateParts[1];
+        const dateTimeParts = date.split(' ');
+        const dateParts = dateTimeParts[0].split('-');
+        const timePart = dateTimeParts[1].split(':');
+        let year = dateParts[0] != undefined && dateParts[0] != null ? dateParts[0] : [];
+        let month = dateParts[1] != undefined && dateParts[1] != null ? dateParts[1] : [];
         let textMonth = new Date(date).toLocaleString('en-US', { month: 'long' });
-        console.log(textMonth);
-        let year = dateParts[0];
-        if ( year.length != 4  || month.length != 2 || day.length != 2) {
-            Alert.alert('Invalid Date!', 'Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD) \n\t\t\tExample :- 2020-05-02', [{ text: 'Okay!' },]);
+        let day = dateParts[2] != undefined && dateParts[2] != null ? dateParts[2] : [];
+        let hour = timePart[0] != undefined && timePart[0] != null ? timePart[0] : [];
+        let minute = timePart[1] != undefined && timePart[1] != null ? timePart[1] : [];
+        let second = timePart[2] != undefined && timePart[2] != null ? timePart[2] : [];
+        if ( year.length != 4  || month.length != 2 || day.length != 2 || hour.length != 2 || minute.length != 2 || second.length != 2) {
+            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD hh-mm-ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss')}`, [{ text: 'Okay!' },]);
             return;
         }
         if (month > 12 || month < 1) {
@@ -94,7 +86,19 @@ function HomeScreen({ route, navigation }) {
                 return;
             }
         }
-        if (date > moment().format('YYYY-MM-DD')) {
+        if (hour > 24) {
+            Alert.alert('Invalid Hour!', 'We only have 24 Hours in a Day!', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (minute > 60) {
+            Alert.alert('Invalid Minute!', 'We only have 60 Minutes in a Day!', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (second > 60) {
+            Alert.alert('Invalid Second!', 'We only have 60 Seconds in a Day!', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (date > moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss')) {
             Alert.alert('Invalid Date!', 'Sorry! But You can\'t add Future Transactions!', [{ text: 'Okay!' },]);
             return;
         }
@@ -108,16 +112,21 @@ function HomeScreen({ route, navigation }) {
             ]);
             return;
         }
-        insertData(amount, title, description == undefined ? null : description, type, date, day, textMonth, year);
-        // console.log(mainData.length);
-        // console.log(mainData);
-        // insertData: (amount: number, title: string, description: string | null, type: string, date: string, dateDay: string, dateMonth: string, dateYear: string) => void;
-        // insertData()
+        insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
+        setModelIsVisible(false);
+    }
+
+    let resertVariable = () => {
+        setType();
+        setDate(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss'));
+        setAmount();
+        setTitle('');
+        setDescription('');
     }
 
     const [modelIsVisible, setModelIsVisible] = useState(false);
     const [type, setType] = useState();
-    const [date, setDate] = useState(moment().format('YYYY-MM-DD hh:mm:ss'));
+    const [date, setDate] = useState(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss'));
     const [amount, setAmount] = useState();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState();
@@ -150,12 +159,12 @@ function HomeScreen({ route, navigation }) {
             <View style={styles.buttonBox}>
                 {/* //Buttons */}
                 <View style={styles.pressableView}>
-                    <Pressable style={[styles.pressable, { backgroundColor: '#FF0000' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { setType('DEBIT'); setModelIsVisible(true); }}>
+                    <Pressable style={[styles.pressable, { backgroundColor: '#FF0000' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resertVariable(); setType('DEBIT'); setModelIsVisible(true); }}>
                         <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>DEBIT</Text>
                     </Pressable>
                 </View>
                 <View style={styles.pressableView}>
-                    <Pressable style={[styles.pressable, { backgroundColor: '#0CF107' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { setType('CREDIT'); setModelIsVisible(true); }}>
+                    <Pressable style={[styles.pressable, { backgroundColor: '#0CF107' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resertVariable(); setType('CREDIT'); setModelIsVisible(true); }}>
                         <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'black' }}>CREDIT</Text>
                     </Pressable>
                 </View>
