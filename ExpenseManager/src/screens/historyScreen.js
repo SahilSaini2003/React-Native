@@ -33,17 +33,40 @@ function HistoryScreen({route, navigation}) {
   const transactionTypeDilogBoxHeight = transactionTypeIsClicked ? ((transactionType[0].data.length * 25) + 75) : 35;
 
   //Function for fetching selected data
-  fetchSelectedMonth = (monthArray) => {
-    console.log(monthArray);
+  const [monthSelectedData, setMonthSelectedData] = useState({});
+  const [yearSelectedData, setYearSelectedData] = useState({});
+  const [typeSelectedData, setTypeSelectedData] = useState({});
+
+  fetchSelectedMonth = (monthArray, selectedData) => {
+    setMonthSelectedData({ ...selectedData});
+    console.log(monthSelectedData);
     setMonthIsClicked(false);
   }
-  fetchSelectedYear = (yearArray) => {
-    console.log(yearArray);
+  fetchSelectedYear = (yearArray, selectedData) => {
+    setYearSelectedData({ ...selectedData });
+    // console.log(yearArray);
     setYearIsClicked(false);
   }
-  fetchSelectedTransactionType = (transactionTypeArray) => {
-    console.log(transactionTypeArray);
+  fetchSelectedTransactionType = (transactionTypeArray, selectedData) => {
+    setTypeSelectedData({ ...selectedData });
+    // console.log(transactionTypeArray);
     setTransactionTypeIsClicked(false);
+  }
+
+  //Filter Model Handler
+  const handelFilterDropdown = (id) => {
+    if (id === 1) {
+      setYearIsClicked(false);
+      setTransactionTypeIsClicked(false);
+    }
+    else if (id === 2) {
+      setMonthIsClicked(false);
+      setTransactionTypeIsClicked(false);
+    }
+    else if (id === 3) {
+      setMonthIsClicked(false);
+      setYearIsClicked(false);
+    }
   }
 
   return (
@@ -52,25 +75,25 @@ function HistoryScreen({route, navigation}) {
       <View style={styles.mainBox}>
         <View style={styles.filterBox}>
           <View style={[styles.filterButton, { height: monthDilogBoxHeight }]}>
-            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setMonthIsClicked(!monthIsClicked) }}>
+            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setMonthIsClicked(!monthIsClicked); handelFilterDropdown(1); }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Month</Text>
               {monthIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {monthIsClicked ? (<ListViewMultipleSelect data={month} fetchSelectedData={this.fetchSelectedMonth}></ListViewMultipleSelect>) : null}
+            {monthIsClicked ? (<ListViewMultipleSelect data={month} selectedData={monthSelectedData} fetchSelectedData={this.fetchSelectedMonth}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: yearDilogBoxHeight }]}>
-            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setYearIsClicked(!yearIsClicked) }}>
+            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setYearIsClicked(!yearIsClicked); handelFilterDropdown(2); }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Year</Text>
               {yearIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {yearIsClicked ? (<ListViewMultipleSelect data={year} fetchSelectedData={this.fetchSelectedYear}></ListViewMultipleSelect>) : null}
+            {yearIsClicked ? (<ListViewMultipleSelect data={year} selectedData={yearSelectedData} fetchSelectedData={this.fetchSelectedYear}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: transactionTypeDilogBoxHeight }]}>
-            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setTransactionTypeIsClicked(!transactionTypeIsClicked) }}>
+            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setTransactionTypeIsClicked(!transactionTypeIsClicked); handelFilterDropdown(3); }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>T-Type</Text>
               {transactionTypeIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {transactionTypeIsClicked ? (<ListViewMultipleSelect data={transactionType} fetchSelectedData={this.fetchSelectedTransactionType}></ListViewMultipleSelect>) : null}
+            {transactionTypeIsClicked ? (<ListViewMultipleSelect data={transactionType} selectedData={typeSelectedData} fetchSelectedData={this.fetchSelectedTransactionType}></ListViewMultipleSelect>) : null}
           </View>
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}

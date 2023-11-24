@@ -47,6 +47,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const dateB = new Date(b.date);
             return dateA.getTime() - dateB.getTime();
         });
+        console.log(data);
+        
         setMainData(data.reverse());
     };
 

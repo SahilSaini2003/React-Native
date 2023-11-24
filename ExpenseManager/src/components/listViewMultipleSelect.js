@@ -1,18 +1,32 @@
 import { View, SectionList, Text, TouchableOpacity, Image } from 'react-native'
 import { useState } from 'react';
+import _ from 'underscore';
 
-function listViewMultipleSelect({ data, fetchSelectedData }) {
-
-    const [dataSelected, setDataSelected] = useState({});
+function listViewMultipleSelect({ data, selectedData, fetchSelectedData }) {
+    // console.log(selectedData);
+    console.log(Object.keys(selectedData).length);
+    if (Object.keys(selectedData).length === 0) {
+        var [dataSelected, setDataSelected] = useState({'All': true});
+    }
+    else {
+        var [dataSelected, setDataSelected] = useState(selectedData);
+    }
     const [dataArray, setDataArray] = useState([]);
     const dataPush = async (data) => {
-        const updateDataSelected =  { ...dataSelected };
+        if (data == 'All') {
+            if (dataSelected['All'] == false) {
+                return setDataSelected({'All': true});
+            }
+        }
+        const updateDataSelected =  { ...dataSelected, 'All': false };
         updateDataSelected[data] = !dataSelected[data];
+        console.log(updateDataSelected);
         setDataSelected(updateDataSelected);
         if (updateDataSelected[data] == true) {
             setDataArray(item => [...item, data]);
         }
         if (updateDataSelected[data] == false) {
+                setDataSelected(updateDataSelected);
             setDataArray(item => {
                 let a = item.filter(function(item) {
                     return item != data;
@@ -25,10 +39,16 @@ function listViewMultipleSelect({ data, fetchSelectedData }) {
                 }  
             })
         }
+        let allChecker =  _.filter(updateDataSelected, (item)=>{
+            return item == true;
+        })
+        if (allChecker.length === 0) {
+            setDataSelected({'All': true})
+        }
     }
 
     const sendData = () => {
-        fetchSelectedData(dataArray);
+        fetchSelectedData(dataArray, dataSelected);
     }
 
     return (
