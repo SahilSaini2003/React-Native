@@ -1,5 +1,6 @@
 const { Text, View, StyleSheet, TouchableOpacity, Image, SectionList } = require("react-native");
 import { useState } from 'react';
+import _ from 'underscore';
 
 import ListViewMultipleSelect from '../components/listViewMultipleSelect.js';
 import HistoryData from '../components/historyData.js';
@@ -8,6 +9,8 @@ import { useDataContext } from '../context/dataContext';
 function HistoryScreen({route, navigation}) {
   //Main data
   let {mainData}= useDataContext();
+
+  let tempData = mainData;
 
   callDataBreifScreen = (id) => {
     let itemData = mainData.filter((item)=>{
@@ -37,20 +40,59 @@ function HistoryScreen({route, navigation}) {
   const [yearSelectedData, setYearSelectedData] = useState({});
   const [typeSelectedData, setTypeSelectedData] = useState({});
 
+  const [monthArrayData, setMonthArrayData] = useState([]);
+  const [yearArrayData, setYearArrayData] = useState([]);
+  const [typeArrayData, setTypeArrayData] = useState([]);
+
   fetchSelectedMonth = (monthArray, selectedData) => {
     setMonthSelectedData({ ...selectedData});
-    console.log(monthSelectedData);
+    setMonthArrayData(monthArray)
     setMonthIsClicked(false);
+    filterData(1, monthArray);
   }
   fetchSelectedYear = (yearArray, selectedData) => {
     setYearSelectedData({ ...selectedData });
-    // console.log(yearArray);
+    setYearArrayData(yearArray);
     setYearIsClicked(false);
+    filterData(2, yearArray);
   }
   fetchSelectedTransactionType = (transactionTypeArray, selectedData) => {
     setTypeSelectedData({ ...selectedData });
-    // console.log(transactionTypeArray);
+    setTypeArrayData(transactionTypeArray)
     setTransactionTypeIsClicked(false);
+    filterData(3, transactionTypeArray)
+  }
+
+  filterData= (id , data) => {
+    let dummyVariable = [];
+    if (id === 1) {
+      _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
+        _.map(data, (filter) => {
+          if (item.dateMonthString == filter) {
+            dummyVariable.push(item);
+          }
+        })
+      })
+    }
+    if (id === 2) {
+      _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
+        _.map(data, (filter) => {
+          if (item.dateYear == filter) {
+            dummyVariable.push(item);
+          }
+        })
+      })
+    }
+    if (id === 3) {
+      _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
+        _.map(data, (filter) => {
+          if (item.type == filter) {
+            dummyVariable.push(item);
+          }
+        })
+      })
+    }
+    console.log(dummyVariable);
   }
 
   //Filter Model Handler
@@ -79,26 +121,27 @@ function HistoryScreen({route, navigation}) {
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Month</Text>
               {monthIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {monthIsClicked ? (<ListViewMultipleSelect data={month} selectedData={monthSelectedData} fetchSelectedData={this.fetchSelectedMonth}></ListViewMultipleSelect>) : null}
+            {monthIsClicked ? (<ListViewMultipleSelect data={month} selectedData={monthSelectedData} arrayData = {monthArrayData} fetchSelectedData={this.fetchSelectedMonth}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: yearDilogBoxHeight }]}>
             <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setYearIsClicked(!yearIsClicked); handelFilterDropdown(2); }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>Year</Text>
               {yearIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {yearIsClicked ? (<ListViewMultipleSelect data={year} selectedData={yearSelectedData} fetchSelectedData={this.fetchSelectedYear}></ListViewMultipleSelect>) : null}
+            {yearIsClicked ? (<ListViewMultipleSelect data={year} selectedData={yearSelectedData} arrayData ={yearArrayData} fetchSelectedData={this.fetchSelectedYear}></ListViewMultipleSelect>) : null}
           </View>
           <View style={[styles.filterButton, { height: transactionTypeDilogBoxHeight }]}>
-            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setTransactionTypeIsClicked(!transactionTypeIsClicked); handelFilterDropdown(3); }}>
+            <TouchableOpacity style={{ width: 100, height: 30, flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setTransactionTypeIsClicked(!transactionTypeIsClicked ); handelFilterDropdown(3); }}>
               <Text style={{ color: 'black', alignSelf: 'flex-start', fontSize: 20, marginLeft: 10 }}>T-Type</Text>
               {transactionTypeIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 6, marginTop: 6 }} />)}
             </TouchableOpacity>
-            {transactionTypeIsClicked ? (<ListViewMultipleSelect data={transactionType} selectedData={typeSelectedData} fetchSelectedData={this.fetchSelectedTransactionType}></ListViewMultipleSelect>) : null}
+            {transactionTypeIsClicked ? (<ListViewMultipleSelect data={transactionType} selectedData={typeSelectedData} arrayData={typeArrayData} fetchSelectedData={this.fetchSelectedTransactionType}></ListViewMultipleSelect>) : null}
           </View>
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}
         <View style={styles.contentBox}>
-          <HistoryData mainData={mainData} callDataBreifScreen={this.callDataBreifScreen}/>
+          <HistoryData mainData={tempData
+          } callDataBreifScreen={this.callDataBreifScreen}/>
         </View>
       </View>
     </View>

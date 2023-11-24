@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 function DataBreifScreen({ route }) {
 
     const { itemData } = route.params;
-    const typeColor = itemData[0].type == 'Debit' ? '#FF0000' : '#0CF107';
+    const typeColor = itemData[0].type == 'Debit' || itemData[0].type == 'DEBIT' ? '#FF0000' : '#0CF107';
     const descriptionHeight = itemData[0].description != null ? (itemData[0].description).length > 50 ? ((itemData[0].description).length > 100 ? 200 : 150) : 100 : null;
     return (
         <View style={styles.mainBox}>

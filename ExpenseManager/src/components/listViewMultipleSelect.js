@@ -2,16 +2,21 @@ import { View, SectionList, Text, TouchableOpacity, Image } from 'react-native'
 import { useState } from 'react';
 import _ from 'underscore';
 
-function listViewMultipleSelect({ data, selectedData, fetchSelectedData }) {
+function listViewMultipleSelect({ data, selectedData, arrayData, fetchSelectedData }) {
     // console.log(selectedData);
     console.log(Object.keys(selectedData).length);
+    if (arrayData.length == 0) {
+        var [dataArray, setDataArray] = useState([]);
+    }
+    else {
+        var [dataArray, setDataArray] = useState(arrayData);
+    }
     if (Object.keys(selectedData).length === 0) {
         var [dataSelected, setDataSelected] = useState({'All': true});
     }
     else {
         var [dataSelected, setDataSelected] = useState(selectedData);
     }
-    const [dataArray, setDataArray] = useState([]);
     const dataPush = async (data) => {
         if (data == 'All') {
             if (dataSelected['All'] == false) {

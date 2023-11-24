@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 function historyData({ mainData, callDataBreifScreen }) {
 
     const TypeStyle = (type) => {
-        if (type == 'Debit') {
+        if (type == 'Debit' || type == 'DEBIT') {
             return (
                 <View style={[styles.typeStyle, {backgroundColor: '#FF0000'}]}>
                     <Text style={styles.typeText}>D</Text>

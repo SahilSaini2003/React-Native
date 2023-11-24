@@ -112,11 +112,16 @@ function HomeScreen({ route, navigation }) {
             ]);
             return;
         }
+        console.log(type);
         insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
         setModelIsVisible(false);
     }
 
-    let resertVariable = () => {
+
+
+
+
+    let resetVariable = () => {
         setType();
         setDate(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss'));
         setAmount();
@@ -159,12 +164,12 @@ function HomeScreen({ route, navigation }) {
             <View style={styles.buttonBox}>
                 {/* //Buttons */}
                 <View style={styles.pressableView}>
-                    <Pressable style={[styles.pressable, { backgroundColor: '#FF0000' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resertVariable(); setType('DEBIT'); setModelIsVisible(true); }}>
+                    <Pressable style={[styles.pressable, { backgroundColor: '#FF0000' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resetVariable(); setType('DEBIT'); setModelIsVisible(true); }}>
                         <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>DEBIT</Text>
                     </Pressable>
                 </View>
                 <View style={styles.pressableView}>
-                    <Pressable style={[styles.pressable, { backgroundColor: '#0CF107' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resertVariable(); setType('CREDIT'); setModelIsVisible(true); }}>
+                    <Pressable style={[styles.pressable, { backgroundColor: '#0CF107' }]} android_ripple={{ color: 'white', borderless: true }} onPress={() => { resetVariable(); setType('CREDIT'); setModelIsVisible(true); }}>
                         <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'black' }}>CREDIT</Text>
                     </Pressable>
                 </View>
