@@ -11,7 +11,7 @@ function advancedFilterModel({ timeLine, year, month, date, count }) {
      * Need to add a logic which will set other state false and will set relative and zIndex 1 for selected dropdown box
      */
 
-    let type = ['Both', 'Credit', 'Debit'];
+    let type = ['Both', 'CREDIT', 'DEBIT'];
 
     const [countIsClicked, setCountIsClicked] = useState(false);
     const [countData, setCountData] = useState('Select Count');

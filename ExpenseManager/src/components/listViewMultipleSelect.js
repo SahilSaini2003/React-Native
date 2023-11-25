@@ -4,7 +4,7 @@ import _ from 'underscore';
 
 function listViewMultipleSelect({ data, selectedData, arrayData, fetchSelectedData }) {
     // console.log(selectedData);
-    console.log(Object.keys(selectedData).length);
+    // console.log(Object.keys(selectedData).length);
     if (arrayData.length == 0) {
         var [dataArray, setDataArray] = useState([]);
     }
@@ -20,12 +20,13 @@ function listViewMultipleSelect({ data, selectedData, arrayData, fetchSelectedDa
     const dataPush = async (data) => {
         if (data == 'All') {
             if (dataSelected['All'] == false) {
+                setDataArray([]);
                 return setDataSelected({'All': true});
             }
         }
         const updateDataSelected =  { ...dataSelected, 'All': false };
         updateDataSelected[data] = !dataSelected[data];
-        console.log(updateDataSelected);
+        // console.log(updateDataSelected);
         setDataSelected(updateDataSelected);
         if (updateDataSelected[data] == true) {
             setDataArray(item => [...item, data]);

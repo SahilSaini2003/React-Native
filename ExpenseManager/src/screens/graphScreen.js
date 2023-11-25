@@ -7,7 +7,7 @@ import AdvancedFilterModel from '../components/advancedFilterModel.js'
 function GraphScreen({ route, navigation }) {
 
     let { mainData } = route.params;
-    const type = [{data :['All', 'Credit', 'Debit']}];
+    const type = [{data :['All', 'CREDIT', 'DEBIT']}];
     const time = [{data :['Overall', 'Today', 'Tomarrow', 'Last 15 Days', 'Last 30 Days', 'This Month', 'This Year']}];
     const timeLine = ['Year By Year', 'Month By Month', 'Day By Day']
     const year = ['2023', '2003'];

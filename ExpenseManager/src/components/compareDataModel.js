@@ -11,7 +11,7 @@ function compareDataModel({ timeLine, year, month, date }) {
      * Need to add a logic which will set other state false and will set relative and zIndex 1 for selected dropdown box
      */
 
-    let type = ['Both', 'Credit', 'Debit'];
+    let type = ['Both', 'CREDIT', 'DEBIT'];
 
     const [timeLineIsClicked, setTimeLineIsClicked] = useState(false);
     const [timeLineData, setTimeLineData] = useState('Select TimeLine');

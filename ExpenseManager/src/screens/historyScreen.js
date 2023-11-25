@@ -16,7 +16,7 @@ function HistoryScreen({route, navigation}) {
     let itemData = mainData.filter((item)=>{
       return item.id == id;
     });
-    console.log(itemData);
+    // console.log(itemData);
     navigation.navigate('Data - Breif', {itemData});
   }
 
@@ -28,7 +28,7 @@ function HistoryScreen({route, navigation}) {
   //Data for Filters
   const month = [{ data: ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }];
   const year = [{ data: ['All', '2022', '2023'] }]
-  const transactionType = [{ data: ['All', 'Debit', 'Credit'] }]
+  const transactionType = [{ data: ['All', 'DEBIT', 'CREDIT'] }]
 
   //Height of Filter Box
   const monthDilogBoxHeight = monthIsClicked ? ((month[0].data.length * 25) + 75) : 35;
@@ -48,40 +48,94 @@ function HistoryScreen({route, navigation}) {
     setMonthSelectedData({ ...selectedData});
     setMonthArrayData(monthArray)
     setMonthIsClicked(false);
+    console.log('monthArray',monthArray);
     filterData(1, monthArray);
   }
   fetchSelectedYear = (yearArray, selectedData) => {
     setYearSelectedData({ ...selectedData });
     setYearArrayData(yearArray);
     setYearIsClicked(false);
+    console.log('yearArray',yearArray);
     filterData(2, yearArray);
   }
   fetchSelectedTransactionType = (transactionTypeArray, selectedData) => {
     setTypeSelectedData({ ...selectedData });
     setTypeArrayData(transactionTypeArray)
     setTransactionTypeIsClicked(false);
+    console.log('transactionType',transactionTypeArray);
     filterData(3, transactionTypeArray)
   }
 
-  filterData= (id , data) => {
+  let [filteredData, setFilteredData] = useState([]);
+
+  let filterData = (id , data) => {
     let dummyVariable = [];
+    console.log(filteredData);
     if (id === 1) {
-      _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
+      _.map(mainData, (item) => {
         _.map(data, (filter) => {
           if (item.dateMonthString == filter) {
             dummyVariable.push(item);
           }
         })
       })
+      console.log(dummyVariable);
+      if (yearArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(yearArrayData, (filter) => {
+            if (item.dateYear == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      if (typeArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(typeArrayData, (filter) => {
+            if (item.type == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      console.log(yearArrayData, typeArrayData, dummyVariable);
+      setFilteredData(dummyVariable);
     }
     if (id === 2) {
-      _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
+      _.map(mainData, (item) => {
         _.map(data, (filter) => {
           if (item.dateYear == filter) {
             dummyVariable.push(item);
           }
         })
       })
+      if (monthArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(monthArrayData, (filter) => {
+            if (item.dateMonthString == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      if (typeArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(typeArrayData, (filter) => {
+            if (item.type == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      setFilteredData(dummyVariable);
     }
     if (id === 3) {
       _.map(dummyVariable.length == 0 ? mainData : dummyVariable, (item) => {
@@ -91,8 +145,30 @@ function HistoryScreen({route, navigation}) {
           }
         })
       })
+      if (monthArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(monthArrayData, (filter) => {
+            if (item.dateMonthString == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      if (yearArrayData.length != 0) {
+        let dummyVariable2 = [];
+        _.map(dummyVariable, (item) => {
+          _.map(yearArrayData, (filter) => {
+            if (item.dateYear == filter) {
+              dummyVariable2.push(item);
+            }
+          })
+        })
+        dummyVariable = dummyVariable2;
+      }
+      setFilteredData(dummyVariable);
     }
-    console.log(dummyVariable);
   }
 
   //Filter Model Handler
@@ -140,8 +216,7 @@ function HistoryScreen({route, navigation}) {
         </View>
         {/* <View style={styles.filterBreifBox}></View> */}
         <View style={styles.contentBox}>
-          <HistoryData mainData={tempData
-          } callDataBreifScreen={this.callDataBreifScreen}/>
+          <HistoryData mainData={ filteredData.length != 0 ? filteredData : mainData} callDataBreifScreen={this.callDataBreifScreen}/>
         </View>
       </View>
     </View>
