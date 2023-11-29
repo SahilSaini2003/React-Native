@@ -212,7 +212,6 @@ function HistoryScreen({route, navigation}) {
         typeArrayData.length != 0) &&
       filteredData.length == 0
     ) {
-      console.log(1);
       return (
         <Image
           source={require('../assets/images/emptyData.png')}
@@ -220,7 +219,6 @@ function HistoryScreen({route, navigation}) {
         />
       );
     } else {
-      console.log(2);
       return (
         <HistoryData
           mainData={filteredData.length != 0 ? filteredData : mainData}

@@ -1,6 +1,7 @@
 const { Text, View, StyleSheet, Modal, Image, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert } = require("react-native");
 import { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
+import _ from 'underscore';
 
 import { useDataContext } from '../context/dataContext';
 
@@ -59,10 +60,10 @@ function HomeScreen({ route, navigation }) {
             return;
         }
         if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-            if (day > 30) {
+            if (day > 31) {
                 let dummyDate = new Date(date);
                 dummyDate.setMonth(month - 1);
-                Alert.alert('Invalid Date!', `We only have 30 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
+                Alert.alert('Invalid Date!', `We only have 31 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
                 return;
             }
         }
@@ -79,10 +80,10 @@ function HomeScreen({ route, navigation }) {
             }
         }
         if (month == 4 || month == 6 || month == 9 || month == 11) {
-            if (day > 31) {
+            if (day > 30) {
                 let dummyDate = new Date(date);
                 dummyDate.setMonth(month - 1);
-                Alert.alert('Invalid Date!', `We only have 31 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
+                Alert.alert('Invalid Date!', `We only have 30 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
                 return;
             }
         }
@@ -117,9 +118,40 @@ function HomeScreen({ route, navigation }) {
         setModelIsVisible(false);
     }
 
-
-
-
+    amountGenerator = (filteredData, type = null) => {
+        let totalAmount = 0;
+        if (type == null) {
+            _.map(filteredData, (data) => {
+                if (data.type == 'DEBIT') {
+                    totalAmount = totalAmount - data.amount;
+                } else if (data.type == 'CREDIT') {
+                    totalAmount = totalAmount + data.amount;
+                }
+            })
+        }
+        if (type == 'CD') {
+            _.map(filteredData, (data) => {
+                totalAmount = totalAmount + data.amount;
+            })
+        }
+        if (type == 'C') {
+            let dummy = _.filter(filteredData, (data) => {
+                return data.type == 'CREDIT'
+            });
+            _.map(dummy, (data) => {
+                totalAmount = totalAmount + data.amount;
+            })
+        }
+        if (type == 'D') {
+            let dummy = _.filter(filteredData, (data) => {
+                return data.type == 'DEBIT'
+            });
+            _.map(dummy, (data) => {
+                totalAmount = totalAmount + data.amount;
+            })
+        }
+        return totalAmount;
+    }
 
     let resetVariable = () => {
         setType();
@@ -136,29 +168,299 @@ function HomeScreen({ route, navigation }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState();
 
+    const [mainBoxCounter, setMainBoxCounter] = useState(1);
+    const [mainBoxText, setMainBoxText] = useState('Overall');
+    const [mainBoxTextFontSize, setMainBoxTextFontSize] = useState(30);
+    const [mainBoxAmount, setMainBoxAmount] = useState(amountGenerator(mainData));
+
+    const [creditBoxCounter, setCreditBoxCounter] = useState(1);
+    const [creditBoxText, setCreditBoxText] = useState('Overall');
+    const [creditBoxTextFontSize, setCreditBoxTextFontSize] = useState(20);
+    const [creditBoxAmount, setCreditBoxAmount] = useState(amountGenerator(mainData, 'C'));
+
+    const [debitBoxCounter, setDebitBoxCounter] = useState(1);
+    const [debitBoxText, setDebitBoxText] = useState('Overall');
+    const [debitBoxTextFontSize, setDebitBoxTextFontSize] = useState(20);
+    const [debitBoxAmount, setDebitBoxAmount] = useState(amountGenerator(mainData, 'D'));
+    
+
+    mainBoxDataChanger = () => {
+        let dummyCounter = mainBoxCounter;
+        dummyCounter++;
+        if (dummyCounter == 1) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Overall');
+            setMainBoxTextFontSize(30);
+            setMainBoxAmount(amountGenerator(mainData));
+        }
+        if (dummyCounter == 2) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Today');
+            setMainBoxTextFontSize(30);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 3) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Yesterday');
+            setMainBoxTextFontSize(27);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 4) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Last 15 Days');
+            setMainBoxTextFontSize(24);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(15, 'd').format('YYYY-MM-DD');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 5) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Last 30 Days');
+            setMainBoxTextFontSize(24);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(30, 'd').format('YYYY-MM-DD');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 6) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('This Month');
+            setMainBoxTextFontSize(26);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 7) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('Last Month');
+            setMainBoxTextFontSize(26);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'M').format('YYYY-MM');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 8) {
+            setMainBoxCounter(dummyCounter);
+            setMainBoxText('This Year');
+            setMainBoxTextFontSize(28);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+        if (dummyCounter == 9) {
+            setMainBoxCounter(0);
+            setMainBoxText('Last Year');
+            setMainBoxTextFontSize(28);
+            let data = _.filter(mainData, (item) => {
+                return `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'y').format('YYYY');
+            })
+            setMainBoxAmount(amountGenerator(data));
+        }
+    }
+    crebitBoxDataChanger = () => {
+        let dummyCounter = creditBoxCounter;
+        dummyCounter++;
+        if (dummyCounter == 1) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Overall');
+            setCreditBoxTextFontSize(20);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT';
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 2) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Today');
+            setCreditBoxTextFontSize(20);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 3) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Yesterday');
+            setCreditBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 4) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Last 15 Days');
+            setCreditBoxTextFontSize(15);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(15, 'd').format('YYYY-MM-DD');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 5) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Last 30 Days');
+            setCreditBoxTextFontSize(15);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(30, 'd').format('YYYY-MM-DD');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 6) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('This Month');
+            setCreditBoxTextFontSize(17);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 7) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('Last Month');
+            setCreditBoxTextFontSize(17);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'M').format('YYYY-MM');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 8) {
+            setCreditBoxCounter(dummyCounter);
+            setCreditBoxText('This Year');
+            setCreditBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 9) {
+            setCreditBoxCounter(0);
+            setCreditBoxText('Last Year');
+            setCreditBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'CREDIT' && `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'y').format('YYYY');
+            })
+            setCreditBoxAmount(amountGenerator(data, 'CD'));
+        }
+    }
+    debitBoxDataChanger = () => {
+        let dummyCounter = debitBoxCounter;
+        dummyCounter++;
+        if (dummyCounter == 1) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Overall');
+            setDebitBoxTextFontSize(20);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT';
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 2) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Today');
+            setDebitBoxTextFontSize(20);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 3) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Yesterday');
+            setDebitBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 4) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Last 15 Days');
+            setDebitBoxTextFontSize(15);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(15, 'd').format('YYYY-MM-DD');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 5) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Last 30 Days');
+            setDebitBoxTextFontSize(15);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(30, 'd').format('YYYY-MM-DD');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 6) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('This Month');
+            setDebitBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 7) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('Last Month');
+            setDebitBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'M').format('YYYY-MM');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 8) {
+            setDebitBoxCounter(dummyCounter);
+            setDebitBoxText('This Year');
+            setDebitBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+        if (dummyCounter == 9) {
+            setDebitBoxCounter(0);
+            setDebitBoxText('Last Year');
+            setDebitBoxTextFontSize(18);
+            let data = _.filter(mainData, (item) => {
+                return item.type == 'DEBIT' && `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'y').format('YYYY');
+            })
+            setDebitBoxAmount(amountGenerator(data, 'CD'));
+        }
+    }
+
+    // Overall, today, tomarrow, Last 15 Days, Last 30 Days, This Month, Last Month, This Year, Last Year
     return (
         <View style={styles.main}>
             <View style={styles.portfolioBox}>
                 {/* // My portfolio */}
-                <TouchableOpacity style={styles.portfolioMainBox}>
+                <TouchableOpacity style={styles.portfolioMainBox} onPress={() => { mainBoxDataChanger() }}>
                     <View style={{ flexDirection: 'row', marginHorizontal: 20, marginVertical: 30 }}>
-                        <Text style={{ fontSize: 30, alignSelf: 'flex-start', color: 'black' }}>Overall Portfolio</Text>
+                        <Text style={{ fontSize: mainBoxTextFontSize, alignSelf: 'flex-start', color: 'black' }}>{mainBoxText} Portfolio</Text>
                         <TouchableOpacity onPress={() => callGraphScreen()}>
                             <Image source={require('../assets/images/loupe.png')} style={{ width: 50, height: 50, marginHorizontal: 20 }} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={{ fontSize: 50, marginHorizontal: 20, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
+                    <Text style={{ fontSize: 50, marginHorizontal: 20, alignSelf: 'flex-end', color: 'black' }}>{mainBoxAmount}</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.debitCreditBox}>
                 {/* // Debit Credit */}
-                <TouchableOpacity style={styles.debitCreditMainBox}>
-                    <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Debit</Text>
-                    <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#FF0000' }}>5000</Text>
+                <TouchableOpacity style={styles.debitCreditMainBox} onPress={() => { debitBoxDataChanger() }}>
+                    <Text style={{ fontSize: debitBoxTextFontSize, margin: 15, alignSelf: 'flex-start', color: 'black' }}>{debitBoxText} Debit</Text>
+                    <Text style={{ fontSize: debitBoxAmount.toLocaleString().replaceAll(',' ,'').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{debitBoxAmount}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.debitCreditMainBox}>
-                    <Text style={{ fontSize: 20, margin: 15, alignSelf: 'flex-start', color: 'black' }}>Overall Credit</Text>
-                    <Text style={{ fontSize: 30, margin: 15, alignSelf: 'flex-end', color: '#0CF107' }}>5000</Text>
+                <TouchableOpacity style={styles.debitCreditMainBox} onPress={() => { crebitBoxDataChanger() }}>
+                    <Text style={{ fontSize: creditBoxTextFontSize, margin: 15, alignSelf: 'flex-start', color: 'black' }}>{creditBoxText} Credit</Text>
+                    <Text style={{ fontSize: creditBoxAmount.toLocaleString().replaceAll(',' ,'').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{creditBoxAmount}</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.buttonBox}>
