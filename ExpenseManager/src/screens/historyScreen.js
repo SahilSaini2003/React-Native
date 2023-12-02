@@ -206,7 +206,15 @@ function HistoryScreen({route, navigation}) {
 
   // History Data Screen Handler
   function HistoryDataSetter() {
-    if (
+    if(mainData.length == 0) {
+      return (
+        <Image
+          source={require('../assets/images/emptyMainData.png')}
+          style={{height: '100%', width: '100%'}}
+        />
+      );
+    }
+    else if (
       (monthArrayData.length != 0 ||
         yearArrayData.length != 0 ||
         typeArrayData.length != 0) &&
@@ -218,7 +226,8 @@ function HistoryScreen({route, navigation}) {
           style={{height: '100%', width: '100%'}}
         />
       );
-    } else {
+    } 
+    else {
       return (
         <HistoryData
           mainData={filteredData.length != 0 ? filteredData : mainData}

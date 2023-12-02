@@ -10,8 +10,11 @@ const { useState } = require('react');
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function DataBreifScreen({ route }) {
+import { useDataContext } from '../context/dataContext';
+
+function DataBreifScreen({ route, navigation }) {
   const { itemData } = route.params;
+  const { verifyData, deleteData } = useDataContext();
 
   const [type, setType] = useState(itemData[0].type);
   const [date, setDate] = useState(itemData[0].date);
@@ -29,22 +32,26 @@ function DataBreifScreen({ route }) {
     if (updateSave.text == 'UPDATE') {
       setUpdateSave({ color: '#4CBB17', text: 'SAVE' });
       setTextEditable(true);
-      console.log(typeof date, typeof amount, typeof title, typeof description);
+      // console.log(typeof date, typeof amount, typeof title, typeof description);
     } else {
-      setUpdateSave({ color: '#0000FF', text: 'UPDATE' });
-      setTextEditable(false);
+      let dataCheck = verifyData(amount, title, description, type.toUpperCase(), date, 2, itemData[0].id);
+      if (dataCheck == 'success') {
+        setUpdateSave({ color: '#0000FF', text: 'UPDATE' });
+        setTextEditable(false);
+        navigation.navigate('History');
+      }
       console.log(date, amount, title, description);
     }
   }
 
   const typeColor =
-    itemData[0].type == 'Debit' || itemData[0].type == 'DEBIT'
+    type == 'Debit' || type == 'DEBIT'
       ? '#FF0000'
       : '#0CF107';
   const descriptionHeight =
-    itemData[0].description != null
-      ? itemData[0].description.length > 50
-        ? itemData[0].description.length > 100
+    description != null
+      ? description.length > 50
+        ? description.length > 100
           ? 200
           : 150
         : 100
@@ -55,18 +62,22 @@ function DataBreifScreen({ route }) {
         <View style={styles.container}>
           <View
             style={{
-              width: 120,
-              height: 35,
-              backgroundColor: typeColor,
+              width: 150,
+              height: 50,
+              backgroundColor: textEditable == true ? '#FFFDD0' : typeColor,
               alignItems: 'center',
               marginTop: 10,
-              borderRadius: 20,
+              borderRadius: 50,
               borderWidth: 2,
               borderColor: 'black',
+              // justifyContent: 'center'
             }}>
-            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>
+            <TextInput style={{ color: textEditable == true ? 'black' : 'white', fontSize: 20, fontWeight: 'bold' }} editable={textEditable}
+              onChangeText={(text) => {
+                setType(text);
+              }}>
               {type}
-            </Text>
+            </TextInput>
           </View>
           <View style={styles.textView}>
             <Text style={styles.textTitle}>Date of Transaction :</Text>
@@ -74,8 +85,7 @@ function DataBreifScreen({ route }) {
               style={[styles.textArea, { fontSize: 15 }]}
               defaultValue={date}
               editable={textEditable}
-              onChange={(text) => {
-                console.log(text);
+              onChangeText={(text) => {
                 setDate(text);
               }}
             />
@@ -86,7 +96,7 @@ function DataBreifScreen({ route }) {
             <TextInput
               style={styles.textArea}
               editable={textEditable}
-              onChange={(text) => {
+              onChangeText={(text) => {
                 setAmount(parseInt(text));
               }}>
               {amount}
@@ -97,13 +107,13 @@ function DataBreifScreen({ route }) {
             <TextInput
               style={styles.textArea}
               editable={textEditable}
-              onChange={(text) => {
+              onChangeText={(text) => {
                 setTitle(text);
               }}>
               {title}
             </TextInput>
           </View>
-          {itemData[0].description != null ? (
+          {description != null ? (
             <View
               style={[
                 styles.textView,
@@ -112,11 +122,10 @@ function DataBreifScreen({ route }) {
               <Text style={[styles.textTitle, { marginBottom: 5 }]}>
                 Transaction Description
               </Text>
-              {/* <Text style={styles.textArea}>{itemData[0].description}</Text> */}
               <TextInput
                 style={[styles.textArea, { alignItems: 'center' }]}
                 editable={textEditable}
-                onChange={(text) => {
+                onChangeText={(text) => {
                   setDescription(text);
                 }}
                 multiline={true}>
@@ -138,7 +147,13 @@ function DataBreifScreen({ route }) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.textView, { backgroundColor: '#B22222', height: 50 }]}>
+            style={[styles.textView, { backgroundColor: '#B22222', height: 50 }]}
+            onPress={() => {
+              let dataCheck = deleteData(itemData[0].id);
+              if (dataCheck == 'success') {
+                navigation.navigate('History');
+              }
+            }}>
             <Text style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>
               <MaterialCommunityIcons
                 name="delete-empty"

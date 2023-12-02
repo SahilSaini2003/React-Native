@@ -9,7 +9,7 @@ import { useDataContext } from '../context/dataContext';
 
 function HomeScreen({ route, navigation }) {
 
-    let { insertData, mainData } = useDataContext();
+    let { verifyData, mainData } = useDataContext();
     // Used to check weather keyboard is active or not
     const [isKeyboardActive, setKeyboardActive] = useState(false);
     useEffect(() => {
@@ -34,88 +34,6 @@ function HomeScreen({ route, navigation }) {
 
     callGraphScreen = () => {
         navigation.navigate('Progress');
-    }
-
-    let verifyData = () => {
-        if (!date) {
-            Alert.alert('Invalid Date!', 'Date Required!', [{ text: 'Okay!' },]);
-            return;
-        }
-        const dateTimeParts = date.split(' ');
-        const dateParts = dateTimeParts[0].split('-');
-        const timePart = dateTimeParts[1].split(':');
-        let year = dateParts[0] != undefined && dateParts[0] != null ? dateParts[0] : [];
-        let month = dateParts[1] != undefined && dateParts[1] != null ? dateParts[1] : [];
-        let textMonth = new Date(date).toLocaleString('en-US', { month: 'long' });
-        let day = dateParts[2] != undefined && dateParts[2] != null ? dateParts[2] : [];
-        let hour = timePart[0] != undefined && timePart[0] != null ? timePart[0] : [];
-        let minute = timePart[1] != undefined && timePart[1] != null ? timePart[1] : [];
-        let second = timePart[2] != undefined && timePart[2] != null ? timePart[2] : [];
-        if ( year.length != 4  || month.length != 2 || day.length != 2 || hour.length != 2 || minute.length != 2 || second.length != 2) {
-            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD hh-mm-ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss')}`, [{ text: 'Okay!' },]);
-            return;
-        }
-        if (month > 12 || month < 1) {
-            Alert.alert('Invalid Month!', 'We only have 1 to 12 Months in a Year!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-            if (day > 31) {
-                let dummyDate = new Date(date);
-                dummyDate.setMonth(month - 1);
-                Alert.alert('Invalid Date!', `We only have 31 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
-                return;
-            }
-        }
-        if (month == 2) {
-            let dummyDate = new Date(date);
-            dummyDate.setMonth(month - 1);
-            if (year % 4 == 0 && day > 29) {
-                Alert.alert('Invalid Date!', `We only have 29 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })}/${year}!`, [{ text: 'Okay!' },]);
-                return;
-            }
-            if (year % 4 != 0 && day > 28) {
-                Alert.alert('Invalid Date!', `We only have 28 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })}/${year}!`, [{ text: 'Okay!' },]);
-                return;
-            }
-        }
-        if (month == 4 || month == 6 || month == 9 || month == 11) {
-            if (day > 30) {
-                let dummyDate = new Date(date);
-                dummyDate.setMonth(month - 1);
-                Alert.alert('Invalid Date!', `We only have 30 Days in ${dummyDate.toLocaleString('en-US', { month: 'long' })} Month!`, [{ text: 'Okay!' },]);
-                return;
-            }
-        }
-        if (hour > 24) {
-            Alert.alert('Invalid Hour!', 'We only have 24 Hours in a Day!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (minute > 60) {
-            Alert.alert('Invalid Minute!', 'We only have 60 Minutes in a Day!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (second > 60) {
-            Alert.alert('Invalid Second!', 'We only have 60 Seconds in a Day!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (date > moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss')) {
-            Alert.alert('Invalid Date!', 'Sorry! But You can\'t add Future Transactions!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (!amount) {
-            Alert.alert('Invalid Amount!', 'Amount can be of Type Number Only!', [{ text: 'Okay!' },]);
-            return;
-        }
-        if (title.length < 5) {
-            Alert.alert('Title Required!', 'Min Length :- 5 & Max Lenght :- 15', [
-                { text: 'Okay!' },
-            ]);
-            return;
-        }
-        console.log(type);
-        insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
-        setModelIsVisible(false);
     }
 
     amountGenerator = (filteredData, type = null) => {
@@ -166,7 +84,7 @@ function HomeScreen({ route, navigation }) {
     const [date, setDate] = useState(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss'));
     const [amount, setAmount] = useState();
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState();
+    const [description, setDescription] = useState('');
 
     const [mainBoxCounter, setMainBoxCounter] = useState(1);
     const [mainBoxText, setMainBoxText] = useState('Overall');
@@ -182,7 +100,7 @@ function HomeScreen({ route, navigation }) {
     const [debitBoxText, setDebitBoxText] = useState('Overall');
     const [debitBoxTextFontSize, setDebitBoxTextFontSize] = useState(20);
     const [debitBoxAmount, setDebitBoxAmount] = useState(amountGenerator(mainData, 'D'));
-    
+
 
     mainBoxDataChanger = () => {
         let dummyCounter = mainBoxCounter;
@@ -456,11 +374,11 @@ function HomeScreen({ route, navigation }) {
                 {/* // Debit Credit */}
                 <TouchableOpacity style={styles.debitCreditMainBox} onPress={() => { debitBoxDataChanger() }}>
                     <Text style={{ fontSize: debitBoxTextFontSize, margin: 15, alignSelf: 'flex-start', color: 'black' }}>{debitBoxText} Debit</Text>
-                    <Text style={{ fontSize: debitBoxAmount.toLocaleString().replaceAll(',' ,'').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{debitBoxAmount}</Text>
+                    <Text style={{ fontSize: debitBoxAmount.toLocaleString().replaceAll(',', '').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{debitBoxAmount}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.debitCreditMainBox} onPress={() => { crebitBoxDataChanger() }}>
                     <Text style={{ fontSize: creditBoxTextFontSize, margin: 15, alignSelf: 'flex-start', color: 'black' }}>{creditBoxText} Credit</Text>
-                    <Text style={{ fontSize: creditBoxAmount.toLocaleString().replaceAll(',' ,'').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{creditBoxAmount}</Text>
+                    <Text style={{ fontSize: creditBoxAmount.toLocaleString().replaceAll(',', '').length < 9 ? 30 : 25, margin: 15, alignSelf: 'flex-end' }}>{creditBoxAmount}</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.buttonBox}>
@@ -507,7 +425,12 @@ function HomeScreen({ route, navigation }) {
                                 <TouchableOpacity onPress={() => { setModelIsVisible(false); }}>
                                     <Image source={require('../assets/images/cross.png')} style={{ width: 100, height: 100, borderRadius: 20, marginHorizontal: 20 }} />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => { verifyData() }}>
+                                <TouchableOpacity onPress={() => {
+                                    let dataCheck = verifyData(amount, title, description, type, date, 1); 
+                                    if (dataCheck == 'success') {
+                                        setModelIsVisible(false);
+                                    }
+                                }}>
                                     <Image source={require('../assets/images/tick.png')} style={{ width: 100, height: 100, borderRadius: 20, marginHorizontal: 20 }} />
                                 </TouchableOpacity>
                             </View>
