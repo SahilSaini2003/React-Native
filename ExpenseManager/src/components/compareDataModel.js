@@ -2,10 +2,11 @@ import { Text, View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react
 import { useState } from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import DropDown from './dropDown.js'
 
-function compareDataModel({ timeLine, year, month, date }) {
+function compareDataModel({ timeLine, year, month, date, setCompareDataModelVisible }) {
 
     /**
      * Need to add a logic which will set other state false and will set relative and zIndex 1 for selected dropdown box
@@ -53,11 +54,16 @@ function compareDataModel({ timeLine, year, month, date }) {
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             <View style={styles.modelCustomFilterView}>
-                <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>Compare Data</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>Compare Data</Text>
+                    <TouchableOpacity style={{ left: 40 }} onPress={() => { setCompareDataModelVisible(false) }} >
+                        <Entypo name='cross' size={40} color={'black'} />
+                    </TouchableOpacity>
+                </View>
                 <View style={{ width: '100%', borderWidth: 1, marginBottom: 10 }}></View>
                 {/* TimeLine DropDown  */}
                 <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
-                    <View style={[styles.dropDownBox, { height: timeLineHeight}]}>
+                    <View style={[styles.dropDownBox, { height: timeLineHeight }]}>
                         <TouchableOpacity style={{ height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => { setTimeLineIsClicked(!timeLineIsClicked) }}>
                             <Text style={{ color: '#676767', fontSize: 20, marginLeft: 10 }}>{timeLineData}</Text>
                             {timeLineIsClicked ? (<Image source={require('../assets/images/down-arrow.png')} style={{ width: 20, height: 20, marginLeft: 20, marginTop: 6 }} />) : (<Image source={require('../assets/images/up-arrow.png')} style={{ width: 20, height: 20, marginLeft: 20, marginTop: 6 }} />)}
@@ -78,12 +84,12 @@ function compareDataModel({ timeLine, year, month, date }) {
                 </View>
                 {/* Type DropDown */}
                 <View style={[styles.dropDownContainer, { justifyContent: 'space-between', flexDirection: 'row' }]}>
-                    <View style={[styles.dropDownBox, { height: type1LineHeight, width: '40%', marginHorizontal: 10, position: 'relative', zIndex: 1  }]}>
+                    <View style={[styles.dropDownBox, { height: type1LineHeight, width: '40%', marginHorizontal: 10, position: 'relative', zIndex: 1 }]}>
                         <DropDown data={type} state={type1LineIsClicked} setState={setType1LineIsClicked} textData={type1LineData} setTextData={setType1LineData} />
                     </View>
                     <Ionicons name='git-compare' size={30} color={'black'} />
                     <View style={[styles.dropDownBox, { height: type2LineHeight, width: '40%', marginHorizontal: 10 }]}>
-                    <DropDown data={type} state={type2LineIsClicked} setState={setType2LineIsClicked} textData={type2LineData} setTextData={setType2LineData} />
+                        <DropDown data={type} state={type2LineIsClicked} setState={setType2LineIsClicked} textData={type2LineData} setTextData={setType2LineData} />
                     </View>
                 </View>
                 {/* Year DropDown */}
@@ -93,32 +99,32 @@ function compareDataModel({ timeLine, year, month, date }) {
                     </View>
                     <Ionicons name='git-compare' size={30} color={'black'} />
                     <View style={[styles.dropDownBox, { height: year2LineHeight, width: '40%', marginHorizontal: 10 }]}>
-                    <DropDown data={year} state={year2LineIsClicked} setState={setYear2LineIsClicked} textData={year2LineData} setTextData={setYear2LineData} />
+                        <DropDown data={year} state={year2LineIsClicked} setState={setYear2LineIsClicked} textData={year2LineData} setTextData={setYear2LineData} />
                     </View>
                 </View>
                 {/* Month DropDown */}
                 <View style={[styles.dropDownContainer, { justifyContent: 'space-between', flexDirection: 'row' }]}>
-                    <View style={[styles.dropDownBox, { height: month1LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10, overflow:'hidden' }]}>
+                    <View style={[styles.dropDownBox, { height: month1LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10, overflow: 'hidden' }]}>
                         <DropDown data={month} state={month1LineIsClicked} setState={setMonth1LineIsClicked} textData={month1LineData} setTextData={setMonth1LineData} />
                     </View>
                     <Ionicons name='git-compare' size={30} color={'black'} />
-                    <View style={[styles.dropDownBox, { height: month2LineHeight,maxHeight: 150, width: '40%', marginHorizontal: 10 }]}>
-                    <DropDown data={month} state={month2LineIsClicked} setState={setMonth2LineIsClicked} textData={month2LineData} setTextData={setMonth2LineData} />
+                    <View style={[styles.dropDownBox, { height: month2LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10 }]}>
+                        <DropDown data={month} state={month2LineIsClicked} setState={setMonth2LineIsClicked} textData={month2LineData} setTextData={setMonth2LineData} />
                     </View>
                 </View>
                 {/* Date DropDown */}
                 <View style={[styles.dropDownContainer, { justifyContent: 'space-between', flexDirection: 'row' }]}>
-                    <View style={[styles.dropDownBox, { height: date1LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10, overflow:'hidden' }]}>
+                    <View style={[styles.dropDownBox, { height: date1LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10, overflow: 'hidden' }]}>
                         <DropDown data={date} state={date1LineIsClicked} setState={setDate1LineIsClicked} textData={date1LineData} setTextData={setDate1LineData} />
                     </View>
                     <Ionicons name='git-compare' size={30} color={'black'} />
-                    <View style={[styles.dropDownBox, { height: date2LineHeight,maxHeight: 150, width: '40%', marginHorizontal: 10 }]}>
-                    <DropDown data={date} state={date2LineIsClicked} setState={setDate2LineIsClicked} textData={date2LineData} setTextData={setDate2LineData} />
+                    <View style={[styles.dropDownBox, { height: date2LineHeight, maxHeight: 150, width: '40%', marginHorizontal: 10 }]}>
+                        <DropDown data={date} state={date2LineIsClicked} setState={setDate2LineIsClicked} textData={date2LineData} setTextData={setDate2LineData} />
                     </View>
                 </View>
 
-                <TouchableOpacity style={{ backgroundColor: '#00BF00', width:'70%', height:60, alignItems:'center',justifyContent:'center', borderRadius: 50, borderWidth: 2, borderColor: 'white'}}>
-                    <Text style={{fontSize: 40, color:'white',fontWeight:'bold'}}>A P P L Y</Text>
+                <TouchableOpacity style={{ backgroundColor: '#00BF00', width: '70%', height: 60, alignItems: 'center', justifyContent: 'center', borderRadius: 50, borderWidth: 2, borderColor: 'white' }}>
+                    <Text style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>A P P L Y</Text>
                 </TouchableOpacity>
             </View>
         </View>

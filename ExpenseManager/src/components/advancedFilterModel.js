@@ -2,10 +2,11 @@ import { Text, View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react
 import { useState } from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import DropDown from './dropDown.js'
 
-function advancedFilterModel({ timeLine, year, month, date, count }) {
+function advancedFilterModel({ timeLine, year, month, date, count, setAdvancedFilterModelVisible }) {
 
     /**
      * Need to add a logic which will set other state false and will set relative and zIndex 1 for selected dropdown box
@@ -59,7 +60,7 @@ function advancedFilterModel({ timeLine, year, month, date, count }) {
                 <>
                     {/* Type DropDown */}
                     <View style={[styles.dropDownContainer, { justifyContent: 'center', flexDirection: 'row' }]}>
-                        <View style={[styles.dropDownBox, { height: type1LineHeight,marginHorizontal: 10, position: 'relative', zIndex: 1 }]}>
+                        <View style={[styles.dropDownBox, { height: type1LineHeight, marginHorizontal: 10, position: 'relative', zIndex: 1 }]}>
                             <DropDown data={type} state={type1LineIsClicked} setState={setType1LineIsClicked} textData={type1LineData} setTextData={setType1LineData} />
                         </View>
                     </View>
@@ -139,7 +140,12 @@ function advancedFilterModel({ timeLine, year, month, date, count }) {
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             <View style={styles.modelCustomFilterView}>
-                <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>Advanced Filters</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>Advanced Filters</Text>
+                    <TouchableOpacity style={{left: 40}} onPress={() => { setAdvancedFilterModelVisible(false) }} >
+                        <Entypo name='cross' size={40} color={'black'} style={{}} />
+                    </TouchableOpacity>
+                </View>
                 <View style={{ width: '100%', borderWidth: 1, marginBottom: 10 }}></View>
                 {/* Count DropDown */}
                 <View style={[styles.dropDownContainer, { justifyContent: 'center', flexDirection: 'row' }]}>

@@ -1,35 +1,34 @@
 import { View, SectionList, Text, TouchableOpacity, Image } from 'react-native'
 import { useState } from 'react';
 
-function listViewSingleSelect({ data }) {
-
-    const [dataSelected, setDataSelected] = useState({'All':true});
-    const [dataArray, setDataArray] = useState([]);
+function listViewSingleSelect({ data, setData, selectedData, setSelectedData }) {
+    if (Object.keys(selectedData).length === 0) {
+        var [dataSelected, setDataSelected] = useState({'All':true, 'Overall':true});
+    }
+    else {
+        var [dataSelected, setDataSelected] = useState(selectedData);
+    }
+    // const [dataArray, setDataArray] = useState();
     const dataPush = async (data) => {
-        let updateDataSelected = [];
+        let updateDataSelected = {};
         updateDataSelected[data] = !dataSelected[data];
         setDataSelected(updateDataSelected);
-        // if (updateDataSelected[data] == true) {
-        //     setDataArray(item => [...item, data]);
-        // }
-        // if (updateDataSelected[data] == false) {
-        //     setDataArray(item => {
-        //         let a = item.filter(function(item) {
-        //             return item != data;
-        //         });
-        //         if (a == undefined) {
-        //             return [];
-        //         } 
-        //         else{
-        //             return a;
-        //         }  
-        //     })
-        // }
+        if (updateDataSelected[data] == true) {
+            if(data == 'Overall' && data == 'All'){
+                return setData();
+            }
+            setSelectedData(updateDataSelected);
+            setData(data);
+        }
+        if (updateDataSelected[data] == false) {
+            // setDataArray();
+            setSelectedData({});
+            setData();
+            setDataSelected({'All':true, 'Overall':true});
+        }
+        console.log(dataSelected);
+        // console.log(dataArray, updateDataSelected);
     }
-
-    // const sendData = () => {
-    //     fetchSelectedData(dataArray);
-    // }
 
     return (
         <View>
