@@ -10,6 +10,7 @@ import {
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { useState } from 'react';
 import _ from 'underscore';
+import moment from 'moment-timezone';
 
 import CustomFilterModel from '../components/customFilterModel.js';
 import CompareDataModel from '../components/compareDataModel.js';
@@ -25,7 +26,7 @@ function GraphScreen({ route, navigation }) {
             data: [
                 'Overall',
                 'Today',
-                'Tomarrow',
+                'Yesterday',
                 'Last 15 Days',
                 'Last 30 Days',
                 'This Month',
@@ -68,43 +69,199 @@ function GraphScreen({ route, navigation }) {
         console.log(mainData);
     };
 
-    function evaluateCustomFilterGraphData(filter, type) {
+    customCalculator = (data, labelDecider) => {
+        console.log('custonc', data);
         let gData = {};
-        let label = [];
+        let label;
         let dataArray = [];
-        if (selectedTime == undefined && selectedType == undefined) {
-            let dummy = _.groupBy(mainData, 'dateYear');
-            // console.log();
-            if (Object.keys(dummy).length > 1) {
-                for (let i = 0; i < Object.keys(dummy).length; i++) {
-                    const element = Object.keys(dummy)[i];
-                    label.push(element);
-                }
-                // console.log(label);
-                _.map(dummy, context => {
-                    let totalAmount = 0;
-                    _.map(context, data => {
-                        if (data.type == 'DEBIT') {
-                            totalAmount = totalAmount - data.amount;
-                        } else if (data.type == 'CREDIT') {
-                            totalAmount = totalAmount + data.amount;
-                        }
-                    });
-                    dataArray.push(totalAmount);
+        switch (labelDecider) {
+            case 1:
+                label = Object.keys(data);
+                break;
+            case 2:
+                label = _.map(Object.keys(data), (item) => {
+                    return `${data[item][0]['date'].split(' ')[0]}`;
                 });
-                // console.log(dataArray);
-                // data = { labels: label, datasets: [{data:dataArray}]}
-                gData.labels = label;
-                gData.datasets = [];
-                // gData.datasets.push({data: dataArray});
-                gData.datasets.push({ data: [-10000000, -10000000000] });
-                console.log(gData, dataArray, gData.datasets.data);
-                return gData;
+                break;
+            case 3:
+                label = _.map(Object.keys(data), (item) => {
+                    return `${item}.00 Hour`;
+                });
+                break;
+            case 4:
+                label = _.map(Object.keys(data), (item) => {
+                    return `${data[item][0]['dateHour']}:${item}`;
+                });
+                break;
+            case 5:
+                label = _.map(Object.keys(data), (item) => {
+                    return `${data[item][0]['date'].split(' ')[1]}`;
+                });
+                break;
+
+            default:
+                break;
+        }
+        // for (let i = 0; i < Object.keys(data).length; i++) {
+        //     const element = Object.keys(data)[i];
+        //     label.push(element);
+        // }
+        _.map(data, context => {
+            let totalAmount = 0;
+            _.map(context, data => {
+                if (data.type == 'DEBIT') {
+                    totalAmount = totalAmount - data.amount;
+                } else if (data.type == 'CREDIT') {
+                    totalAmount = totalAmount + data.amount;
+                }
+            });
+            dataArray.push(totalAmount);
+        });
+        gData.labels = label;
+        gData.datasets = [];
+        let minValue = Math.min(...dataArray);
+        let maxValue = Math.max(...dataArray);
+        minValue = minValue > 0 ? minValue - (0.1 * minValue) : minValue + (0.1 * minValue);
+        maxValue = maxValue > 0 ? maxValue + (0.1 * maxValue) : maxValue - (0.1 * maxValue);
+        gData.datasets.push({ data: dataArray });
+        // gData.datasets.push({ data: [100], withDots: false, });
+        // gData.datasets.push({ data: [500], withDots: false, });
+        gData.datasets.push({ data: [minValue], withDots: false });
+        gData.datasets.push({ data: [maxValue], withDots: false });
+        console.log(gData.datasets);
+        return gData;
+    }
+
+    customDataChecker = (mainData) => {
+        let finalData;
+        let dummy = _.groupBy(mainData, 'dateYear');
+        if (Object.keys(dummy).length > 1) {
+            finalData = customCalculator(dummy, 1);
+            return finalData;
+        }
+        else {
+            console.log('month');
+            dummy = _.groupBy(mainData, 'dateMonthString');
+            if (Object.keys(dummy).length > 1) {
+                finalData = customCalculator(dummy, 1);
+                return finalData;
+            }
+            else {
+                console.log('day');
+                dummy = _.groupBy(mainData, 'dateDay');
+                if (Object.keys(dummy).length > 1) {
+                    finalData = customCalculator(dummy, 2);
+                    return finalData;
+                }
+                else {
+                    console.log('hour');
+                    dummy = _.groupBy(mainData, 'dateHour');
+                    if (Object.keys(dummy).length > 1) {
+                        finalData = customCalculator(dummy, 3);
+                        return finalData;
+                    }
+                    else {
+                        console.log('minute');
+                        dummy = _.groupBy(mainData, 'dateMinute');
+                        if (Object.keys(dummy).length > 1) {
+                            finalData = customCalculator(dummy, 4);
+                            return finalData;
+                        }
+                        else {
+                            console.log('second');
+                            dummy = _.groupBy(mainData, 'dateSecond');
+                            if (Object.keys(dummy).length >= 1) {
+                                finalData = customCalculator(dummy, 5);
+                                return finalData;
+                            }
+                            else {
+
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
+    function evaluateCustomFilterGraphData(filter, type) {
+        if (selectedTime == undefined && selectedType == undefined) {
+            return customDataChecker(mainData);
+        }
+        else {
+            let data = mainData;
+            console.log(selectedTime, selectedType);
+            if (selectedTime != undefined) {
+                switch (selectedTime) {
+                    case 'Today':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD');
+                        })
+                        console.log(data);
+                        break;
+                    case 'Tomarrow':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
+                        })
+                        break;
+                    case 'Last 15 Days':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(15, 'd').format('YYYY-MM-DD');
+                        })
+                        break;
+                    case 'Last 30 Days':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(30, 'd').format('YYYY-MM-DD');
+                        })
+                        break;
+                    case 'This Month':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM');
+                        })
+                        break;
+                    case 'This Year':
+                        console.log('selectedTime', selectedTime);
+                        data = _.filter(data, (item) => {
+                            return `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY');
+                        })
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (selectedType != undefined) {
+                switch (selectedType) {
+                    case 'CREDIT':
+                        console.log('selectedType', selectedType);
+                        data = _.filter(data, (item) => {
+                            return item.type == 'CREDIT';
+                        })
+                        break;
+                    case 'DEBIT':
+                        console.log('selectedType', selectedType);
+                        data = _.filter(data, (item) => {
+                            return item.type == 'DEBIT';
+                        })
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return customDataChecker(data);
+        }
+    }
+
     const [graphData, setGraphData] = useState(evaluateCustomFilterGraphData());
+
+    function updateGraphData() {
+        setGraphData(evaluateCustomFilterGraphData());
+        return 'success';
+    }
 
     return (
         <View style={styles.mainBox}>
@@ -143,6 +300,7 @@ function GraphScreen({ route, navigation }) {
                     height={300}
                     // yAxisLabel='₹'
                     yLabelsOffset={10}
+                    // yAxisInterval={10}
                     // formatYLabel={₹}
                     formatYLabel={value =>
                         value.toString()[0] != '-' ?
@@ -234,6 +392,7 @@ function GraphScreen({ route, navigation }) {
                     setSelectedType={setSelectedType}
                     selectedTypeValue={selectedTypeValue}
                     setSelectedTypeValue={setSelectedTypeValue}
+                    updateGraphData={updateGraphData}
                 />
             </Modal>
             {/* Advanced Filter Model */}

@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import ListViewSingleSelect from '../components/listViewSingleSelect.js'
 
-function customFilterModel({ timeData, typeData, setCustomFilterModelVisible, selectedTime, setSelectedTime, selectedTimeValue, setSelectedTimeValue, selectedType, selectedTypeValue, setSelectedTypeValue, setSelectedType }) {
+function customFilterModel({ timeData, typeData, setCustomFilterModelVisible, selectedTime, setSelectedTime, selectedTimeValue, setSelectedTimeValue, selectedType, selectedTypeValue, setSelectedTypeValue, setSelectedType, updateGraphData }) {
 
     return (
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -23,7 +23,7 @@ function customFilterModel({ timeData, typeData, setCustomFilterModelVisible, se
                     </View>
                 </View>
                 <View style={{ position: 'absolute', width: '100%', height: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                    <TouchableOpacity  onPress={() => { console.log(selectedTime,selectedType); setCustomFilterModelVisible(false); }}>
+                    <TouchableOpacity  onPress={() => { updateGraphData(); setCustomFilterModelVisible(false); }}>
                         <Image source={require('../assets/images/tick.png')} style={{ width: 70, height: 70, margin: 30, borderRadius: 50 }} />
                     </TouchableOpacity>
                 </View>
