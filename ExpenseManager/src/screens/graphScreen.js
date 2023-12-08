@@ -59,7 +59,7 @@ function GraphScreen({ route, navigation }) {
         useState(false);
     const [compareDataModelVisible, setCompareDataModelVisible] = useState(false);
 
-    //ccustomfilte
+    //ccustomfilter
     const [selectedTime, setSelectedTime] = useState();
     const [selectedTimeValue, setSelectedTimeValue] = useState({});
     const [selectedType, setSelectedType] = useState();
@@ -70,7 +70,7 @@ function GraphScreen({ route, navigation }) {
     };
 
     customCalculator = (data, labelDecider) => {
-        console.log('custonc', data);
+        // console.log('custonc', data);
         let gData = {};
         let label;
         let dataArray = [];
@@ -200,7 +200,7 @@ function GraphScreen({ route, navigation }) {
                         })
                         console.log(data);
                         break;
-                    case 'Tomarrow':
+                    case 'Yesterday':
                         console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
@@ -257,9 +257,31 @@ function GraphScreen({ route, navigation }) {
     }
 
     const [graphData, setGraphData] = useState(evaluateCustomFilterGraphData());
+    const [messageFlag, setMessageFlag] = useState(false);
+    const [message, setMessage] = useState('');
 
     function updateGraphData() {
-        setGraphData(evaluateCustomFilterGraphData());
+        let data = evaluateCustomFilterGraphData();
+        console.log('data',data);
+        
+        if (data == undefined) {
+            setMessage('* Noo Data Find for the Selected Match.');
+        }
+        else if (data.labels.length == 1) {
+            setMessage('* Only Single Entry Found For the Data\n(Required at least two Entries for a Graph).');
+        }
+        else if (data.labels.length > 1) {
+            setGraphData(data);
+            return 'success';
+        }
+        setSelectedTime();
+        setSelectedTimeValue({});
+        setSelectedType();
+        setSelectedTypeValue({});
+        setMessageFlag(true);
+        setTimeout(() => {
+            setMessageFlag(false);
+        }, 10000);
         return 'success';
     }
 
@@ -346,6 +368,7 @@ function GraphScreen({ route, navigation }) {
                         borderRadius: 16,
                     }}
                 />
+                {messageFlag ? <Text style={{alignSelf:'center', color:'red',fontSize: 15}}>{message}</Text>: null}
             </View>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <TouchableOpacity
