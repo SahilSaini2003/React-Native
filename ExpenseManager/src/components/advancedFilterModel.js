@@ -2,9 +2,7 @@ import {
     Text,
     View,
     StyleSheet,
-    FlatList,
     TouchableOpacity,
-    Image,
 } from 'react-native';
 import { useState } from 'react';
 
@@ -21,10 +19,6 @@ function advancedFilterModel({
     count,
     setAdvancedFilterModelVisible,
 }) {
-    /**
-     * Need to add a logic which will set other state false and will set relative and zIndex 1 for selected dropdown box // done
-     */
-
     let type = ['Both', 'CREDIT', 'DEBIT'];
 
     const [countIsClicked, setCountIsClicked] = useState(false);
@@ -33,7 +27,7 @@ function advancedFilterModel({
 
     const [timeLineIsClicked, setTimeLineIsClicked] = useState(false);
     const [timeLineData, setTimeLineData] = useState('Select TimeLine');
-    let timeLineHeight = timeLineIsClicked ? timeLine.length * 30 + 50 : 40;
+    let timeLineHeight = timeLineIsClicked ? timeLine[0].length * 30 + 50 : 40;
 
     const [type1LineIsClicked, setType1LineIsClicked] = useState(false);
     const [type1LineData, setType1LineData] = useState('Select Type');
@@ -67,433 +61,573 @@ function advancedFilterModel({
     const [date2LineData, setDate2LineData] = useState('Select Date');
     let date2LineHeight = date2LineIsClicked ? date.length * 30 + 50 : 40;
 
-    const [dropDownStyleOpener, setDropDownStyleOpener] = useState(true);
+    function handelFilterDropdown(data) {
+        console.log('calledd',data);
+        if (data == count) {
+            setTimeLineIsClicked(false);
+            setType1LineIsClicked(false);
+            setType2LineIsClicked(false);
+            setYear1LineIsClicked(false);
+            setYear2LineIsClicked(false);
+            setMonth1LineIsClicked(false);
+            setMonth2LineIsClicked(false);
+            setDate1LineIsClicked(false);
+            setDate2LineIsClicked(false);
+        }
+        else if (data == timeLine[0] || data == timeLine[1]) {
+            setCountIsClicked(false);
+            setType1LineIsClicked(false);
+            setType2LineIsClicked(false);
+            setYear1LineIsClicked(false);
+            setYear2LineIsClicked(false);
+            setMonth1LineIsClicked(false);
+            setMonth2LineIsClicked(false);
+            setDate1LineIsClicked(false);
+            setDate2LineIsClicked(false);
+        }
+        else if (data == type) {
+            setCountIsClicked(false);
+            setTimeLineIsClicked(false);
+            // setType2LineIsClicked(false);
+            setYear1LineIsClicked(false);
+            setYear2LineIsClicked(false);
+            setMonth1LineIsClicked(false);
+            setMonth2LineIsClicked(false);
+            setDate1LineIsClicked(false);
+            setDate2LineIsClicked(false);
+        }
+        // else if (id == 4) {
+        //     setCountIsClicked(false);
+        //     setTimeLineIsClicked(false);
+        //     setType1LineIsClicked(false);
+        //     setYear1LineIsClicked(false);
+        //     setYear2LineIsClicked(false);
+        //     setMonth1LineIsClicked(false);
+        //     setMonth2LineIsClicked(false);
+        //     setDate1LineIsClicked(false);
+        //     setDate2LineIsClicked(false);
+        // }
+        else if (data == year) {
+            setCountIsClicked(false);
+            setTimeLineIsClicked(false);
+            setType1LineIsClicked(false);
+            setType2LineIsClicked(false);
+            // setYear2LineIsClicked(false);
+            setMonth1LineIsClicked(false);
+            setMonth2LineIsClicked(false);
+            setDate1LineIsClicked(false);
+            setDate2LineIsClicked(false);
+        }
+        // else if (id == 6) {
+        //     setCountIsClicked(false);
+        //     setTimeLineIsClicked(false);
+        //     setType1LineIsClicked(false);
+        //     setType2LineIsClicked(false);
+        //     setYear1LineIsClicked(false);
+        //     setMonth1LineIsClicked(false);
+        //     setMonth2LineIsClicked(false);
+        //     setDate1LineIsClicked(false);
+        //     setDate2LineIsClicked(false);
+        // }
+        else if (data == month) {
+            setCountIsClicked(false);
+            setTimeLineIsClicked(false);
+            setType1LineIsClicked(false);
+            setType2LineIsClicked(false);
+            setYear1LineIsClicked(false);
+            setYear2LineIsClicked(false);
+            // setMonth2LineIsClicked(false);
+            setDate1LineIsClicked(false);
+            setDate2LineIsClicked(false);
+        }
+        // else if (id == 8) {
+        //     setCountIsClicked(false);
+        //     setTimeLineIsClicked(false);
+        //     setType1LineIsClicked(false);
+        //     setType2LineIsClicked(false);
+        //     setYear1LineIsClicked(false);
+        //     setYear2LineIsClicked(false);
+        //     setMonth1LineIsClicked(false);
+        //     setDate1LineIsClicked(false);
+        //     setDate2LineIsClicked(false);
+        // }
+        else if (data == data) {
+            setCountIsClicked(false);
+            setTimeLineIsClicked(false);
+            setType1LineIsClicked(false);
+            setType2LineIsClicked(false);
+            setYear1LineIsClicked(false);
+            setYear2LineIsClicked(false);
+            setMonth1LineIsClicked(false);
+            setMonth2LineIsClicked(false);
+            // setDate2LineIsClicked(false);
+        }
+        // else if (id == 10) {
+        //     setCountIsClicked(false);
+        //     setTimeLineIsClicked(false);
+        //     setType1LineIsClicked(false);
+        //     setType2LineIsClicked(false);
+        //     setYear1LineIsClicked(false);
+        //     setYear2LineIsClicked(false);
+        //     setMonth1LineIsClicked(false);
+        //     setMonth2LineIsClicked(false);
+        //     setDate1LineIsClicked(false);
+        // }
+    }
 
     ContentDecider = () => {
         if (countData == 'Single(One)') {
             return (
                 <>
                     {/* Type DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'center', flexDirection: 'row' },
-                        ]}>
+                    {countData != 'Select Count' && timeLineData != 'Select TimeLine' &&
                         <View
-                            style={type1LineIsClicked == false ? [
-                                styles.dropDownBox,
-                                {
-                                    height: type1LineHeight,
-                                    marginHorizontal: 10
-                                },
-                            ] : [
-                                styles.dropDownBox,
-                                {
-                                    height: type1LineHeight,
-                                    marginHorizontal: 10,
-                                    position: 'relative',
-                                    zIndex: 1,
-                                },
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'center', flexDirection: 'row' },
                             ]}>
-                            <DropDown
-                                data={type}
-                                state={type1LineIsClicked}
-                                setState={setType1LineIsClicked}
-                                textData={type1LineData}
-                                setTextData={setType1LineData}
-                            />
+                            <View
+                                style={type1LineIsClicked == false ? [
+                                    styles.dropDownBox,
+                                    {
+                                        height: type1LineHeight,
+                                        marginHorizontal: 10
+                                    },
+                                ] : [
+                                    styles.dropDownBox,
+                                    {
+                                        height: type1LineHeight,
+                                        marginHorizontal: 10,
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    },
+                                ]}>
+                                <DropDown
+                                    data={type}
+                                    state={type1LineIsClicked}
+                                    setState={setType1LineIsClicked}
+                                    textData={type1LineData}
+                                    setTextData={setType1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(3)}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                     {/* Year DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'center', flexDirection: 'row' },
-                        ]}>
+                    {type1LineData != 'Select Type' &&
                         <View
-                            style={year1LineIsClicked == false ? [
-                                styles.dropDownBox,
-                                {
-                                    height: year1LineHeight,
-                                    marginHorizontal: 10
-                                },
-                            ] : [
-                                styles.dropDownBox,
-                                {
-                                    height: year1LineHeight,
-                                    marginHorizontal: 10,
-                                    position: 'relative',
-                                    zIndex: 1,
-                                },
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'center', flexDirection: 'row' },
                             ]}>
-                            <DropDown
-                                data={year}
-                                state={year1LineIsClicked}
-                                setState={setYear1LineIsClicked}
-                                textData={year1LineData}
-                                setTextData={setYear1LineData}
-                            />
+                            <View
+                                style={year1LineIsClicked == false ? [
+                                    styles.dropDownBox,
+                                    {
+                                        height: year1LineHeight,
+                                        marginHorizontal: 10
+                                    },
+                                ] : [
+                                    styles.dropDownBox,
+                                    {
+                                        height: year1LineHeight,
+                                        marginHorizontal: 10,
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    },
+                                ]}>
+                                <DropDown
+                                    data={year}
+                                    state={year1LineIsClicked}
+                                    setState={setYear1LineIsClicked}
+                                    textData={year1LineData}
+                                    setTextData={setYear1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(5)}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                     {/* Month DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'center', flexDirection: 'row' },
-                        ]}>
+                    {year1LineData != 'Select Year' &&
                         <View
-                            style={month1LineIsClicked == false ? [
-                                styles.dropDownBox,
-                                {
-                                    height: month1LineHeight,
-                                    maxHeight: 150,
-                                    marginHorizontal: 10,
-                                    overflow: 'hidden'
-                                },
-                            ] : [
-                                styles.dropDownBox,
-                                {
-                                    height: month1LineHeight,
-                                    maxHeight: 150,
-                                    marginHorizontal: 10,
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                    zIndex: 1,
-                                },
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'center', flexDirection: 'row' },
                             ]}>
-                            <DropDown
-                                data={month}
-                                state={month1LineIsClicked}
-                                setState={setMonth1LineIsClicked}
-                                textData={month1LineData}
-                                setTextData={setMonth1LineData}
-                            />
+                            <View
+                                style={month1LineIsClicked == false ? [
+                                    styles.dropDownBox,
+                                    {
+                                        height: month1LineHeight,
+                                        maxHeight: 150,
+                                        marginHorizontal: 10,
+                                        overflow: 'hidden'
+                                    },
+                                ] : [
+                                    styles.dropDownBox,
+                                    {
+                                        height: month1LineHeight,
+                                        maxHeight: 150,
+                                        marginHorizontal: 10,
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    },
+                                ]}>
+                                <DropDown
+                                    data={month}
+                                    state={month1LineIsClicked}
+                                    setState={setMonth1LineIsClicked}
+                                    textData={month1LineData}
+                                    setTextData={setMonth1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(7)}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                     {/* Date DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'center', flexDirection: 'row' },
-                        ]}>
+                    {month1LineData != 'Select Month' &&
                         <View
-                            style={date1LineIsClicked == false ? [
-                                styles.dropDownBox,
-                                {
-                                    height: date1LineHeight,
-                                    maxHeight: 150,
-                                    marginHorizontal: 10,
-                                    overflow: 'hidden'
-                                },
-                            ] : [
-                                styles.dropDownBox,
-                                {
-                                    height: date1LineHeight,
-                                    maxHeight: 150,
-                                    marginHorizontal: 10,
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                    zIndex: 1,
-                                },
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'center', flexDirection: 'row' },
                             ]}>
-                            <DropDown
-                                data={date}
-                                state={date1LineIsClicked}
-                                setState={setDate1LineIsClicked}
-                                textData={date1LineData}
-                                setTextData={setDate1LineData}
-                            />
+                            <View
+                                style={date1LineIsClicked == false ? [
+                                    styles.dropDownBox,
+                                    {
+                                        height: date1LineHeight,
+                                        maxHeight: 150,
+                                        marginHorizontal: 10,
+                                        overflow: 'hidden'
+                                    },
+                                ] : [
+                                    styles.dropDownBox,
+                                    {
+                                        height: date1LineHeight,
+                                        maxHeight: 150,
+                                        marginHorizontal: 10,
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    },
+                                ]}>
+                                <DropDown
+                                    data={date}
+                                    state={date1LineIsClicked}
+                                    setState={setDate1LineIsClicked}
+                                    textData={date1LineData}
+                                    setTextData={setDate1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(9)}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                 </>
             );
         } else if (countData == 'Range(From)') {
             return (
                 <>
                     {/* Type DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'space-between', flexDirection: 'row' },
-                        ]}>
-                        <View
-                            style={
-                                type1LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: type1LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: type1LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={type}
-                                state={type1LineIsClicked}
-                                setState={setType1LineIsClicked}
-                                textData={type1LineData}
-                                setTextData={setType1LineData}
-                            />
-                        </View>
-                        <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
-                        <View
-                            style={
-                                type2LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: type2LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: type2LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={type}
-                                state={type2LineIsClicked}
-                                setState={setType2LineIsClicked}
-                                textData={type2LineData}
-                                setTextData={setType2LineData}
-                            />
-                        </View>
-                    </View>
+                    {countData != 'Select Count' && timeLineData != 'Select TimeLine' &&
+                        (<View
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'space-between', flexDirection: 'row' },
+                            ]}>
+                            <View
+                                style={
+                                    type1LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: type1LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: type1LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={type}
+                                    state={type1LineIsClicked}
+                                    setState={setType1LineIsClicked}
+                                    textData={type1LineData}
+                                    setTextData={setType1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(3)}
+                                />
+                            </View>
+                            <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
+                            <View
+                                style={
+                                    type2LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: type2LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: type2LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={type}
+                                    state={type2LineIsClicked}
+                                    setState={setType2LineIsClicked}
+                                    textData={type2LineData}
+                                    setTextData={setType2LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(4)}
+                                />
+                            </View>
+                        </View>)
+                    }
                     {/* Year DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'space-between', flexDirection: 'row' },
-                        ]}>
+                    {type1LineData != 'Select Type' && type2LineData != 'Select Type' &&
                         <View
-                            style={
-                                year1LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year1LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year1LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={year}
-                                state={year1LineIsClicked}
-                                setState={setYear1LineIsClicked}
-                                textData={year1LineData}
-                                setTextData={setYear1LineData}
-                            />
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'space-between', flexDirection: 'row' },
+                            ]}>
+                            <View
+                                style={
+                                    year1LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: year1LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: year1LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={year}
+                                    state={year1LineIsClicked}
+                                    setState={setYear1LineIsClicked}
+                                    textData={year1LineData}
+                                    setTextData={setYear1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(5)}
+                                />
+                            </View>
+                            <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
+                            <View
+                                style={
+                                    year2LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: year2LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: year2LineHeight,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={year}
+                                    state={year2LineIsClicked}
+                                    setState={setYear2LineIsClicked}
+                                    textData={year2LineData}
+                                    setTextData={setYear2LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(6)}
+                                />
+                            </View>
                         </View>
-                        <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
-                        <View
-                            style={
-                                year2LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year2LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year2LineHeight,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={year}
-                                state={year2LineIsClicked}
-                                setState={setYear2LineIsClicked}
-                                textData={year2LineData}
-                                setTextData={setYear2LineData}
-                            />
-                        </View>
-                    </View>
+                    }
                     {/* Month DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'space-between', flexDirection: 'row' },
-                        ]}>
+                    {year1LineData != 'Select Year' && year2LineData != 'Select Year' &&
                         <View
-                            style={
-                                month1LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: month1LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            overflow: 'hidden',
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: month1LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            overflow: 'hidden',
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={month}
-                                state={month1LineIsClicked}
-                                setState={setMonth1LineIsClicked}
-                                textData={month1LineData}
-                                setTextData={setMonth1LineData}
-                            />
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'space-between', flexDirection: 'row' },
+                            ]}>
+                            <View
+                                style={
+                                    month1LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: month1LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                overflow: 'hidden',
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: month1LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={month}
+                                    state={month1LineIsClicked}
+                                    setState={setMonth1LineIsClicked}
+                                    textData={month1LineData}
+                                    setTextData={setMonth1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(7)}
+                                />
+                            </View>
+                            <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
+                            <View
+                                style={
+                                    month2LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: month2LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: month2LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={month}
+                                    state={month2LineIsClicked}
+                                    setState={setMonth2LineIsClicked}
+                                    textData={month2LineData}
+                                    setTextData={setMonth2LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(8)}
+                                />
+                            </View>
                         </View>
-                        <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
-                        <View
-                            style={
-                                month2LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: month2LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: month2LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={month}
-                                state={month2LineIsClicked}
-                                setState={setMonth2LineIsClicked}
-                                textData={month2LineData}
-                                setTextData={setMonth2LineData}
-                            />
-                        </View>
-                    </View>
+                    }
                     {/* Date DropDown */}
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'space-between', flexDirection: 'row' },
-                        ]}>
+                    {month1LineData != 'Select Month' && month2LineData != 'Select Month' &&
                         <View
-                            style={
-                                date1LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: date1LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            overflow: 'hidden',
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: date1LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            overflow: 'hidden',
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={date}
-                                state={date1LineIsClicked}
-                                setState={setDate1LineIsClicked}
-                                textData={date1LineData}
-                                setTextData={setDate1LineData}
-                            />
+                            style={[
+                                styles.dropDownContainer,
+                                { justifyContent: 'space-between', flexDirection: 'row' },
+                            ]}>
+                            <View
+                                style={
+                                    date1LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: date1LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                overflow: 'hidden',
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: date1LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={date}
+                                    state={date1LineIsClicked}
+                                    setState={setDate1LineIsClicked}
+                                    textData={date1LineData}
+                                    setTextData={setDate1LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(9)}
+                                />
+                            </View>
+                            <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
+                            <View
+                                style={
+                                    date2LineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            {
+                                                height: date2LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                            },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: date2LineHeight,
+                                                maxHeight: 150,
+                                                width: '40%',
+                                                marginHorizontal: 10,
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={date}
+                                    state={date2LineIsClicked}
+                                    setState={setDate2LineIsClicked}
+                                    textData={date2LineData}
+                                    setTextData={setDate2LineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(10)}
+                                />
+                            </View>
                         </View>
-                        <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
-                        <View
-                            style={
-                                date2LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: date2LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: date2LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                data={date}
-                                state={date2LineIsClicked}
-                                setState={setDate2LineIsClicked}
-                                textData={date2LineData}
-                                setTextData={setDate2LineData}
-                            />
-                        </View>
-                    </View>
+                    }
                 </>
             );
         } else {
@@ -558,31 +692,34 @@ function advancedFilterModel({
                             setState={setCountIsClicked}
                             textData={countData}
                             setTextData={setCountData}
+                            handelFilterDropdown={handelFilterDropdown.bind(1)}
                         />
                     </View>
                 </View>
                 {/* TimeLine DropDown  */}
-                <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
+                {countData != 'Select Count' && <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
                     <View
                         style={
                             timeLineIsClicked == false
-                                ? [styles.dropDownBox, { height: timeLineHeight }]
+                                ? [styles.dropDownBox, { height: timeLineHeight, overflow: 'hidden' }]
                                 : [
                                     styles.dropDownBox,
-                                    { height: timeLineHeight, position: 'relative', zIndex: 1 },
+                                    { height: timeLineHeight, overflow:'scroll', position: 'relative', zIndex: 1 },
                                 ]
                         }>
                         <DropDown
-                            data={timeLine}
+                            data={countData == 'Single(One)' ? timeLine[1] : timeLine[0]}
                             state={timeLineIsClicked}
                             setState={setTimeLineIsClicked}
                             textData={timeLineData}
                             setTextData={setTimeLineData}
+                            handelFilterDropdown={handelFilterDropdown.bind(2)}
                         />
                     </View>
-                </View>
+                </View>}
                 {ContentDecider()}
                 <TouchableOpacity
+                disabled={ countData != 'Select Count' ? (countData == 'Single(One)' ? (timeLineData != 'Select TimeLine' && year1LineData != 'Select Year' && type1LineData != 'Select Type' && month1LineData != 'Select Month' && date1LineData != 'Select Date') ? false : true : (timeLineData != 'Select TimeLine' && year1LineData != 'Select Year' && year2LineData != 'Select Year' && type1LineData != 'Select Type' && type2LineData != 'Select Type' && month1LineData != 'Select Month' && month2LineData != 'Select Month' && date1LineData != 'Select Date' && date2LineData != 'Select Date') ? false : true) : true }
                     style={{
                         backgroundColor: '#00BF00',
                         width: '70%',

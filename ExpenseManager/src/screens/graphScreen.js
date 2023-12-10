@@ -34,7 +34,7 @@ function GraphScreen({ route, navigation }) {
             ],
         },
     ];
-    const timeLine = ['Year By Year', 'Month By Month', 'Day By Day'];
+    const timeLine = [['Year By Year', 'Month By Month', 'Day By Day'],['Year','Month','Day']];
     const year = ['2023', '2003'];
     const month = [
         'January',
