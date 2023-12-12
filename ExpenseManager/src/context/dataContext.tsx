@@ -23,6 +23,10 @@ interface DataContextProps {
     insertData: (amount: number, title: string, description: string | null, type: string, date: string, dateDay: string, dateMonth: string, dateMonthString: string, dateYear: string, dateHour: string, dateMinute: string, dateSecond: string) => void;
     deleteData: (id: number) => void;
     verifyData: (amount: number, title: string, description: string | null, type: string, date: string, taskId: number, dataId: number) => string | undefined;
+    manageAdvancedData: (timeLine: string, year1: string, month1: string, date1: string) => void;
+    year1Data: String[];
+    month1Data: String[];
+    type1Data: String[];
 }
 
 const DataContext = createContext<DataContextProps | undefined>(undefined);
@@ -53,6 +57,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         data = sortData(data);
         // console.log(data.reverse());
         setMainData(data.reverse());
+        setYear1Data(Object.keys(_.groupBy(data, 'dateYear')));
+        setMonth1Data(Object.keys(_.groupBy(data, 'dateMonthString')));
+        let tType = Object.keys(_.groupBy(data, 'type'));
+        if (tType.length == 2) {
+            setType1Data(['Both',...tType]);
+        }
+        else setType1Data(tType);
+        // setDay1Data(Object.keys(_.groupBy(data, 'dateDay')));
+
     };
 
     const deleteData = (id: number) => {
@@ -173,8 +186,52 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }
 
+    // const [ timeLineData, setTimeLineData] = useState<String>();
+    const [ year1Data , setYear1Data] = useState<String[]>([]);
+    const [ month1Data , setMonth1Data] = useState<String[]>([]);
+    const [ type1Data , setType1Data] = useState<String[]>([]);
+
+    let manageAdvancedData = (timeLine: string = '', year1: string = '', month1: string = '', date1: string = '') => {
+        let dateYear = _.groupBy(mainData, 'dateYear');
+        if (timeLine != '') {
+            let year = Object.keys(dateYear)
+            let type = Object.keys(_.groupBy(mainData, 'type'));
+            if (type.length == 2) {
+                type = ['BOTH',...type];
+            }
+            return {year, type}
+        }
+        else if (year1 != '' && month1 != '' && date1 != '') {
+            let year = _.groupBy(dateYear[year1], 'dateMonthString');
+            let month = _.groupBy(year[month1], 'dateDay');
+            let type = Object.keys(_.groupBy(month[date1], 'type'));
+            if (type.length == 2) {
+                type = ['BOTH',...type];
+            }
+            return {type};
+        }
+        else if (year1 != '' && month1 != '' && date1 == '') {
+            let year = _.groupBy(dateYear[year1], 'dateMonthString');
+            let month = _.groupBy(year[month1], 'dateDay');
+            let day = Object.keys(month);
+            let type = Object.keys(_.groupBy(year[month1], 'type'));
+            if (type.length == 2) {
+                type = ['BOTH',...type];
+            }
+            return {day, type};
+        }
+        else if (year1 != '' && month1 == '' && date1 == '') {
+            let month = Object.keys(_.groupBy(dateYear[year1], 'dateMonthString'));
+            let type = Object.keys(_.groupBy(dateYear[year1], 'type'));
+            if (type.length == 2) {
+                type = ['BOTH',...type];
+            }
+            return {month, type};
+        }
+    }
+
     return (
-        <DataContext.Provider value={{ mainData, insertData, deleteData, verifyData }}>
+        <DataContext.Provider value={{ mainData, insertData, deleteData, verifyData, manageAdvancedData, year1Data, month1Data, type1Data }}>
             {children}
         </DataContext.Provider>
     );

@@ -35,7 +35,18 @@ function GraphScreen({ route, navigation }) {
         },
     ];
     const timeLine = [['Year By Year', 'Month By Month', 'Day By Day'],['Year','Month','Day']];
-    const year = ['2023', '2003'];
+    // var year1, year2;
+    // function manageAdvancedData(timeLineData = '') {
+    //     if (timeLineData != '') {
+    //         console.log('manage');
+    //         const year = Object.keys(_.groupBy(mainData, 'dateYear'));
+    //         year1 = year;
+    //         year2 = year;
+    //         console.log(year1);
+    //     }
+    // }
+    const year1 = ['2023', '2003'];const year2 = ['2023', '2003'];
+    // console.log(year);
     const month = [
         'January',
         'February',
@@ -64,10 +75,6 @@ function GraphScreen({ route, navigation }) {
     const [selectedTimeValue, setSelectedTimeValue] = useState({});
     const [selectedType, setSelectedType] = useState();
     const [selectedTypeValue, setSelectedTypeValue] = useState({});
-
-    const x = () => {
-        console.log(mainData);
-    };
 
     customCalculator = (data, labelDecider) => {
         // console.log('custonc', data);
@@ -425,15 +432,17 @@ function GraphScreen({ route, navigation }) {
                 transparent={true}>
                 <AdvancedFilterModel
                     timeLine={timeLine}
-                    year={year}
+                    year1={year1}
+                    year2={year2}
                     month={month}
                     date={date}
                     count={count}
                     setAdvancedFilterModelVisible={setAdvancedFilterModelVisible}
+                    // manageAdvancedData={manageAdvancedData}
                 />
             </Modal>
             {/* Compare Data Model */}
-            <Modal
+            {/* <Modal
                 visible={compareDataModelVisible}
                 animationType="fade"
                 transparent={true}>
@@ -444,7 +453,7 @@ function GraphScreen({ route, navigation }) {
                     date={date}
                     setCompareDataModelVisible={setCompareDataModelVisible}
                 />
-            </Modal>
+            </Modal> */}
         </View>
     );
 }
