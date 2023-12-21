@@ -165,12 +165,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             Alert.alert('Invalid Date!', 'Sorry! But You can\'t add Future Transactions!', [{ text: 'Okay!' },]);
             return;
         }
+        if (date < '2000-01-01 00:00:00') {
+            Alert.alert('Invalid Date!', 'Sorry! We only allow Transaction Till 2000-01-01 00:00:00', [{ text: 'Okay!' },]);
+            return;
+        }
         if (!amount) {
             Alert.alert('Invalid Amount!', 'Amount can be of Type Number Only!', [{ text: 'Okay!' },]);
             return;
         }
-        if (title.length < 5) {
-            Alert.alert('Title Required!', 'Min Length :- 5 & Max Lenght :- 15', [
+        if (title.length < 1) {
+            Alert.alert('Title Required!', 'Min Length :- 2 & Max Lenght :- 15', [
                 { text: 'Okay!' },
             ]);
             return;

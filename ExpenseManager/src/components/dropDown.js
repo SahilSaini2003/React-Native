@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text, Image, FlatList } from 'react-native';
 
 function dropDown({
+    id,
     data,
     state,
     setState,
@@ -38,14 +39,14 @@ function dropDown({
                 )}
             </TouchableOpacity>
             {state ? (
-                <View style={{ width: '100%', borderTopWidth: 1, height: 110 }}>
+                <View style={{ width: '100%', borderTopWidth: 1, height: data.length * 30, maxHeight: 110 }}>
                     <FlatList
                         data={data}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={{ width: '100%', alignItems: 'center' }}
                                 onPress={() => {
-                                    let res = manageData(item);
+                                    let res = manageData(item, id);
                                     if (res == 'success') {
                                         setTextData(item);
                                         setState(!state);

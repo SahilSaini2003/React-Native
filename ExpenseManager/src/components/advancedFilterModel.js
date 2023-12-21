@@ -1,5 +1,7 @@
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
+import _ from 'underscore';
+import moment from 'moment-timezone';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -9,19 +11,21 @@ import { useDataContext } from '../context/dataContext';
 
 function advancedFilterModel({
     timeLine,
-    year1,
-    year2,
-    month,
-    date,
     count,
     setAdvancedFilterModelVisible,
+    evaluateAdvancedFilterGraphData
 }) {
-    let { manageAdvancedData, year2Data, month2Data, day2Data, type2Data} = useDataContext();
-    const [ year1Data , setYear1Data] = useState([]);
-    const [ month1Data , setMonth1Data] = useState([]);
-    const [day1Data, setDay1Data] = useState();
-    const [ type1Data , setType1Data] = useState([]);
-    let type = ['Both', 'CREDIT', 'DEBIT'];
+    let { manageAdvancedData } = useDataContext();
+    const [year1Data, setYear1Data] = useState([]);
+    const [month1Data, setMonth1Data] = useState([]);
+    const [month2Data, setMonth2Data] = useState([]);
+    const [day1Data, setDay1Data] = useState([]);
+    const [day2Data, setDay2Data] = useState([]);
+    const [type1Data, setType1Data] = useState([]);
+    const [type2Data, setType2Data] = useState(['Both', 'CREDIT', 'DEBIT']);
+    let type = ['BOTH', 'CREDIT', 'DEBIT'];
+    let months = [1,2,3,4,5,6,7,8,9,10,11,12];
+    let dates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
 
     const [countIsClicked, setCountIsClicked] = useState(false);
     const [countData, setCountData] = useState('Select Count');
@@ -43,17 +47,15 @@ function advancedFilterModel({
     const [year1LineData, setYear1LineData] = useState('Select Year');
     let year1LineHeight = year1LineIsClicked ? year1Data.length * 30 + 50 : 40;
 
-    const [year2LineIsClicked, setYear2LineIsClicked] = useState(false);
     const [year2LineData, setYear2LineData] = useState('Select Year');
-    let year2LineHeight = year2LineIsClicked ? year2.length * 30 + 50 : 40;
 
     const [month1LineIsClicked, setMonth1LineIsClicked] = useState(false);
     const [month1LineData, setMonth1LineData] = useState('Select Month');
-    let month1LineHeight = month1LineIsClicked ? month1Data.length * 30 + 50 : 40;
+    let month1LineHeight = month1LineIsClicked ? month1Data.length * 30 + 50 : 50;
 
     const [month2LineIsClicked, setMonth2LineIsClicked] = useState(false);
     const [month2LineData, setMonth2LineData] = useState('Select Month');
-    let month2LineHeight = month2LineIsClicked ? month.length * 30 + 50 : 40;
+    let month2LineHeight = month2LineIsClicked ? month2Data.length * 30 + 50 : 50;
 
     const [day1LineIsClicked, setDay1LineIsClicked] = useState(false);
     const [day1LineData, setDay1LineData] = useState('Select Date');
@@ -61,7 +63,10 @@ function advancedFilterModel({
 
     const [day2LineIsClicked, setDay2LineIsClicked] = useState(false);
     const [day2LineData, setDay2LineData] = useState('Select Date');
-    let day2LineHeight = day2LineIsClicked ? date.length * 30 + 50 : 40;
+    let day2LineHeight = day2LineIsClicked ? day2Data.length * 30 + 50 : 40;
+
+    const [year1Check, setYear1Check] = useState(false);
+    const [year2Check, setYear2Check] = useState(false);
 
     function setApplyButtonActive() {
         if (countData == 'Select Count') {
@@ -96,7 +101,6 @@ function advancedFilterModel({
             } else {
                 if (timeLineData == 'Year By Year') {
                     if (
-                        type1LineData != 'Select Type' &&
                         type2LineData != 'Select Type' &&
                         year1LineData != 'Select Year' &&
                         year2LineData != 'Select Year'
@@ -105,7 +109,6 @@ function advancedFilterModel({
                     } else return true;
                 } else if (timeLineData == 'Month By Month') {
                     if (
-                        type1LineData != 'Select Type' &&
                         type2LineData != 'Select Type' &&
                         year1LineData != 'Select Year' &&
                         year2LineData != 'Select Year' &&
@@ -116,7 +119,6 @@ function advancedFilterModel({
                     } else return true;
                 } else if (timeLineData == 'Day By Day') {
                     if (
-                        type1LineData != 'Select Type' &&
                         type2LineData != 'Select Type' &&
                         year1LineData != 'Select Year' &&
                         year2LineData != 'Select Year' &&
@@ -132,14 +134,13 @@ function advancedFilterModel({
         }
     }
 
-    let handelFilterDropdown= (data) => {
-        console.log(data);
+    let handelFilterDropdown = (data) => {
+        console.log('handelFilterDropdown', data);
         if (data == count) {
             setTimeLineIsClicked(false);
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
             setYear1LineIsClicked(false);
-            setYear2LineIsClicked(false);
             setMonth1LineIsClicked(false);
             setMonth2LineIsClicked(false);
             setDay1LineIsClicked(false);
@@ -149,125 +150,105 @@ function advancedFilterModel({
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
             setYear1LineIsClicked(false);
-            setYear2LineIsClicked(false);
             setMonth1LineIsClicked(false);
             setMonth2LineIsClicked(false);
             setDay1LineIsClicked(false);
             setDay2LineIsClicked(false);
-        } else if (data == type1Data) {
+        } else if (data == type1Data || data == type2Data) {
             setCountIsClicked(false);
             setTimeLineIsClicked(false);
-            // setType2LineIsClicked(false);
             setYear1LineIsClicked(false);
-            setYear2LineIsClicked(false);
             setMonth1LineIsClicked(false);
             setMonth2LineIsClicked(false);
             setDay1LineIsClicked(false);
             setDay2LineIsClicked(false);
         }
-        // else if (id == 4) {
-        //     setCountIsClicked(false);
-        //     setTimeLineIsClicked(false);
-        //     setType1LineIsClicked(false);
-        //     setYear1LineIsClicked(false);
-        //     setYear2LineIsClicked(false);
-        //     setMonth1LineIsClicked(false);
-        //     setMonth2LineIsClicked(false);
-        //     setDay1LineIsClicked(false);
-        //     setDay2LineIsClicked(false);
-        // }
         else if (data == year1Data) {
             setCountIsClicked(false);
             setTimeLineIsClicked(false);
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
-            // setYear2LineIsClicked(false);
             setMonth1LineIsClicked(false);
             setMonth2LineIsClicked(false);
             setDay1LineIsClicked(false);
             setDay2LineIsClicked(false);
         }
-        // else if (id == 6) {
-        //     setCountIsClicked(false);
-        //     setTimeLineIsClicked(false);
-        //     setType1LineIsClicked(false);
-        //     setType2LineIsClicked(false);
-        //     setYear1LineIsClicked(false);
-        //     setMonth1LineIsClicked(false);
-        //     setMonth2LineIsClicked(false);
-        //     setDay1LineIsClicked(false);
-        //     setDay2LineIsClicked(false);
-        // }
-        else if (data == month1Data) {
+        else if (data == month1Data || data == month2Data) {
             setCountIsClicked(false);
             setTimeLineIsClicked(false);
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
             setYear1LineIsClicked(false);
-            setYear2LineIsClicked(false);
-            // setMonth2LineIsClicked(false);
             setDay1LineIsClicked(false);
             setDay2LineIsClicked(false);
         }
-        // else if (id == 8) {
-        //     setCountIsClicked(false);
-        //     setTimeLineIsClicked(false);
-        //     setType1LineIsClicked(false);
-        //     setType2LineIsClicked(false);
-        //     setYear1LineIsClicked(false);
-        //     setYear2LineIsClicked(false);
-        //     setMonth1LineIsClicked(false);
-        //     setDay1LineIsClicked(false);
-        //     setDay2LineIsClicked(false);
-        // }
-        else if (data == day1Data) {
+        else if (data == day1Data || data == day2Data) {
             setCountIsClicked(false);
             setTimeLineIsClicked(false);
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
             setYear1LineIsClicked(false);
-            setYear2LineIsClicked(false);
             setMonth1LineIsClicked(false);
             setMonth2LineIsClicked(false);
-            // setDay2LineIsClicked(false);
         }
-        // else if (id == 10) {
-        //     setCountIsClicked(false);
-        //     setTimeLineIsClicked(false);
-        //     setType1LineIsClicked(false);
-        //     setType2LineIsClicked(false);
-        //     setYear1LineIsClicked(false);
-        //     setYear2LineIsClicked(false);
-        //     setMonth1LineIsClicked(false);
-        //     setMonth2LineIsClicked(false);
-        //     setDay1LineIsClicked(false);
-        // }
     }
 
-    let manageData = (data) => {
-        console.log(data);
+    let manageData = (data, id) => {
+        console.log('manageData', data, id);
         if (timeLine[1].includes(data)) {
             let res = manageAdvancedData(data);
             setYear1Data(res.year);
-            setType1Data(res.type);
+            // setType1Data(res.type);
             return 'success';
         }
-        else if (year1Data.includes(data)) {
-            let res = manageAdvancedData('', data);
-            setMonth1Data(res.month);
-            setType1Data(res.type);
+        else if (timeLine[0].includes(data)) {
+            let res = manageAdvancedData(data);
+            setYear1Data(res.year);
+            setYear2Data(res.year);
             return 'success';
         }
-        else if (month1Data.includes(data)){
-            let res = manageAdvancedData('', year1LineData, data);
-            setDay1Data(res.day);
-            setType1Data(res.type);
-            return 'success';
-        }
-        else if (day1Data.includes(data)){
-            let res = manageAdvancedData('', year1LineData, month1LineData, data);
-            setType1Data(res.type);
-            return 'success';
+        switch (id) {
+            case 'Y1':
+                {
+                    console.log('Y1');
+                    let res = manageAdvancedData('', data);
+                    let year2 = year1Data;
+                    year2 = _.filter(year2, (item) => {
+                        return item != data;
+                    })
+                    console.log(year2);
+                    setYear2Data(year2);
+                    setMonth1Data(res.month);
+                    setType1Data(res.type);
+                    return 'success';
+                }
+            case 'Y2':
+                {
+                    console.log('Y2');
+                    let res = manageAdvancedData('', data);
+                    setMonth2Data(res.month);
+                    setType2Data(res.type);
+                    return 'success';
+                }
+            case 'M1':
+                {
+                    console.log('M1');
+                    let res = manageAdvancedData('', year1LineData, data);
+                    setDay1Data(res.day);
+                    setType1Data(res.type);
+                    return 'success';
+                }
+            case 'M2':
+                {
+                    console.log('M2');
+                    let res = manageAdvancedData('', year2LineData, data);
+                    setDay2Data(res.day);
+                    setType2Data(res.type);
+                    return 'success';
+                }
+
+            default:
+                break;
         }
         return 'success';
     }
@@ -304,19 +285,37 @@ function advancedFilterModel({
             setMonth2LineData('Select Month');
             setDay1LineData('Select Date');
             setDay2LineData('Select Date');
-            // let response  = manageAdvancedData(timeLineData);
-
-            // manageAdvancedData(timeLineData)
+            if (count == 'Range(From)') {
+                this.year1Input.clear();
+                this.year2Input.clear();
+                setYear1Check(false);
+                setYear2Check(false);
+            }
         }
     }, [timeLineData]);
-    
+
     useEffect(() => {
         if (year1LineData != 'Select Year') {
             setType1LineData('Select Type');
             setMonth1LineData('Select Month');
             setDay1LineData('Select Date');
         }
-    },[year1LineData])
+        if (year1LineData.length == 4 && countData == 'Range(From)') {
+            let res = verifyData('Y1');
+            if (res == 'success') {
+                if (year1LineData == moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
+                    setMonth1Data(months.slice(0, moment.tz(moment(), 'Asia/Kolkata').format('MM')));
+                }
+                else{
+                    setMonth1Data(months);
+                }
+                setYear1Check(true);
+            }
+            else{
+                setYear1Check(false);
+            }
+        }
+    }, [year1LineData])
 
     useEffect(() => {
         if (year2LineData != 'Select Year') {
@@ -324,33 +323,194 @@ function advancedFilterModel({
             setMonth2LineData('Select Month');
             setDay2LineData('Select Date');
         }
-    },[year2LineData])
-    
+        if (year2LineData.length == 4 && countData == 'Range(From)') {
+            let res = verifyData('Y2');
+            if (res == 'success') {
+                if (year2LineData == moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
+                    setMonth2Data(months.slice(0, moment.tz(moment(), 'Asia/Kolkata').format('MM')));
+                }
+                else{
+                    setMonth2Data(months);
+                }
+                setYear2Check(true);
+            }
+            else{
+                setYear2Check(false);
+            }
+        }
+    }, [year2LineData])
+
     useEffect(() => {
         if (month1LineData != 'Select Month') {
             setType1LineData('Select Type');
             setDay1LineData('Select Date');
         }
-    },[month1LineData])
+        if (month1LineData != 'Select Month' &&  countData == 'Range(From)') {
+            if (year1LineData == year2LineData) {
+                let filteredMonth = _.filter(months, (data) => {
+                    if (timeLineData == 'Month By Month') {
+                        return data > month1LineData;
+                    }
+                    return data == month1LineData || data > month1LineData;
+                })
+                setMonth2Data(filteredMonth);
+            }
+            if(month1LineData == 1 || month1LineData == 3 || month1LineData == 5 || month1LineData == 7 || month1LineData == 8 || month1LineData == 10 || month1LineData == 12){
+                setDay1Data(dates);
+            }
+            if (month1LineData == 4 || month1LineData == 6 || month1LineData == 9 || month1LineData == 11) {
+                setDay1Data(dates.slice(0,30));
+            }
+            if (month1LineData == 2) {
+                if (year1LineData % 4 == 0) {
+                    setDay1Data(dates.slice(0,29));
+                }
+                if (year1LineData % 4 != 0) {
+                    setDay1Data(dates.slice(0,28));
+                }
+            }
+        }
+    }, [month1LineData])
 
     useEffect(() => {
         if (month2LineData != 'Select Month') {
             setType2LineData('Select Type');
             setDay2LineData('Select Date');
         }
-    },[month2LineData])
+        if (month2LineData != 'Select Month' &&  countData == 'Range(From)') {
+            if (year1LineData == year2LineData) {
+                let filteredMonth = _.filter(months, (data) => {
+                    if (timeLineData == 'Month By Month') {
+                        return data < month2LineData;
+                    }
+                    return data == month2LineData || data < month2LineData;
+                })
+                setMonth1Data(filteredMonth);
+            }
+            if(month2LineData == 1 || month2LineData == 3 || month2LineData == 5 || month2LineData == 7 || month2LineData == 8 || month2LineData == 10 || month2LineData == 12){
+                setDay2Data(dates);
+            }
+            if (month2LineData == 4 || month2LineData == 6 || month2LineData == 9 || month2LineData == 11) {
+                setDay2Data(dates.slice(0,30));
+            }
+            if (month2LineData == 2) {
+                if (year2LineData % 4 == 0) {
+                    setDay2Data(dates.slice(0,29));
+                }
+                if (year2LineData % 4 != 0) {
+                    setDay2Data(dates.slice(0,28));
+                }
+            }
+        }
+    }, [month2LineData])
 
     useEffect(() => {
         if (day1LineData != 'Select Date') {
             setType1LineData('Select Type');
         }
-    },[day1LineData])
+        if (day1LineData != 'Select Date' && countData == 'Range(From)') {
+            if (year1LineData == year2LineData && month1LineData == month2LineData) {
+                let filteredDate = _.filter(dates, (data) => {
+                    return data > day1LineData;
+                })
+                setDay2Data(filteredDate);
+            }
+        }
+    }, [day1LineData])
 
     useEffect(() => {
         if (day2LineData != 'Select Date') {
             setType2LineData('Select Type');
         }
-    },[day2LineData])
+        if (day2LineData != 'Select Date' && countData == 'Range(From)') {
+            if (year1LineData == year2LineData && month1LineData == month2LineData) {
+                let filteredDate = _.filter(dates, (data) => {
+                    return data < day2LineData;
+                })
+                setDay1Data(filteredDate);
+            }
+        }
+    }, [day2LineData])
+
+    function verifyData( id ) {
+        if (year1LineData.length == 4 && id == 'Y1') {
+            if (year1LineData < '2000') {
+                Alert.alert(
+                    'Invalid Year!',
+                    'Sorry! We only allow Transaction Till 2000 Year.',
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (year1LineData > moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
+                Alert.alert(
+                    'Invalid Year!',
+                    'Future Year Not Allowded!',
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (year2LineData < year1LineData) {
+                Alert.alert(
+                    'Invalid Year!',
+                    `Enter a Year Smaller or Equal to ${year2LineData}!`,
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (timeLineData == 'Year By Year') {
+                console.log(1);
+                if (year2LineData == year1LineData) {
+                    Alert.alert(
+                        'Invalid Year!',
+                        `Enter a Year Smaller than ${year2LineData}!`,
+                        [{ text: 'Okay!' }],
+                    );
+                    return;
+                }
+            }
+            return 'success';
+        }
+        if (year2LineData.length == 4 && id == 'Y2') {
+            if (year2LineData < '2000') {
+                Alert.alert(
+                    'Invalid Year!',
+                    'Sorry! We only allow Transaction Till 2000 Year.',
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (year2LineData > moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
+                Alert.alert(
+                    'Invalid Year!',
+                    'Future Year Not Allowded!',
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (year2LineData < year1LineData) {
+                Alert.alert(
+                    'Invalid Year!',
+                    `Enter a Year Greater or Equal ${year1LineData}!`,
+                    [{ text: 'Okay!' }],
+                );
+                return;
+            }
+            if (timeLineData == 'Year By Year') {
+                console.log(1);
+                if (year2LineData == year1LineData) {
+                    Alert.alert(
+                        'Invalid Year!',
+                        `Enter a Year Greater than ${year2LineData}!`,
+                        [{ text: 'Okay!' }],
+                    );
+                    return;
+                }
+            }
+            return 'success';
+        }
+        return false;
+    }
 
     ContentDecider = () => {
         if (countData == 'Single(One)') {
@@ -384,6 +544,7 @@ function advancedFilterModel({
                                         ]
                                 }>
                                 <DropDown
+                                    id={'Y1'}
                                     data={year1Data}
                                     state={year1LineIsClicked}
                                     setState={setYear1LineIsClicked}
@@ -428,6 +589,7 @@ function advancedFilterModel({
                                             ]
                                     }>
                                     <DropDown
+                                        id={'M1'}
                                         data={month1Data}
                                         state={month1LineIsClicked}
                                         setState={setMonth1LineIsClicked}
@@ -534,82 +696,77 @@ function advancedFilterModel({
             return (
                 <>
                     {/* Year DropDown */}
-                    {countData != 'Select Count' && timeLineData != 'Select TimeLine' && (
-                        <View
-                            style={[
-                                styles.dropDownContainer,
-                                { justifyContent: 'space-between', flexDirection: 'row' },
-                            ]}>
+                    {countData != 'Select Count' &&
+                        timeLineData != 'Select TimeLine' && (
                             <View
-                                style={
-                                    year1LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: year1LineHeight,
-                                                width: '40%',
-                                                marginHorizontal: 10,
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: year1LineHeight,
-                                                width: '40%',
-                                                marginHorizontal: 10,
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    data={year1Data}
-                                    state={year1LineIsClicked}
-                                    setState={setYear1LineIsClicked}
-                                    textData={year1LineData}
-                                    setTextData={setYear1LineData}
-                                    handelFilterDropdown={handelFilterDropdown.bind(5)}
-                                    manageData={manageData}
+                                style={[
+                                    styles.dropDownContainer,
+                                    { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' },
+                                ]}>
+                                <View
+                                    style={[
+                                        styles.dropDownBox,
+                                        {
+                                            height: 50,
+                                            width: '40%',
+                                            marginHorizontal: 10,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        },
+                                    ]}>
+                                    <TextInput
+                                        style={{
+                                            color: 'black',
+                                            fontSize: 20,
+                                            marginLeft: 10,
+                                        }}
+                                        ref={input => { this.year1Input = input }}
+                                        maxLength={4}
+                                        textAlign="center"
+                                        keyboardType="number-pad"
+                                        placeholder={'Enter Year'}
+                                        placeholderTextColor={'#676767'}
+                                        onChangeText={text => {
+                                            setYear1LineData(text);
+                                        }}></TextInput>
+                                </View>
+                                <Ionicons
+                                    name="arrow-forward-sharp"
+                                    size={30}
+                                    color={'black'}
                                 />
+                                <View
+                                    style={[
+                                        styles.dropDownBox,
+                                        {
+                                            height: 50,
+                                            width: '40%',
+                                            marginHorizontal: 10,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        },
+                                    ]}>
+                                    <TextInput
+                                        style={{
+                                            color: 'black',
+                                            fontSize: 20,
+                                            marginLeft: 10,
+                                        }}
+                                        ref={input => { this.year2Input = input }}
+                                        maxLength={4}
+                                        textAlign="center"
+                                        keyboardType="number-pad"
+                                        placeholder={'Enter Year'}
+                                        placeholderTextColor={'#676767'}
+                                        onChangeText={text => {
+                                            setYear2LineData(text);
+                                        }}></TextInput>
+                                </View>
                             </View>
-                            <Ionicons name="arrow-forward-sharp" size={30} color={'black'} />
-                            <View
-                                style={
-                                    year2LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: year2LineHeight,
-                                                width: '40%',
-                                                marginHorizontal: 10,
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: year2LineHeight,
-                                                width: '40%',
-                                                marginHorizontal: 10,
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    data={year2Data}
-                                    state={year2LineIsClicked}
-                                    setState={setYear2LineIsClicked}
-                                    textData={year2LineData}
-                                    setTextData={setYear2LineData}
-                                    handelFilterDropdown={handelFilterDropdown.bind(6)}
-                                    manageData={manageData}
-                                />
-                            </View>
-                        </View>
-                    )}
+                        )}
                     {/* Month DropDown */}
                     {year1LineData != 'Select Year' &&
-                        year2LineData != 'Select Year' &&
+                        year2LineData != 'Select Year' && year1Check && year2Check &&
                         (timeLineData == 'Month By Month' ||
                             timeLineData == 'Day By Day') && (
                             <View
@@ -628,6 +785,7 @@ function advancedFilterModel({
                                                     width: '40%',
                                                     marginHorizontal: 10,
                                                     overflow: 'hidden',
+                                                    justifyContent: 'center'
                                                 },
                                             ]
                                             : [
@@ -640,10 +798,12 @@ function advancedFilterModel({
                                                     overflow: 'hidden',
                                                     position: 'relative',
                                                     zIndex: 1,
+                                                    justifyContent: 'center'
                                                 },
                                             ]
                                     }>
                                     <DropDown
+                                        id={'M1'}
                                         data={month1Data}
                                         state={month1LineIsClicked}
                                         setState={setMonth1LineIsClicked}
@@ -657,6 +817,7 @@ function advancedFilterModel({
                                     name="arrow-forward-sharp"
                                     size={30}
                                     color={'black'}
+                                    style={{alignSelf: 'center'}}
                                 />
                                 <View
                                     style={
@@ -668,6 +829,7 @@ function advancedFilterModel({
                                                     maxHeight: 150,
                                                     width: '40%',
                                                     marginHorizontal: 10,
+                                                    justifyContent:'center'
                                                 },
                                             ]
                                             : [
@@ -679,10 +841,12 @@ function advancedFilterModel({
                                                     marginHorizontal: 10,
                                                     position: 'relative',
                                                     zIndex: 1,
+                                                    justifyContent: 'center'
                                                 },
                                             ]
                                     }>
                                     <DropDown
+                                        id={'M2'}
                                         data={month2Data}
                                         state={month2LineIsClicked}
                                         setState={setMonth2LineIsClicked}
@@ -707,15 +871,15 @@ function advancedFilterModel({
                                     style={
                                         day1LineIsClicked == false
                                             ? [
-                                                styles.dropDownBox,
-                                                {
-                                                    height: day1LineHeight,
+                                        styles.dropDownBox,
+                                        {
+                                            height: day1LineHeight,
                                                     maxHeight: 150,
-                                                    width: '40%',
-                                                    marginHorizontal: 10,
-                                                    overflow: 'hidden',
-                                                },
-                                            ]
+                                            width: '40%',
+                                            marginHorizontal: 10,
+                                            overflow: 'hidden',
+                                        },
+                                    ]
                                             : [
                                                 styles.dropDownBox,
                                                 {
@@ -748,13 +912,13 @@ function advancedFilterModel({
                                     style={
                                         day2LineIsClicked == false
                                             ? [
-                                                styles.dropDownBox,
-                                                {
-                                                    height: day2LineHeight,
+                                        styles.dropDownBox,
+                                        {
+                                            height: day2LineHeight,
                                                     maxHeight: 150,
-                                                    width: '40%',
-                                                    marginHorizontal: 10,
-                                                },
+                                            width: '40%',
+                                            marginHorizontal: 10,
+                                            },
                                             ]
                                             : [
                                                 styles.dropDownBox,
@@ -781,7 +945,7 @@ function advancedFilterModel({
                             </View>
                         )}
                     {/* Type DropDown */}
-                    {((timeLineData == 'Year By Year' &&
+                    {(year1Check && year2Check && (timeLineData == 'Year By Year' &&
                         year1LineData != 'Select Year' &&
                         year2LineData != 'Select Year') ||
                         (timeLineData == 'Month By Month' &&
@@ -797,81 +961,42 @@ function advancedFilterModel({
                             day1LineData != 'Select Date' &&
                             day2LineData != 'Select Date')) && (
                                 <View
-                                    style={[
-                                        styles.dropDownContainer,
-                                        { justifyContent: 'space-between', flexDirection: 'row' },
-                                    ]}>
-                                    <View
-                                        style={
-                                            type1LineIsClicked == false
-                                                ? [
-                                                    styles.dropDownBox,
-                                                    {
-                                                        height: type1LineHeight,
-                                                        width: '40%',
-                                                        marginHorizontal: 10,
-                                                    },
-                                                ]
-                                                : [
-                                                    styles.dropDownBox,
-                                                    {
-                                                        height: type1LineHeight,
-                                                        width: '40%',
-                                                        marginHorizontal: 10,
-                                                        position: 'relative',
-                                                        zIndex: 1,
-                                                    },
-                                                ]
-                                        }>
-                                        <DropDown
-                                            data={type1Data}
-                                            state={type1LineIsClicked}
-                                            setState={setType1LineIsClicked}
-                                            textData={type1LineData}
-                                            setTextData={setType1LineData}
-                                            handelFilterDropdown={handelFilterDropdown.bind(3)}
-                                            manageData={manageData}
-                                        />
-                                    </View>
-                                    <Ionicons
-                                        name="arrow-forward-sharp"
-                                        size={30}
-                                        color={'black'}
+                                style={[
+                                    styles.dropDownContainer,
+                                    { justifyContent: 'center', flexDirection: 'row' },
+                                ]}>
+                                <View
+                                    style={
+                                        type2LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type2LineHeight,
+                                                    marginHorizontal: 10,
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type2LineHeight,
+                                                    marginHorizontal: 10,
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        data={type}
+                                        state={type2LineIsClicked}
+                                        setState={setType2LineIsClicked}
+                                        textData={type2LineData}
+                                        setTextData={setType2LineData}
+                                        handelFilterDropdown={handelFilterDropdown.bind(3)}
+                                        manageData={manageData}
                                     />
-                                    <View
-                                        style={
-                                            type2LineIsClicked == false
-                                                ? [
-                                                    styles.dropDownBox,
-                                                    {
-                                                        height: type2LineHeight,
-                                                        width: '40%',
-                                                        marginHorizontal: 10,
-                                                    },
-                                                ]
-                                                : [
-                                                    styles.dropDownBox,
-                                                    {
-                                                        height: type2LineHeight,
-                                                        width: '40%',
-                                                        marginHorizontal: 10,
-                                                        position: 'relative',
-                                                        zIndex: 1,
-                                                    },
-                                                ]
-                                        }>
-                                        <DropDown
-                                            data={type2Data}
-                                            state={type2LineIsClicked}
-                                            setState={setType2LineIsClicked}
-                                            textData={type2LineData}
-                                            setTextData={setType2LineData}
-                                            handelFilterDropdown={handelFilterDropdown.bind(4)}
-                                            manageData={manageData}
-                                        />
-                                    </View>
                                 </View>
-                            )}
+                            </View>
+                        )}
                 </>
             );
         } else {
@@ -976,6 +1101,11 @@ function advancedFilterModel({
                 {ContentDecider()}
                 <TouchableOpacity
                     disabled={setApplyButtonActive()}
+                    onPress={() => {
+                        console.log('press');
+                        evaluateAdvancedFilterGraphData(year1LineData, year2LineData, month1LineData, month2LineData, day1LineData, day2LineData, type1LineData, type2LineData);
+                        setAdvancedFilterModelVisible(false);
+                    }}
                     style={{
                         backgroundColor: '#00BF00',
                         width: '70%',

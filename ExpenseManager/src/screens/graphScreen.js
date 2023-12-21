@@ -19,7 +19,7 @@ import { useDataContext } from '../context/dataContext';
 
 function GraphScreen({ route, navigation }) {
     let { mainData } = useDataContext();
-
+    
     const type = [{ data: ['All', 'CREDIT', 'DEBIT'] }];
     const time = [
         {
@@ -75,9 +75,15 @@ function GraphScreen({ route, navigation }) {
     const [selectedTimeValue, setSelectedTimeValue] = useState({});
     const [selectedType, setSelectedType] = useState();
     const [selectedTypeValue, setSelectedTypeValue] = useState({});
+    
+    const [messageFlag, setMessageFlag] = useState(false);
+    const [message, setMessage] = useState('');
+
 
     customCalculator = (data, labelDecider) => {
         // console.log('custonc', data);
+        // console.log(data, labelDecider);
+        // return;
         let gData = {};
         let label;
         let dataArray = [];
@@ -113,8 +119,8 @@ function GraphScreen({ route, navigation }) {
         //     const element = Object.keys(data)[i];
         //     label.push(element);
         // }
+        let totalAmount = 0;
         _.map(data, context => {
-            let totalAmount = 0;
             _.map(context, data => {
                 if (data.type == 'DEBIT') {
                     totalAmount = totalAmount - data.amount;
@@ -131,15 +137,13 @@ function GraphScreen({ route, navigation }) {
         minValue = minValue > 0 ? minValue - (0.1 * minValue) : minValue + (0.1 * minValue);
         maxValue = maxValue > 0 ? maxValue + (0.1 * maxValue) : maxValue - (0.1 * maxValue);
         gData.datasets.push({ data: dataArray });
-        // gData.datasets.push({ data: [100], withDots: false, });
-        // gData.datasets.push({ data: [500], withDots: false, });
         gData.datasets.push({ data: [minValue], withDots: false });
         gData.datasets.push({ data: [maxValue], withDots: false });
-        console.log(gData.datasets);
+        // console.log(gData.datasets);
         return gData;
     }
 
-    customDataChecker = (mainData) => {
+    const customDataChecker = (mainData) => {
         let finalData;
         let dummy = _.groupBy(mainData, 'dateYear');
         if (Object.keys(dummy).length > 1) {
@@ -197,7 +201,7 @@ function GraphScreen({ route, navigation }) {
         }
         else {
             let data = mainData;
-            console.log(selectedTime, selectedType);
+            // console.log(selectedTime, selectedType);
             if (selectedTime != undefined) {
                 switch (selectedTime) {
                     case 'Today':
@@ -264,8 +268,91 @@ function GraphScreen({ route, navigation }) {
     }
 
     const [graphData, setGraphData] = useState(evaluateCustomFilterGraphData());
-    const [messageFlag, setMessageFlag] = useState(false);
-    const [message, setMessage] = useState('');
+
+
+
+    function evaluateAdvancedFilterGraphData(year1, year2, month1, month2, day1, day2, type1, type2) {
+        //single
+        console.log(year1, year2,month1,month2,day1,day2,type1,type2);
+        if (year1 != 'Select Year' && year2 == 'Select Year' && month1 == 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
+            console.log('year1 type1');
+            let data = _.filter(mainData,(data) => {
+                if (type1 == 'BOTH') {
+                    return data.dateYear == year1;
+                }
+                return data.dateYear == year1 && data.type == type1;
+            })
+            let graph = customDataChecker(data);
+            console.log('++++++',graph);
+            setGraphData(graph);
+        }
+        if (year1 != 'Select Year' && year2 == 'Select Year' && month1 != 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
+            console.log('year1 month1 type1');
+            let data = _.filter(mainData,(data) => {
+                if (type1 == 'BOTH') {
+                    return data.dateYear == year1 && data.dateMonthString == month1;
+                }
+                return data.dateYear == year1 && data.dateMonthString == month1 && data.type == type1;
+            })
+            let graph = customDataChecker(data);
+            console.log(graph);
+            setGraphData(graph);
+        }
+        if (year1 != 'Select Year' && year2 == 'Select Year' && month1 != 'Select Month' && month2 == 'Select Month' && day1 != 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
+            console.log('Y1 M1 D1 T1');
+            let data = _.filter(mainData,(data) => {
+                if (type1 == 'BOTH') {
+                    return data.dateYear == year1 && data.dateMonthString == month1;
+                }
+                return data.dateYear == year1 && data.dateMonthString == month1 && data.dateDay == day1 && data.type == type1;
+            })
+            let graph = customDataChecker(data);
+            console.log(graph);
+            setGraphData(graph);
+        }
+        //range
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 == 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
+            console.log('Y1 Y2 T2');
+            let data = _.filter(mainData,(data) => {
+                if (type2 == 'BOTH') {
+                    return data.dateYear >= year1 && data.dateYear <= year2;
+                }
+                return data.dateYear >= year1 && data.dateYear <= year2 && data.type == type2;
+            })
+            console.log('+++++++++++',data, data.length);
+            let graph = customDataChecker(data);
+            console.log(graph);
+            setGraphData(graph);
+        }
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
+            console.log('Y1 Y2 M1 M2 T2');
+            // let filter1= `${year1}-${month1}`
+            let data = _.filter(mainData,(data) => {
+                if (type2 == 'BOTH') {
+                    return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}`;
+                }
+                return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}` && data.type == type2;
+            })
+            console.log('+++++++++++',data, data.length);
+            let graph = customDataChecker(data);
+            console.log(graph);
+            setGraphData(graph);
+        }
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 != 'Select Date' && day2 != 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
+            console.log('Y1 Y2 M1 M2 D1 D2 T2');
+            let data = _.filter(mainData,(data) => {
+                if (type2 == 'BOTH') {
+                    return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}`;
+                }
+                return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}` && data.type == type2;
+            })
+            console.log('+++++++++++',data, data.length);
+            let graph = customDataChecker(data);
+            console.log(graph);
+            setGraphData(graph);
+        }
+    }
+
 
     function updateGraphData() {
         let data = evaluateCustomFilterGraphData();
@@ -438,6 +525,7 @@ function GraphScreen({ route, navigation }) {
                     date={date}
                     count={count}
                     setAdvancedFilterModelVisible={setAdvancedFilterModelVisible}
+                    evaluateAdvancedFilterGraphData={evaluateAdvancedFilterGraphData}
                     // manageAdvancedData={manageAdvancedData}
                 />
             </Modal>
