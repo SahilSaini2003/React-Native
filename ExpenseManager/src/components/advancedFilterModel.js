@@ -11,11 +11,16 @@ import { useDataContext } from '../context/dataContext';
 
 function advancedFilterModel({
     timeLine,
-    count,
     setAdvancedFilterModelVisible,
     evaluateAdvancedFilterGraphData
 }) {
+    const count = ['Single(One)', 'Range(From)'];
+    let type = ['BOTH', 'CREDIT', 'DEBIT'];
+    let months = [1,2,3,4,5,6,7,8,9,10,11,12];
+    let dates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+
     let { manageAdvancedData } = useDataContext();
+
     const [year1Data, setYear1Data] = useState([]);
     const [month1Data, setMonth1Data] = useState([]);
     const [month2Data, setMonth2Data] = useState([]);
@@ -23,10 +28,7 @@ function advancedFilterModel({
     const [day2Data, setDay2Data] = useState([]);
     const [type1Data, setType1Data] = useState([]);
     const [type2Data, setType2Data] = useState(['Both', 'CREDIT', 'DEBIT']);
-    let type = ['BOTH', 'CREDIT', 'DEBIT'];
-    let months = [1,2,3,4,5,6,7,8,9,10,11,12];
-    let dates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-
+    
     const [countIsClicked, setCountIsClicked] = useState(false);
     const [countData, setCountData] = useState('Select Count');
     let countHeight = countIsClicked ? count.length * 30 + 50 : 40;
@@ -204,7 +206,7 @@ function advancedFilterModel({
         else if (timeLine[0].includes(data)) {
             let res = manageAdvancedData(data);
             setYear1Data(res.year);
-            setYear2Data(res.year);
+            // setYear2Data(res.year);
             return 'success';
         }
         switch (id) {
@@ -217,7 +219,7 @@ function advancedFilterModel({
                         return item != data;
                     })
                     console.log(year2);
-                    setYear2Data(year2);
+                    // setYear2Data(year2);
                     setMonth1Data(res.month);
                     setType1Data(res.type);
                     return 'success';

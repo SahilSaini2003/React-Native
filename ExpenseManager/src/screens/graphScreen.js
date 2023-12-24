@@ -1,12 +1,4 @@
-import {
-    Text,
-    View,
-    StyleSheet,
-    TouchableOpacity,
-    Image,
-    Modal,
-    Dimensions,
-} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, Modal, Dimensions } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { useState } from 'react';
 import _ from 'underscore';
@@ -19,50 +11,11 @@ import { useDataContext } from '../context/dataContext';
 
 function GraphScreen({ route, navigation }) {
     let { mainData } = useDataContext();
-    
+
     const type = [{ data: ['All', 'CREDIT', 'DEBIT'] }];
-    const time = [
-        {
-            data: [
-                'Overall',
-                'Today',
-                'Yesterday',
-                'Last 15 Days',
-                'Last 30 Days',
-                'This Month',
-                'This Year',
-            ],
-        },
-    ];
-    const timeLine = [['Year By Year', 'Month By Month', 'Day By Day'],['Year','Month','Day']];
-    // var year1, year2;
-    // function manageAdvancedData(timeLineData = '') {
-    //     if (timeLineData != '') {
-    //         console.log('manage');
-    //         const year = Object.keys(_.groupBy(mainData, 'dateYear'));
-    //         year1 = year;
-    //         year2 = year;
-    //         console.log(year1);
-    //     }
-    // }
-    const year1 = ['2023', '2003'];const year2 = ['2023', '2003'];
-    // console.log(year);
-    const month = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-    ];
-    const date = [1, 2, 3, 4];
-    const count = ['Single(One)', 'Range(From)'];
+    const time = [{ data: ['Overall', 'Today', 'Yesterday', 'Last 15 Days', 'Last 30 Days', 'This Month', 'This Year'] }];
+    const timeLine = [['Year By Year', 'Month By Month', 'Day By Day'], ['Year', 'Month', 'Day']];
+    const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const [customFilterModelVisible, setCustomFilterModelVisible] =
         useState(false);
@@ -70,24 +23,28 @@ function GraphScreen({ route, navigation }) {
         useState(false);
     const [compareDataModelVisible, setCompareDataModelVisible] = useState(false);
 
-    //ccustomfilter
     const [selectedTime, setSelectedTime] = useState();
     const [selectedTimeValue, setSelectedTimeValue] = useState({});
     const [selectedType, setSelectedType] = useState();
     const [selectedTypeValue, setSelectedTypeValue] = useState({});
-    
+
     const [messageFlag, setMessageFlag] = useState(false);
     const [message, setMessage] = useState('');
 
 
     customCalculator = (data, labelDecider) => {
-        // console.log('custonc', data);
-        // console.log(data, labelDecider);
-        // return;
         let gData = {};
         let label;
         let dataArray = [];
         switch (labelDecider) {
+            case 0:
+                label = [];
+                _.map(month, (month) => {
+                    if (data[month] != undefined) {
+                        label.push(`${month}/${data[month][0].dateYear}`);
+                    }
+                })
+                break;
             case 1:
                 label = Object.keys(data);
                 break;
@@ -111,25 +68,36 @@ function GraphScreen({ route, navigation }) {
                     return `${data[item][0]['date'].split(' ')[1]}`;
                 });
                 break;
-
             default:
                 break;
         }
-        // for (let i = 0; i < Object.keys(data).length; i++) {
-        //     const element = Object.keys(data)[i];
-        //     label.push(element);
-        // }
         let totalAmount = 0;
-        _.map(data, context => {
-            _.map(context, data => {
-                if (data.type == 'DEBIT') {
-                    totalAmount = totalAmount - data.amount;
-                } else if (data.type == 'CREDIT') {
-                    totalAmount = totalAmount + data.amount;
+        if (labelDecider == 0) {
+            _.map(month, (month) => {
+                if (data[month] != undefined) {
+                    _.map(data[month], data => {
+                        if (data.type == 'DEBIT') {
+                            totalAmount = totalAmount - data.amount;
+                        } else if (data.type == 'CREDIT') {
+                            totalAmount = totalAmount + data.amount;
+                        }
+                    });
+                    dataArray.push(totalAmount);
                 }
+            })
+        }
+        else {
+            _.map(data, context => {
+                _.map(context, data => {
+                    if (data.type == 'DEBIT') {
+                        totalAmount = totalAmount - data.amount;
+                    } else if (data.type == 'CREDIT') {
+                        totalAmount = totalAmount + data.amount;
+                    }
+                });
+                dataArray.push(totalAmount);
             });
-            dataArray.push(totalAmount);
-        });
+        }
         gData.labels = label;
         gData.datasets = [];
         let minValue = Math.min(...dataArray);
@@ -139,7 +107,6 @@ function GraphScreen({ route, navigation }) {
         gData.datasets.push({ data: dataArray });
         gData.datasets.push({ data: [minValue], withDots: false });
         gData.datasets.push({ data: [maxValue], withDots: false });
-        // console.log(gData.datasets);
         return gData;
     }
 
@@ -151,35 +118,30 @@ function GraphScreen({ route, navigation }) {
             return finalData;
         }
         else {
-            console.log('month');
             dummy = _.groupBy(mainData, 'dateMonthString');
             if (Object.keys(dummy).length > 1) {
-                finalData = customCalculator(dummy, 1);
+                finalData = customCalculator(dummy, 0);
                 return finalData;
             }
             else {
-                console.log('day');
                 dummy = _.groupBy(mainData, 'dateDay');
                 if (Object.keys(dummy).length > 1) {
                     finalData = customCalculator(dummy, 2);
                     return finalData;
                 }
                 else {
-                    console.log('hour');
                     dummy = _.groupBy(mainData, 'dateHour');
                     if (Object.keys(dummy).length > 1) {
                         finalData = customCalculator(dummy, 3);
                         return finalData;
                     }
                     else {
-                        console.log('minute');
                         dummy = _.groupBy(mainData, 'dateMinute');
                         if (Object.keys(dummy).length > 1) {
                             finalData = customCalculator(dummy, 4);
                             return finalData;
                         }
                         else {
-                            console.log('second');
                             dummy = _.groupBy(mainData, 'dateSecond');
                             if (Object.keys(dummy).length >= 1) {
                                 finalData = customCalculator(dummy, 5);
@@ -201,42 +163,34 @@ function GraphScreen({ route, navigation }) {
         }
         else {
             let data = mainData;
-            // console.log(selectedTime, selectedType);
             if (selectedTime != undefined) {
                 switch (selectedTime) {
                     case 'Today':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD');
                         })
-                        console.log(data);
                         break;
                     case 'Yesterday':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` == moment.tz(moment(), 'Asia/Kolkata').subtract(1, 'd').format('YYYY-MM-DD');
                         })
                         break;
                     case 'Last 15 Days':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(15, 'd').format('YYYY-MM-DD');
                         })
                         break;
                     case 'Last 30 Days':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}-${item.dateDay}` >= moment.tz(moment(), 'Asia/Kolkata').subtract(30, 'd').format('YYYY-MM-DD');
                         })
                         break;
                     case 'This Month':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}-${item.dateMonth}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM');
                         })
                         break;
                     case 'This Year':
-                        console.log('selectedTime', selectedTime);
                         data = _.filter(data, (item) => {
                             return `${item.dateYear}` == moment.tz(moment(), 'Asia/Kolkata').format('YYYY');
                         })
@@ -248,13 +202,11 @@ function GraphScreen({ route, navigation }) {
             if (selectedType != undefined) {
                 switch (selectedType) {
                     case 'CREDIT':
-                        console.log('selectedType', selectedType);
                         data = _.filter(data, (item) => {
                             return item.type == 'CREDIT';
                         })
                         break;
                     case 'DEBIT':
-                        console.log('selectedType', selectedType);
                         data = _.filter(data, (item) => {
                             return item.type == 'DEBIT';
                         })
@@ -269,95 +221,74 @@ function GraphScreen({ route, navigation }) {
 
     const [graphData, setGraphData] = useState(evaluateCustomFilterGraphData());
 
-
-
     function evaluateAdvancedFilterGraphData(year1, year2, month1, month2, day1, day2, type1, type2) {
         //single
-        console.log(year1, year2,month1,month2,day1,day2,type1,type2);
         if (year1 != 'Select Year' && year2 == 'Select Year' && month1 == 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
-            console.log('year1 type1');
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1;
                 }
                 return data.dateYear == year1 && data.type == type1;
             })
             let graph = customDataChecker(data);
-            console.log('++++++',graph);
             setGraphData(graph);
         }
         if (year1 != 'Select Year' && year2 == 'Select Year' && month1 != 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
-            console.log('year1 month1 type1');
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1 && data.dateMonthString == month1;
                 }
                 return data.dateYear == year1 && data.dateMonthString == month1 && data.type == type1;
             })
             let graph = customDataChecker(data);
-            console.log(graph);
             setGraphData(graph);
         }
         if (year1 != 'Select Year' && year2 == 'Select Year' && month1 != 'Select Month' && month2 == 'Select Month' && day1 != 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 == 'Select Type') {
-            console.log('Y1 M1 D1 T1');
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1 && data.dateMonthString == month1;
                 }
                 return data.dateYear == year1 && data.dateMonthString == month1 && data.dateDay == day1 && data.type == type1;
             })
             let graph = customDataChecker(data);
-            console.log(graph);
             setGraphData(graph);
         }
         //range
         if (year1 != 'Select Year' && year2 != 'Select Year' && month1 == 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
-            console.log('Y1 Y2 T2');
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type2 == 'BOTH') {
                     return data.dateYear >= year1 && data.dateYear <= year2;
                 }
                 return data.dateYear >= year1 && data.dateYear <= year2 && data.type == type2;
             })
-            console.log('+++++++++++',data, data.length);
             let graph = customDataChecker(data);
-            console.log(graph);
             setGraphData(graph);
         }
         if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
-            console.log('Y1 Y2 M1 M2 T2');
             // let filter1= `${year1}-${month1}`
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type2 == 'BOTH') {
                     return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}`;
                 }
                 return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}` && data.type == type2;
             })
-            console.log('+++++++++++',data, data.length);
             let graph = customDataChecker(data);
-            console.log(graph);
             setGraphData(graph);
         }
         if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 != 'Select Date' && day2 != 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
-            console.log('Y1 Y2 M1 M2 D1 D2 T2');
-            let data = _.filter(mainData,(data) => {
+            let data = _.filter(mainData, (data) => {
                 if (type2 == 'BOTH') {
                     return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}`;
                 }
                 return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}` && data.type == type2;
             })
-            console.log('+++++++++++',data, data.length);
             let graph = customDataChecker(data);
-            console.log(graph);
             setGraphData(graph);
         }
     }
 
-
     function updateGraphData() {
         let data = evaluateCustomFilterGraphData();
-        console.log('data',data);
-        
         if (data == undefined) {
             setMessage('* Noo Data Find for the Selected Match.');
         }
@@ -462,7 +393,7 @@ function GraphScreen({ route, navigation }) {
                         borderRadius: 16,
                     }}
                 />
-                {messageFlag ? <Text style={{alignSelf:'center', color:'red',fontSize: 15}}>{message}</Text>: null}
+                {messageFlag ? <Text style={{ alignSelf: 'center', color: 'red', fontSize: 15 }}>{message}</Text> : null}
             </View>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <TouchableOpacity
@@ -519,14 +450,8 @@ function GraphScreen({ route, navigation }) {
                 transparent={true}>
                 <AdvancedFilterModel
                     timeLine={timeLine}
-                    year1={year1}
-                    year2={year2}
-                    month={month}
-                    date={date}
-                    count={count}
                     setAdvancedFilterModelVisible={setAdvancedFilterModelVisible}
                     evaluateAdvancedFilterGraphData={evaluateAdvancedFilterGraphData}
-                    // manageAdvancedData={manageAdvancedData}
                 />
             </Modal>
             {/* Compare Data Model */}
