@@ -45,8 +45,9 @@ function dropDown({
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={{ width: '100%', alignItems: 'center' }}
-                                onPress={() => {
-                                    let res = manageData(item, id);
+                                onPress={async () => {
+                                    let res = await manageData(item, id);
+                                    console.log('+++',res);
                                     if (res == 'success') {
                                         setTextData(item);
                                         setState(!state);

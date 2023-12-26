@@ -53,11 +53,11 @@ function advancedFilterModel({
 
     const [month1LineIsClicked, setMonth1LineIsClicked] = useState(false);
     const [month1LineData, setMonth1LineData] = useState('Select Month');
-    let month1LineHeight = month1LineIsClicked ? month1Data.length * 30 + 50 : 50;
+    let month1LineHeight = month1LineIsClicked ? month1Data.length * 30 + 50 : 40;
 
     const [month2LineIsClicked, setMonth2LineIsClicked] = useState(false);
     const [month2LineData, setMonth2LineData] = useState('Select Month');
-    let month2LineHeight = month2LineIsClicked ? month2Data.length * 30 + 50 : 50;
+    let month2LineHeight = month2LineIsClicked ? month2Data.length * 30 + 50 : 40;
 
     const [day1LineIsClicked, setDay1LineIsClicked] = useState(false);
     const [day1LineData, setDay1LineData] = useState('Select Date');
@@ -200,13 +200,6 @@ function advancedFilterModel({
         if (timeLine[1].includes(data)) {
             let res = manageAdvancedData(data);
             setYear1Data(res.year);
-            // setType1Data(res.type);
-            return 'success';
-        }
-        else if (timeLine[0].includes(data)) {
-            let res = manageAdvancedData(data);
-            setYear1Data(res.year);
-            // setYear2Data(res.year);
             return 'success';
         }
         switch (id) {
@@ -214,24 +207,18 @@ function advancedFilterModel({
                 {
                     console.log('Y1');
                     let res = manageAdvancedData('', data);
-                    let year2 = year1Data;
-                    year2 = _.filter(year2, (item) => {
-                        return item != data;
-                    })
-                    console.log(year2);
-                    // setYear2Data(year2);
                     setMonth1Data(res.month);
                     setType1Data(res.type);
                     return 'success';
                 }
-            case 'Y2':
-                {
-                    console.log('Y2');
-                    let res = manageAdvancedData('', data);
-                    setMonth2Data(res.month);
-                    setType2Data(res.type);
-                    return 'success';
-                }
+            // case 'Y2':
+            //     {
+            //         console.log('Y2');
+            //         let res = manageAdvancedData('', data);
+            //         setMonth2Data(res.month);
+            //         setType2Data(res.type);
+            //         return 'success';
+            //     }
             case 'M1':
                 {
                     console.log('M1');
@@ -240,12 +227,19 @@ function advancedFilterModel({
                     setType1Data(res.type);
                     return 'success';
                 }
-            case 'M2':
+            // case 'M2':
+            //     {
+            //         console.log('M2');
+            //         let res = manageAdvancedData('', year2LineData, data);
+            //         setDay2Data(res.day);
+            //         setType2Data(res.type);
+            //         return 'success';
+            //     }
+            case 'D1':
                 {
-                    console.log('M2');
-                    let res = manageAdvancedData('', year2LineData, data);
-                    setDay2Data(res.day);
-                    setType2Data(res.type);
+                    console.log('D1');
+                    let res = manageAdvancedData('', year1LineData, month1LineData, data);
+                    setType1Data(res.type);
                     return 'success';
                 }
 
@@ -635,6 +629,7 @@ function advancedFilterModel({
                                         ]
                                 }>
                                 <DropDown
+                                    id={'D1'}
                                     data={day1Data}
                                     state={day1LineIsClicked}
                                     setState={setDay1LineIsClicked}
@@ -782,7 +777,7 @@ function advancedFilterModel({
                                             ? [
                                                 styles.dropDownBox,
                                                 {
-                                                    height: month1LineHeight,
+                                                    height: month1LineHeight + 10,
                                                     maxHeight: 150,
                                                     width: '40%',
                                                     marginHorizontal: 10,
@@ -805,7 +800,6 @@ function advancedFilterModel({
                                             ]
                                     }>
                                     <DropDown
-                                        id={'M1'}
                                         data={month1Data}
                                         state={month1LineIsClicked}
                                         setState={setMonth1LineIsClicked}
@@ -827,7 +821,7 @@ function advancedFilterModel({
                                             ? [
                                                 styles.dropDownBox,
                                                 {
-                                                    height: month2LineHeight,
+                                                    height: month2LineHeight + 10,
                                                     maxHeight: 150,
                                                     width: '40%',
                                                     marginHorizontal: 10,
@@ -848,9 +842,9 @@ function advancedFilterModel({
                                             ]
                                     }>
                                     <DropDown
-                                        id={'M2'}
                                         data={month2Data}
                                         state={month2LineIsClicked}
+                                        id={'M2'}
                                         setState={setMonth2LineIsClicked}
                                         textData={month2LineData}
                                         setTextData={setMonth2LineData}

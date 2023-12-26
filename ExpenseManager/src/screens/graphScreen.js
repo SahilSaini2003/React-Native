@@ -17,6 +17,9 @@ function GraphScreen({ route, navigation }) {
     const timeLine = [['Year By Year', 'Month By Month', 'Day By Day'], ['Year', 'Month', 'Day']];
     const month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+    let year =['2023', '2022'];
+    let date = [1,2,3]
+
     const [customFilterModelVisible, setCustomFilterModelVisible] =
         useState(false);
     const [advancedFilterModelVisible, setAdvancedFilterModelVisible] =
@@ -310,38 +313,119 @@ function GraphScreen({ route, navigation }) {
         return 'success';
     }
 
+    function evaluateCompareDataGraphData(year1, year2, month1, month2, day1, day2, type1, type2) {
+        console.log('----',year1, year2, month1, month2, day1, day2, type1, type2);
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 == 'Select Month' && month2 == 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 != 'Select Type' && type2 != 'Select Type') {
+            let gData = {};
+            gData.labels = month;
+            let allValues = [];
+            let data = _.filter(mainData, (data) => {
+                if (type1 == 'BOTH') {
+                    return data.dateYear == year1;
+                }
+                return data.dateYear == year1 && data.type == type1;
+            })
+            let graph = customDataChecker(data);
+            gData.datasets = [];
+            // gData.datasets.data = [];
+            let values = [];
+            console.log('+++',graph);
+            let amount = 0;
+            _.map(month, (data) => {
+                let i = 0;
+                _.map(graph.labels, (item) => {
+                    if (item.split('/')[0] == data) {
+                        amount = graph.datasets[0].data[i]
+                    }
+                    i++;
+                })
+                values.push(amount);
+            })
+            gData.datasets.push({'data':values});
+            console.log('values', values);
+            values = [];
+
+            data = _.filter(mainData, (data) => {
+                if (type2 == 'BOTH') {
+                    return data.dateYear == year2;
+                }
+                return data.dateYear == year2 && data.type == type2;
+            })
+            graph = customDataChecker(data);
+            amount = 0;
+            _.map(month, (data) => {
+                let i = 0;
+                _.map(graph.labels, (item) => {
+                    if (item.split('/')[0] == data) {
+                        amount = graph.datasets[0].data[i]
+                    }
+                    i++;
+                })
+                values.push(amount);
+            })
+            gData.datasets.push({'data':values});
+            console.log('+++',graph, values);
+            console.log('))))',gData);
+
+            setGraphData(gData);
+            return 'success'
+        }
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 == 'Select Date' && day2 == 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
+            // let filter1= `${year1}-${month1}`
+            let data = _.filter(mainData, (data) => {
+                if (type2 == 'BOTH') {
+                    return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}`;
+                }
+                return `${data.dateYear}-${data.dateMonth}` >= `${year1}-${month1}` && `${data.dateYear}-${data.dateMonth}` <= `${year2}-${month2}` && data.type == type2;
+            })
+            let graph = customDataChecker(data);
+            setGraphData(graph);
+        }
+        if (year1 != 'Select Year' && year2 != 'Select Year' && month1 != 'Select Month' && month2 != 'Select Month' && day1 != 'Select Date' && day2 != 'Select Date' && type1 == 'Select Type' && type2 != 'Select Type') {
+            let data = _.filter(mainData, (data) => {
+                if (type2 == 'BOTH') {
+                    return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}`;
+                }
+                return `${data.dateYear}-${data.dateMonth}-${data.dateDay}` >= `${year1}-${month1}-${day1}` && `${data.dateYear}-${data.dateMonth}-${data.dateDay}` <= `${year2}-${month2}-${day2}` && data.type == type2;
+            })
+            let graph = customDataChecker(data);
+            setGraphData(graph);
+        }
+    }
+
     return (
         <View style={styles.mainBox}>
             <View style={styles.graphBox}>
                 {/* <Image source={require('../assets/images/javascript-line-charts-graphs.png')} style={{ width: '95%', height: 200 }} /> */}
                 <Text>Bezier Line Chart</Text>
                 <LineChart
-                    data={graphData}
-                    // data={{
-                    //     labels: ["January", "February", "March", "April", "May", "June"],
-                    //     datasets: [
-                    //         {
-                    //             data: [
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100
-                    //             ]
-                    //         },
-                    //         {
-                    //             data: [
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100,
-                    //                 Math.random() * 100
-                    //             ]
-                    //         }
-                    //     ]
-                    // }}
+                    // data={graphData}
+                    data={{
+                        labels: ["January", "February", "March", "April", "May", "June"],
+                        datasets: [
+                            {
+                                data: [
+                                    null,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100
+                                ],
+                                
+                            },
+                            {
+                                data: [
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100,
+                                    Math.random() * 100
+                                ]
+                            }
+                        ]
+                    }}
                     width={Dimensions.get('window').width - 30} // from react-native
                     // width={700} // from react-native
                     height={300}
@@ -455,18 +539,16 @@ function GraphScreen({ route, navigation }) {
                 />
             </Modal>
             {/* Compare Data Model */}
-            {/* <Modal
+            <Modal
                 visible={compareDataModelVisible}
                 animationType="fade"
                 transparent={true}>
                 <CompareDataModel
-                    timeLine={timeLine}
-                    year={year}
-                    month={month}
-                    date={date}
+                    timeLine={timeLine[0]}
                     setCompareDataModelVisible={setCompareDataModelVisible}
+                    evaluateCompareDataGraphData={evaluateCompareDataGraphData}
                 />
-            </Modal> */}
+            </Modal>
         </View>
     );
 }

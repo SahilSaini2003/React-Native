@@ -198,6 +198,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     let manageAdvancedData = (timeLine: string = '', year1: string = '', month1: string = '', date1: string = '') => {
         let dateYear = _.groupBy(mainData, 'dateYear');
         if (timeLine != '') {
+            console.log('TimeLine');
             let year = Object.keys(dateYear)
             let type = Object.keys(_.groupBy(mainData, 'type'));
             if (type.length == 2) {
@@ -205,14 +206,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return {year, type}
         }
-        else if (year1 != '' && month1 != '' && date1 != '') {
-            let year = _.groupBy(dateYear[year1], 'dateMonthString');
-            let month = _.groupBy(year[month1], 'dateDay');
-            let type = Object.keys(_.groupBy(month[date1], 'type'));
+        else if (year1 != '' && month1 == '' && date1 == '') {
+            let month = Object.keys(_.groupBy(dateYear[year1], 'dateMonthString'));
+            let type = Object.keys(_.groupBy(dateYear[year1], 'type'));
             if (type.length == 2) {
                 type = ['BOTH',...type];
             }
-            return {type};
+            return {month, type};
         }
         else if (year1 != '' && month1 != '' && date1 == '') {
             let year = _.groupBy(dateYear[year1], 'dateMonthString');
@@ -224,13 +224,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
             return {day, type};
         }
-        else if (year1 != '' && month1 == '' && date1 == '') {
-            let month = Object.keys(_.groupBy(dateYear[year1], 'dateMonthString'));
-            let type = Object.keys(_.groupBy(dateYear[year1], 'type'));
+        else if (year1 != '' && month1 != '' && date1 != '') {
+            let year = _.groupBy(dateYear[year1], 'dateMonthString');
+            let month = _.groupBy(year[month1], 'dateDay');
+            let type = Object.keys(_.groupBy(month[date1], 'type'));
             if (type.length == 2) {
                 type = ['BOTH',...type];
             }
-            return {month, type};
+            return {type};
         }
     }
 
