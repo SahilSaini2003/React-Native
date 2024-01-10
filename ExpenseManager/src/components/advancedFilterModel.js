@@ -281,7 +281,7 @@ function advancedFilterModel({
             setMonth2LineData('Select Month');
             setDay1LineData('Select Date');
             setDay2LineData('Select Date');
-            if (count == 'Range(From)') {
+            if (countData == 'Range(From)') {
                 this.year1Input.clear();
                 this.year2Input.clear();
                 setYear1Check(false);
