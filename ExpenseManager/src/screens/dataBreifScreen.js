@@ -73,6 +73,7 @@ function DataBreifScreen({ route, navigation }) {
               // justifyContent: 'center'
             }}>
             <TextInput style={{ color: textEditable == true ? 'black' : 'white', fontSize: 20, fontWeight: 'bold' }} editable={textEditable}
+              maxLength={6}
               onChangeText={(text) => {
                 setType(text);
               }}>
@@ -85,6 +86,7 @@ function DataBreifScreen({ route, navigation }) {
               style={[styles.textArea, { fontSize: 15 }]}
               defaultValue={date}
               editable={textEditable}
+              maxLength={19}
               onChangeText={(text) => {
                 setDate(text);
               }}
@@ -96,6 +98,8 @@ function DataBreifScreen({ route, navigation }) {
             <TextInput
               style={styles.textArea}
               editable={textEditable}
+              keyboardType='number-pad'
+              maxLength={8}
               onChangeText={(text) => {
                 setAmount(parseInt(text));
               }}>
@@ -107,32 +111,61 @@ function DataBreifScreen({ route, navigation }) {
             <TextInput
               style={styles.textArea}
               editable={textEditable}
+              maxLength={15}
               onChangeText={(text) => {
                 setTitle(text);
               }}>
               {title}
             </TextInput>
           </View>
-          {description != null ? (
+          {textEditable == true && description == null ? (
             <View
               style={[
                 styles.textView,
-                { flexDirection: 'column', height: descriptionHeight },
+                { flexDirection: 'column', height: 200 },
               ]}>
               <Text style={[styles.textTitle, { marginBottom: 5 }]}>
                 Transaction Description
               </Text>
-              <TextInput
-                style={[styles.textArea, { alignItems: 'center' }]}
-                editable={textEditable}
-                onChangeText={(text) => {
-                  setDescription(text);
-                }}
-                multiline={true}>
-                {description}
-              </TextInput>
+              <ScrollView>
+                <TextInput
+                  style={[styles.textArea, { alignItems: 'center' }]}
+                  editable={textEditable}
+                  maxLength={150}
+                  numberOfLines={5}
+                  placeholder='Enter Description(If Needed)'
+                  placeholderTextColor={'#666362'}
+                  onChangeText={(text) => {
+                    setDescription(text);
+                  }}
+                  multiline={true}>
+                </TextInput>
+              </ScrollView>
             </View>
-          ) : null}
+          )
+            : description != null ? (
+              <View
+                style={[
+                  styles.textView,
+                  { flexDirection: 'column', height: descriptionHeight },
+                ]}>
+                <Text style={[styles.textTitle, { marginBottom: 5 }]}>
+                  Transaction Description
+                </Text>
+                <ScrollView>
+                  <TextInput
+                    style={[styles.textArea, { alignItems: 'center' }]}
+                    editable={textEditable}
+                    maxLength={150}
+                    onChangeText={(text) => {
+                      setDescription(text);
+                    }}
+                    multiline={true}>
+                    {description}
+                  </TextInput>
+                </ScrollView>
+              </View>
+            ) : null}
           <TouchableOpacity
             style={[
               styles.textView,
