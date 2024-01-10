@@ -1,7 +1,7 @@
 const { Text, View, StyleSheet, Modal, Image, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert } = require("react-native");
 import { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
-import _ from 'underscore';
+import _, { isNull } from 'underscore';
 
 import { useDataContext } from '../context/dataContext';
 
@@ -10,6 +10,7 @@ import { useDataContext } from '../context/dataContext';
 function HomeScreen({ route, navigation }) {
 
     let { verifyData, mainData } = useDataContext();
+
     // Used to check weather keyboard is active or not
     const [isKeyboardActive, setKeyboardActive] = useState(false);
     useEffect(() => {
@@ -33,6 +34,14 @@ function HomeScreen({ route, navigation }) {
     }, []);
 
     callGraphScreen = () => {
+        if (mainData.length <= 2) {
+            Alert.alert(
+                'No Transaction Found!',
+                'You require at least Two entries to access this feature.',
+                [{ text: 'Okay!' }],
+            );
+            return;
+        }
         navigation.navigate('Progress');
     }
 
@@ -102,9 +111,11 @@ function HomeScreen({ route, navigation }) {
     const [debitBoxAmount, setDebitBoxAmount] = useState(amountGenerator(mainData, 'D'));
 
 
-    mainBoxDataChanger = () => {
+    mainBoxDataChanger = (check = null) => {
         let dummyCounter = mainBoxCounter;
-        dummyCounter++;
+        if (isNull(check)) {
+            dummyCounter++;
+        }
         if (dummyCounter == 1) {
             setMainBoxCounter(dummyCounter);
             setMainBoxText('Overall');
@@ -184,9 +195,11 @@ function HomeScreen({ route, navigation }) {
             setMainBoxAmount(amountGenerator(data));
         }
     }
-    crebitBoxDataChanger = () => {
+    crebitBoxDataChanger = (check = null) => {
         let dummyCounter = creditBoxCounter;
-        dummyCounter++;
+        if (isNull(check)) {
+            dummyCounter++;
+        }
         if (dummyCounter == 1) {
             setCreditBoxCounter(dummyCounter);
             setCreditBoxText('Overall');
@@ -269,9 +282,11 @@ function HomeScreen({ route, navigation }) {
             setCreditBoxAmount(amountGenerator(data, 'CD'));
         }
     }
-    debitBoxDataChanger = () => {
+    debitBoxDataChanger = (check = null) => {
         let dummyCounter = debitBoxCounter;
-        dummyCounter++;
+        if (isNull(check)) {
+            dummyCounter++;
+        }
         if (dummyCounter == 1) {
             setDebitBoxCounter(dummyCounter);
             setDebitBoxText('Overall');
@@ -355,6 +370,12 @@ function HomeScreen({ route, navigation }) {
         }
     }
 
+    useEffect(() => {
+        mainBoxDataChanger(1);
+        crebitBoxDataChanger(1);
+        debitBoxDataChanger(1);
+    }, [mainData])
+
     // Overall, today, tomarrow, Last 15 Days, Last 30 Days, This Month, Last Month, This Year, Last Year
     return (
         <View style={styles.main}>
@@ -426,7 +447,7 @@ function HomeScreen({ route, navigation }) {
                                     <Image source={require('../assets/images/cross.png')} style={{ width: 100, height: 100, borderRadius: 20, marginHorizontal: 20 }} />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => {
-                                    let dataCheck = verifyData(amount, title, description, type, date, 1); 
+                                    let dataCheck = verifyData(amount, title, description, type, date, 1);
                                     if (dataCheck == 'success') {
                                         setModelIsVisible(false);
                                     }
