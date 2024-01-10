@@ -15,7 +15,7 @@ import {useDataContext} from '../context/dataContext';
 
 function HistoryScreen({route, navigation}) {
   //Main data
-  let {mainData} = useDataContext();
+  let {mainData, year1Data, month1Data, type1Data} = useDataContext();
 
   callDataBreifScreen = id => {
     let itemData = mainData.filter(item => {
@@ -32,27 +32,9 @@ function HistoryScreen({route, navigation}) {
     useState(false);
 
   //Data for Filters
-  const month = [
-    {
-      data: [
-        'All',
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ],
-    },
-  ];
-  const year = [{data: ['All', '2022', '2023']}];
-  const transactionType = [{data: ['All', 'DEBIT', 'CREDIT']}];
+  const month = [{data: ['All', ...month1Data]}];
+  const year = [{data: ['All', ...year1Data]}];
+  const transactionType = [{data: ['All', ...type1Data]}];
 
   //Height of Filter Box
   const monthDilogBoxHeight = monthIsClicked

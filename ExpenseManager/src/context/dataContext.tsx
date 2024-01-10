@@ -33,8 +33,15 @@ const DataContext = createContext<DataContextProps | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
+    const month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    const [ year1Data , setYear1Data] = useState<String[]>([]);
+    const [ month1Data , setMonth1Data] = useState<String[]>([]);
+    const [ type1Data , setType1Data] = useState<String[]>([]);
     // let id = 1;
     let [id, setId] = useState(9);
+
+    // let [mainData, setMainData] = useState<mainType[]>([]);
 
     let [mainData, setMainData] = useState<mainType[]>([{"amount": 500, "date": "2023-12-08 10:33:12", "dateDay": "08", "dateHour": "10", "dateMinute": "33", "dateMonth": "12", "dateMonthString": "December", "dateSecond": "12", "dateYear": "2023", "description": "Delhi To Jaipur", "id": 8, "title": "Train Fair", "type": "CREDIT"}, {"amount": 800, "date": "2023-11-10 13:23:50", "dateDay": "10", "dateHour": "13", "dateMinute": "23", "dateMonth": "11", "dateMonthString": "November", "dateSecond": "50", "dateYear": "2023", "description": "We live in an age of science. Science has made us civilized. Every progress in human civilization is", "id": 2, "title": "Bought Cloth", "type": "CREDIT"}, {"amount": 1200, "date": "2023-01-08 12:23:50", "dateDay": "08", "dateHour": "12", "dateMinute": "23", "dateMonth": "01", "dateMonthString": "January", "dateSecond": "50", "dateYear": "2023", "description": "We live in an age of science. Science has made uss", "id": 1, 
     "title": "Bus Fair", "type": "CREDIT"}, {"amount": 500, "date": "2022-12-13 12:24:50", "dateDay": "13", "dateHour": "12", "dateMinute": "24", "dateMonth": "12", "dateMonthString": "December", "dateSecond": "50", "dateYear": "2022", "description": "Bought Dell Mouse", "id": 3, "title": "QQQQQQQQQQQQQQQ", "type": "DEBIT"}, {"amount": 1000, "date": "2022-10-15 12:23:59", "dateDay": "15", "dateHour": "12", "dateMinute": "23", "dateMonth": "10", "dateMonthString": "October", "dateSecond": "59", "dateYear": "2022", "description": "We live in an age of science. Science has made us civilized. Every progress in human civilization is the gift of science. Science has solved our probl", "id": 4, "title": "Cap", "type": "DEBIT"}, {"amount": 20000, "date": "2022-08-10 17:23:50", "dateDay": "10", "dateHour": "17", "dateMinute": "23", "dateMonth": "08", "dateMonthString": "August", "dateSecond": "50", "dateYear": 
@@ -55,15 +62,34 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         let data: mainType[] = [...mainData, newData];
         setId(id + 1);
         data = sortData(data);
-        // console.log(data.reverse());
         setMainData(data.reverse());
-        setYear1Data(Object.keys(_.groupBy(data, 'dateYear')));
-        setMonth1Data(Object.keys(_.groupBy(data, 'dateMonthString')));
-        let tType = Object.keys(_.groupBy(data, 'type'));
-        if (tType.length == 2) {
-            setType1Data(['Both',...tType]);
+        if (!year1Data.includes(dateYear)) {
+            let year = year1Data;
+            setYear1Data([...year, dateYear]);
         }
-        else setType1Data(tType);
+        if (!month1Data.includes(dateMonthString) && !(month1Data.length == 12)) {
+            let allMonth = [dateMonthString, ...month1Data];
+            let formatedMonth :String[] = [];
+            _.map(month, (data) => {
+                if (allMonth.includes(data)) {
+                    formatedMonth.push(data);
+                }
+            })
+            setMonth1Data(formatedMonth);
+        }
+        if (!type1Data.includes(type) && !(type1Data.length == 2)) {
+            let allType = type1Data;
+            allType.push(type);
+            setType1Data(allType);
+        }
+        return 'success';
+        // setYear1Data(Object.keys(_.groupBy(data, 'dateYear')));
+        // setMonth1Data(Object.keys(_.groupBy(data, 'dateMonthString')));
+        // let tType = Object.keys(_.groupBy(data, 'type'));
+        // if (tType.length == 2) {
+        //     setType1Data(['Both',...tType]);
+        // }
+        // else setType1Data(tType);
         // setDay1Data(Object.keys(_.groupBy(data, 'dateDay')));
 
     };
@@ -181,19 +207,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         // console.log(type);
         if (taskId == 1) {
-            insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
-            return 'success';
+            return insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
+            // return 'success';
         }
         if (taskId == 2) {
             updateData(dataId, amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
             return 'success';
         }
     }
-
-    // const [ timeLineData, setTimeLineData] = useState<String>();
-    const [ year1Data , setYear1Data] = useState<String[]>([]);
-    const [ month1Data , setMonth1Data] = useState<String[]>([]);
-    const [ type1Data , setType1Data] = useState<String[]>([]);
 
     let manageAdvancedData = (timeLine: string = '', year1: string = '', month1: string = '', date1: string = '') => {
         let dateYear = _.groupBy(mainData, 'dateYear');
