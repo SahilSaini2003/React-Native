@@ -1,4 +1,5 @@
-import { TouchableOpacity, View, Text, Image, FlatList } from 'react-native';
+import { TouchableOpacity, View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { scale } from 'react-native-size-matters';
 
 function dropDown({
     id,
@@ -14,7 +15,7 @@ function dropDown({
         <>
             <TouchableOpacity
                 style={{
-                    height: 40,
+                    height: scale(35),
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -23,18 +24,18 @@ function dropDown({
                     setState(!state);
                     handelFilterDropdown(data);
                 }}>
-                <Text style={{ color: '#676767', fontSize: 20, marginLeft: 10 }}>
+                <Text style={{ color: '#676767', fontSize: scale(18), marginLeft: scale(10) }}>
                     {textData}
                 </Text>
                 {state ? (
                     <Image
                         source={require('../assets/images/down-arrow.png')}
-                        style={{ width: 20, height: 20, marginLeft: 10, marginTop: 6 }}
+                        style={styles.img}
                     />
                 ) : (
                     <Image
                         source={require('../assets/images/up-arrow.png')}
-                        style={{ width: 20, height: 20, marginLeft: 10, marginTop: 6 }}
+                        style={styles.img}
                     />
                 )}
             </TouchableOpacity>
@@ -47,13 +48,12 @@ function dropDown({
                                 style={{ width: '100%', alignItems: 'center' }}
                                 onPress={async () => {
                                     let res = await manageData(item, id);
-                                    console.log('+++',res);
                                     if (res == 'success') {
                                         setTextData(item);
                                         setState(!state);
                                     }
                                 }}>
-                                <Text style={{ fontSize: 16, color: 'black', marginVertical: 5 }}>
+                                <Text style={{ fontSize: scale(14), color: 'black', marginVertical: scale(4) }}>
                                     {item}
                                 </Text>
                             </TouchableOpacity>
@@ -65,5 +65,9 @@ function dropDown({
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    img:{ width: scale(18), height: scale(18), marginLeft: scale(6), marginTop: scale(5) }
+})
 
 export default dropDown;

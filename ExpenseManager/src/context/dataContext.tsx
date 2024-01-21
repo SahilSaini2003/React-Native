@@ -36,7 +36,20 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
     const [ year1Data , setYear1Data] = useState<String[]>([]);
-    const [ month1Data , setMonth1Data] = useState<String[]>([]);
+    const [ month1Data , setMonth1Data] = useState<String[]>([
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ]);
     const [ type1Data , setType1Data] = useState<String[]>([]);
     // let id = 1;
     let [id, setId] = useState(9);
@@ -119,7 +132,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dataToBeUpdated[0].dateMinute = dateMinute;
         dataToBeUpdated[0].dateSecond = dateSecond;
         let data = sortData(mainData);
-        // console.log(data)
         setMainData(data.reverse());
 
     }
@@ -205,10 +217,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             ]);
             return;
         }
-        // console.log(type);
         if (taskId == 1) {
             return insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
-            // return 'success';
         }
         if (taskId == 2) {
             updateData(dataId, amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
@@ -219,7 +229,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     let manageAdvancedData = (timeLine: string = '', year1: string = '', month1: string = '', date1: string = '') => {
         let dateYear = _.groupBy(mainData, 'dateYear');
         if (timeLine != '') {
-            console.log('TimeLine');
             let year = Object.keys(dateYear)
             let type = Object.keys(_.groupBy(mainData, 'type'));
             if (type.length == 2) {

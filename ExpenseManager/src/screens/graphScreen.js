@@ -6,6 +6,7 @@ import {
     Image,
     Modal,
     Dimensions,
+    ScrollView,
 } from 'react-native';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { useState } from 'react';
@@ -16,9 +17,10 @@ import CustomFilterModel from '../components/customFilterModel.js';
 import CompareDataModel from '../components/compareDataModel.js';
 import AdvancedFilterModel from '../components/advancedFilterModel.js';
 import { useDataContext } from '../context/dataContext';
-import { ScrollView } from 'react-native-gesture-handler';
+import { scale } from 'react-native-size-matters';
 
 function GraphScreen({ route, navigation }) {
+
     let { mainData } = useDataContext();
 
     const type = [{ data: ['All', 'CREDIT', 'DEBIT'] }];
@@ -58,15 +60,15 @@ function GraphScreen({ route, navigation }) {
         22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     ];
     const hours = [
-        '1.00 Hour',
-        '2.00 Hour',
-        '3.00 Hour',
-        '4.00 Hour',
-        '5.00 Hour',
-        '6.00 Hour',
-        '7.00 Hour',
-        '8.00 Hour',
-        '9.00 Hour',
+        '01.00 Hour',
+        '02.00 Hour',
+        '03.00 Hour',
+        '04.00 Hour',
+        '05.00 Hour',
+        '06.00 Hour',
+        '07.00 Hour',
+        '08.00 Hour',
+        '09.00 Hour',
         '10.00 Hour',
         '11.00 Hour',
         '12.00 Hour',
@@ -90,8 +92,6 @@ function GraphScreen({ route, navigation }) {
         useState(false);
     const [compareDataModelVisible, setCompareDataModelVisible] = useState(false);
 
-    // const [selectedTime, setSelectedTime] = useState();
-    // const [selectedTime, setSelectedTime] = useState();
     const [selectedTime, setSelectedTime] = useState();
     const [selectedTimeValue, setSelectedTimeValue] = useState({});
     const [selectedType, setSelectedType] = useState();
@@ -220,12 +220,6 @@ function GraphScreen({ route, navigation }) {
     };
 
     function evaluateCustomFilterGraphData(filter, type) {
-        console.log(
-            selectedTime,
-            selectedType,
-            selectedTimeValue,
-            selectedTypeValue,
-        );
         if (selectedTime == undefined && selectedType == undefined) {
             return customDataChecker(mainData);
         } else {
@@ -745,13 +739,11 @@ function GraphScreen({ route, navigation }) {
     const renderOverlay = () => {
         if (selectedData) {
             let dataValue;
-            console.log(selectedData.value.toString());
             if (selectedData.value.toString()[0] == '-') {
                 dataValue = `-₹${selectedData.value.toString().slice(1)}`;
             } else {
                 dataValue = `₹${selectedData.value}`;
             }
-            console.log('dataValue.length', dataValue.length);
             if (selectedData.y > 200) {
                 return (
                     <View
@@ -840,7 +832,7 @@ function GraphScreen({ route, navigation }) {
     return (
         <View style={styles.mainBox}>
             <View style={styles.graphBox}>
-                <Text style={{ color: 'black', fontSize: 15, marginTop: 5 }}>
+                <Text style={styles.topText}>
                     Graph View
                 </Text>
                 <ScrollView horizontal={true}>
@@ -908,7 +900,7 @@ function GraphScreen({ route, navigation }) {
                             backgroundColor: 'black',
                             backgroundGradientFrom: '#ffae42',
                             backgroundGradientTo: '#FFAA33',
-                            decimalPlaces: 0, // optional, defaults to 2dp
+                            decimalPlaces: 0,
                             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                             propsForDots: {
@@ -918,7 +910,6 @@ function GraphScreen({ route, navigation }) {
                             },
                         }}
                         onDataPointClick={data => {
-                            console.log(data);
                             setSelectedData(data);
                             setTimeout(() => {
                                 setSelectedData(null);
@@ -926,100 +917,58 @@ function GraphScreen({ route, navigation }) {
                         }}
                         verticalLabelRotation={30}
                         bezier
-                        style={{
-                            marginVertical: 8,
-                            marginHorizontal: 2,
-                            borderRadius: 16,
-                        }}
+                        style={styles.graphStyle}
                     />
                     {renderOverlay()}
                 </ScrollView>
-                <View style={{ width: '90%', height: 30, marginTop: 3 }}>
+                <View style={styles.messageView}>
                     {messageFlag ? (
-                        <Text style={{ alignSelf: 'center', color: 'red', fontSize: 15 }}>
+                        <Text style={styles.messageText}>
                             {message}
                         </Text>
                     ) : null}
                 </View>
                 <View
-                    style={{
-                        width: '98%',
-                        height: 80,
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                    }}>
+                    style={styles.selectedDataView}>
                     <View
-                        style={{
-                            width: '40%',
-                            height: 70,
-                            marginHorizontal: 10,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 30,
-                        }}>
+                        style={styles.selectedDataInView}>
                         {isArray(selectedTime) && isArray(selectedType) ? (
                             <View>
-                                <Text style={{ fontSize: 15, color: 'black' }}>
+                                <Text style={styles.selectedDataTopText}>
                                     Date 1(Black Line)
                                 </Text>
                                 <Text
-                                    style={{
-                                        fontSize: selectedTime[0].length > 10 ? 14 : 20,
-                                        color: 'black',
-                                        fontWeight: 'bold',
-                                        textAlign: 'center',
-                                    }}>
+                                    style={[styles.selectedDataBottomText, { fontSize: selectedTime[0].length > 10 ? scale(14) : scale(20) }]}>
                                     {selectedTime[0]}{'\n'}{selectedType[0]}
                                 </Text>
                             </View>
                         ) :
                             (<View>
-                                <Text style={{ fontSize: 15, color: 'black' }}>Selected Time</Text>
-                                <Text style={{ fontSize: selectedTime != undefined && selectedTime.length > 10 ? 14 : 20, color: 'black', fontWeight: 'bold', textAlign: 'center' }}>{selectedTime == undefined ? 'Overall' : selectedTime}</Text>
+                                <Text style={styles.selectedDataTopText}>Selected Time</Text>
+                                <Text style={[styles.selectedDataBottomText, { fontSize: selectedTime != undefined && selectedTime.length > 10 ? scale(14) : scale(20) }]}>{selectedTime == undefined ? 'Overall' : selectedTime}</Text>
                             </View>)
                         }
                     </View>
                     <View
-                        style={{
-                            width: '40%',
-                            height: 70,
-                            marginHorizontal: 10,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 30,
-                        }}>
+                        style={styles.selectedDataInView}>
                         {isArray(selectedTime) && isArray(selectedType) ? (
                             <View>
-                                <Text style={{ fontSize: 15, color: 'black' }}>
+                                <Text style={styles.selectedDataTopText}>
                                     Date 2(White Line)
                                 </Text>
                                 <Text
-                                    style={{
-                                        fontSize: selectedTime[1].length > 10 ? 14 : 20,
-                                        color: 'black',
-                                        fontWeight: 'bold',
-                                        textAlign: 'center',
-                                    }}>
+                                    style={[styles.selectedDataBottomText, {fontSize: selectedTime[1].length > 10 ? scale(14) : scale(20) }]}>
                                     {selectedTime[1]}{'\n'}{selectedType[1]}
                                 </Text>
                             </View>
                         ) :
                             (<View>
-                                <Text style={{ fontSize: 15, color: 'black' }}>Selected Type</Text>
-                                <Text style={{ fontSize: 20, color: 'black', fontWeight: 'bold', textAlign: 'center' }}>{selectedType == undefined ? 'All' : selectedType}</Text>
+                                <Text style={styles.selectedDataTopText}>Selected Type</Text>
+                                <Text style={[styles.selectedDataBottomText, { fontSize: scale(20) }]}>{selectedType == undefined ? 'All' : selectedType}</Text>
                             </View>)
                         }
                     </View>
                 </View>
-                {/* <View style={{ width: '80%', height: 30, justifyContent: 'space-between', flexDirection: 'row'}}>
-                    <Text style={{ fontSize: 15, color: 'black' }}>Selected Time</Text>
-                    <Text style={{ fontSize: 15, color: 'black' }}>Selected Type</Text>
-                </View>
-                <View style={{ width: '80%', height: 30, justifyContent: 'space-between', flexDirection: 'row' }}>
-                    <Text style={{ fontSize: 20, color: 'black', fontWeight: 'bold' }}>{selectedTime == undefined ? 'Overall' : selectedTime} </Text>
-                    <Text style={{ fontSize: 20, color: 'black', fontWeight: 'bold', alignSelf: 'center', display: 'flex' }}>{selectedType == undefined ? 'All' : selectedType}</Text>
-                </View> */}
             </View>
             <View style={{ flexDirection: 'row', flex: 1 }}>
                 <TouchableOpacity
@@ -1098,18 +1047,60 @@ function GraphScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     mainBox: {
         flex: 1,
-        margin: 10,
+        margin: scale(8),
         borderRadius: 20,
         borderWidth: 2,
         backgroundColor: '#FFF49C',
-        // alignItems: 'center'
+    },
+    topText: { 
+        color: 'black', 
+        fontSize: scale(15), 
+        marginTop: scale(5) 
+    },
+    graphStyle: {
+        marginVertical: scale(8),
+        marginHorizontal: scale(2),
+        borderRadius: 16,
+    },
+    messageView: { 
+        width: '90%', 
+        height: scale(30), 
+        marginTop: scale(3) 
+    },
+    messageText: { 
+        alignSelf: 'center', 
+        color: 'red', 
+        fontSize: scale(14) 
+    },
+    selectedDataView: {
+        width: '98%',
+        height: scale(76),
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    selectedDataInView: {
+        width: '40%',
+        height: scale(70),
+        marginHorizontal: scale(10),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 30,
+    },
+    selectedDataTopText: { 
+        fontSize: scale(15), 
+        color: 'black' 
+    },
+    selectedDataBottomText: { 
+        color: 'black', 
+        fontWeight: 'bold', 
+        textAlign: 'center' 
     },
     filterBox: {
         backgroundColor: '#FFF49C',
         width: '50%',
-        height: 50,
+        height: scale(50),
         borderWidth: 2,
-        // marginTop: 30,
         borderRadius: 30,
         elevation: 25,
         alignItems: 'center',
@@ -1118,18 +1109,15 @@ const styles = StyleSheet.create({
     },
     filterText: {
         color: 'black',
-        fontSize: 20,
+        fontSize: scale(18),
         fontWeight: '500',
     },
     graphBox: {
         flex: 4.5,
-        marginTop: 0,
         alignItems: 'center',
-        // justifyContent: 'center'
     },
     compareButton: {
         flex: 1,
-        marginTop: 50,
     },
     button: {
         alignItems: 'center',
@@ -1137,9 +1125,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#EFDC75',
         width: '80%',
-        height: 50,
+        height: scale(50),
         borderWidth: 2,
-        // marginTop: 30,
         borderRadius: 30,
         elevation: 25,
     },

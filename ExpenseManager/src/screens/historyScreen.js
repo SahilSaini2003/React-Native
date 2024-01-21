@@ -4,10 +4,10 @@ const {
   StyleSheet,
   TouchableOpacity,
   Image,
-  SectionList,
 } = require('react-native');
 import {useState} from 'react';
 import _ from 'underscore';
+import { scale, moderateScale, verticalScale } from 'react-native-size-matters';
 
 import ListViewMultipleSelect from '../components/listViewMultipleSelect.js';
 import HistoryData from '../components/historyData.js';
@@ -21,7 +21,6 @@ function HistoryScreen({route, navigation}) {
     let itemData = mainData.filter(item => {
       return item.id == id;
     });
-    // console.log(itemData);
     navigation.navigate('Data - Breif', {itemData});
   };
 
@@ -38,11 +37,11 @@ function HistoryScreen({route, navigation}) {
 
   //Height of Filter Box
   const monthDilogBoxHeight = monthIsClicked
-    ? month[0].data.length * 25 + 75
+    ? month[0].data.length * 24 + 75
     : 35;
-  const yearDilogBoxHeight = yearIsClicked ? year[0].data.length * 25 + 75 : 35;
+  const yearDilogBoxHeight = yearIsClicked ? year[0].data.length * 24 + 75 : 35;
   const transactionTypeDilogBoxHeight = transactionTypeIsClicked
-    ? transactionType[0].data.length * 25 + 75
+    ? transactionType[0].data.length * 24 + 75
     : 35;
 
   //Function for fetching selected data
@@ -58,21 +57,18 @@ function HistoryScreen({route, navigation}) {
     setMonthSelectedData({...selectedData});
     setMonthArrayData(monthArray);
     setMonthIsClicked(false);
-    console.log('monthArray', monthArray);
     filterData(1, monthArray);
   };
   fetchSelectedYear = (yearArray, selectedData) => {
     setYearSelectedData({...selectedData});
     setYearArrayData(yearArray);
     setYearIsClicked(false);
-    console.log('yearArray', yearArray);
     filterData(2, yearArray);
   };
   fetchSelectedTransactionType = (transactionTypeArray, selectedData) => {
     setTypeSelectedData({...selectedData});
     setTypeArrayData(transactionTypeArray);
     setTransactionTypeIsClicked(false);
-    console.log('transactionType', transactionTypeArray);
     filterData(3, transactionTypeArray);
   };
 
@@ -80,7 +76,6 @@ function HistoryScreen({route, navigation}) {
 
   let filterData = (id, data) => {
     let dummyVariable = [];
-    console.log(filteredData);
     if (id === 1) {
       let dummyVariable2 = filterMonth(mainData, data);
       if (yearArrayData.length != 0) {
@@ -88,7 +83,6 @@ function HistoryScreen({route, navigation}) {
           data.length == 0 ? mainData : dummyVariable2,
           yearArrayData,
         );
-        // dummyVariable2 = filterYear(dummyVariable2.length != 0 ? dummyVariable2 : mainData, yearArrayData);
       }
       if (typeArrayData.length != 0) {
         dummyVariable2 = filterType(
@@ -99,7 +93,6 @@ function HistoryScreen({route, navigation}) {
             : dummyVariable2,
           typeArrayData,
         );
-        // dummyVariable2 = filterType(dummyVariable2.length != 0 ? dummyVariable2 : mainData, typeArrayData)
       }
       dummyVariable = dummyVariable2;
       setFilteredData(dummyVariable);
@@ -133,7 +126,6 @@ function HistoryScreen({route, navigation}) {
           yearArrayData,
         );
       }
-      console.log('monthArrayData', monthArrayData);
       if (monthArrayData.length != 0) {
         dummyVariable2 = filterMonth(
           data.length == 0
@@ -147,7 +139,6 @@ function HistoryScreen({route, navigation}) {
       dummyVariable = dummyVariable2;
       setFilteredData(dummyVariable);
     }
-    console.log(dummyVariable);
   };
 
   function filterYear(mainData, data) {
@@ -234,40 +225,28 @@ function HistoryScreen({route, navigation}) {
   };
 
   return (
-    // <Text>HistoryScreen</Text>
     <View style={styles.main}>
       <View style={styles.mainBox}>
         <View style={styles.filterBox}>
           <View style={[styles.filterButton, {height: monthDilogBoxHeight}]}>
             <TouchableOpacity
-              style={{
-                width: 100,
-                height: 30,
-                flexDirection: 'row',
-                justifyContent: 'center',
-              }}
+              style={styles.touchable}
               onPress={() => {
                 setMonthIsClicked(!monthIsClicked);
                 handelFilterDropdown(1);
               }}>
-              <Text
-                style={{
-                  color: 'black',
-                  alignSelf: 'flex-start',
-                  fontSize: 20,
-                  marginLeft: 10,
-                }}>
+              <Text style={styles.text}>
                 Month
               </Text>
               {monthIsClicked ? (
                 <Image
                   source={require('../assets/images/down-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               ) : (
                 <Image
                   source={require('../assets/images/up-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               )}
             </TouchableOpacity>
@@ -283,34 +262,23 @@ function HistoryScreen({route, navigation}) {
           </View>
           <View style={[styles.filterButton, {height: yearDilogBoxHeight}]}>
             <TouchableOpacity
-              style={{
-                width: 100,
-                height: 30,
-                flexDirection: 'row',
-                justifyContent: 'center',
-              }}
+              style={styles.touchable}
               onPress={() => {
                 setYearIsClicked(!yearIsClicked);
                 handelFilterDropdown(2);
               }}>
-              <Text
-                style={{
-                  color: 'black',
-                  alignSelf: 'flex-start',
-                  fontSize: 20,
-                  marginLeft: 10,
-                }}>
+              <Text style={styles.text}>
                 Year
               </Text>
               {yearIsClicked ? (
                 <Image
                   source={require('../assets/images/down-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               ) : (
                 <Image
                   source={require('../assets/images/up-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               )}
             </TouchableOpacity>
@@ -330,37 +298,27 @@ function HistoryScreen({route, navigation}) {
               {height: transactionTypeDilogBoxHeight},
             ]}>
             <TouchableOpacity
-              style={{
-                width: 100,
-                height: 30,
-                flexDirection: 'row',
-                justifyContent: 'center',
-              }}
+              style={styles.touchable}
               onPress={() => {
                 setTransactionTypeIsClicked(!transactionTypeIsClicked);
                 handelFilterDropdown(3);
               }}>
               <Text
-                style={{
-                  color: 'black',
-                  alignSelf: 'flex-start',
-                  fontSize: 20,
-                  marginLeft: 10,
-                }}>
+                style={styles.text}>
                 T-Type
               </Text>
               {transactionTypeIsClicked ? (
                 <Image
                   source={require('../assets/images/down-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               ) : (
                 <Image
                   source={require('../assets/images/up-arrow.png')}
-                  style={{width: 20, height: 20, marginLeft: 6, marginTop: 6}}
+                  style={styles.arrow}
                 />
               )}
-            </TouchableOpacity>
+            </TouchableOpacity >
             {transactionTypeIsClicked ? (
               <ListViewMultipleSelect
                 data={transactionType}
@@ -372,7 +330,6 @@ function HistoryScreen({route, navigation}) {
             ) : null}
           </View>
         </View>
-        {/* <View style={styles.filterBreifBox}></View> */}
         <View style={styles.contentBox}>
           <HistoryDataSetter />
         </View>
@@ -390,47 +347,44 @@ const styles = StyleSheet.create({
   mainBox: {
     width: '95%',
     height: '95%',
-    // margin: 10,
     backgroundColor: '#F3E0AC',
     borderWidth: 2,
     borderRadius: 10,
   },
   filterBox: {
     flexDirection: 'row',
-    // alignContent: 'space-between',
-    // alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    justifyContent: 'space-evenly',
+    height: scale(40),
+    position: 'relative',
+    zIndex: 1
   },
   filterButton: {
     backgroundColor: '#FFF49C',
-    width: 110,
-    // height: undefined,
-    margin: 5,
+    width: scale(95),
+    margin: scale(3),
     borderRadius: 10,
     borderWidth: 2,
-    // justifyContent: 'space-between',
-    // alignItems:'center',
-    // flexDirection: 'row',
-    // display: 'none'#F3E0AC
-    zIndex: 1,
-    // position: 'absolute'
-  },
-  filterBreifBox: {
-    width: 15,
-    height: 15,
-    backgroundColor: 'blue',
-    position: 'absolute',
-    right: 10,
-    left: 100,
-    top: 100,
   },
   contentBox: {
     flex: 1,
     borderTopWidth: 2,
-    marginTop: 45,
-    // backgroundColor: 'black'
   },
+  arrow: {
+    width: scale(20), 
+    height: scale(20), 
+    alignSelf: 'center'
+  },
+  touchable: {
+    width: scale(95),
+    height: scale(30),
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  text: {
+    color: 'black',
+    alignSelf: 'flex-start',
+    fontSize: scale(20),
+  }
 });
 
 export default HistoryScreen;

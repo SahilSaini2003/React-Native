@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import _ from 'underscore';
+import { ScrollView } from 'react-native-virtualized-view';
+import { scale } from 'react-native-size-matters';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -33,7 +35,7 @@ function compareDataModel({
 
     const [timeLineIsClicked, setTimeLineIsClicked] = useState(false);
     const [timeLineData, setTimeLineData] = useState('Select TimeLine');
-    let timeLineHeight = timeLineIsClicked ? timeLine.length * 35 + 40 : 40;
+    let timeLineHeight = timeLineIsClicked ? timeLine.length * 30 + 40 : 40;
 
     const [type1LineIsClicked, setType1LineIsClicked] = useState(false);
     const [type1LineData, setType1LineData] = useState('Select Type');
@@ -67,11 +69,7 @@ function compareDataModel({
     const [day2LineData, setDay2LineData] = useState('Select Date');
     let day2LineHeight = day2LineIsClicked ? day2Data.length * 35 + 40 : 40;
 
-    const [year1Check, setYear1Check] = useState(false);
-    const [year2Check, setYear2Check] = useState(false);
-
     let handelFilterDropdown = data => {
-        console.log('handelFilterDropdown', data);
         if (data == timeLine) {
             setType1LineIsClicked(false);
             setType2LineIsClicked(false);
@@ -113,18 +111,14 @@ function compareDataModel({
     };
 
     let manageData = async (data, id) => {
-        console.log('manageData', data, id);
         if (timeLine.includes(data)) {
-            console.log(1);
             let res = manageAdvancedData(data);
-            console.log(res);
             setYear1Data(res.year);
             setYear2Data(res.year);
             return 'success';
         }
         switch (id) {
             case 'Y1': {
-                console.log('Y1', timeLineData);
                 if (timeLineData == 'Year By Year') {
                     let res = manageAdvancedData(timeLineData);
                     let years = _.filter(res.year, item => {
@@ -138,7 +132,6 @@ function compareDataModel({
                 return 'success';
             }
             case 'Y2': {
-                console.log('Y2');
                 if (timeLineData == 'Year By Year') {
                     let res = manageAdvancedData(timeLineData);
                     let years = _.filter(res.year, item => {
@@ -153,7 +146,6 @@ function compareDataModel({
                 return 'success';
             }
             case 'M1': {
-                console.log('M1');
                 if (
                     timeLineData == 'Month By Month' &&
                     year1LineData == year2LineData
@@ -163,7 +155,6 @@ function compareDataModel({
                         return item != data;
                     });
                     setMonth2Data(months);
-                    console.log(months);
                 }
                 let res = manageAdvancedData('', year1LineData, data);
                 setDay1Data(res.day);
@@ -171,7 +162,6 @@ function compareDataModel({
                 return 'success';
             }
             case 'M2': {
-                console.log('M2');
                 if (
                     timeLineData == 'Month By Month' &&
                     year1LineData == year2LineData
@@ -188,7 +178,6 @@ function compareDataModel({
                 return 'success';
             }
             case 'D1': {
-                console.log('D1');
                 if (
                     year1LineData == year2LineData &&
                     month1LineData == month2LineData
@@ -204,7 +193,6 @@ function compareDataModel({
                 return 'success';
             }
             case 'D2': {
-                console.log('D2');
                 if (
                     year1LineData == year2LineData &&
                     month1LineData == month2LineData
@@ -285,167 +273,85 @@ function compareDataModel({
             <View style={styles.modelCustomFilterView}>
                 {/* Heading */}
                 <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                    <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>
+                    style={[styles.center, {alignItems: 'center'}]}>
+                    <Text style={{ fontSize: scale(28), color: 'black', marginVertical: scale(10) }}>
                         Compare Data
                     </Text>
                     <TouchableOpacity
-                        style={{ left: 40 }}
+                        style={{ left: scale(35) }}
                         onPress={() => {
                             setCompareDataModelVisible(false);
                         }}>
-                        <Entypo name="cross" size={40} color={'black'} />
+                        <Entypo name="cross" size={scale(35)} color={'black'} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: '100%', borderWidth: 1, marginBottom: 10 }}></View>
-                {/* TimeLine DropDown  */}
-                <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
-                    <View
-                        style={
-                            timeLineIsClicked == false
-                                ? [
-                                    styles.dropDownBox,
-                                    { height: timeLineHeight, overflow: 'hidden', width: '60%' },
-                                ]
-                                : [
-                                    styles.dropDownBox,
-                                    {
-                                        height: timeLineHeight,
-                                        overflow: 'scroll',
-                                        position: 'relative',
-                                        zIndex: 1,
-                                        width: '60%',
-                                    },
-                                ]
-                        }>
-                        <DropDown
-                            data={timeLine}
-                            state={timeLineIsClicked}
-                            setState={setTimeLineIsClicked}
-                            textData={timeLineData}
-                            setTextData={setTimeLineData}
-                            handelFilterDropdown={handelFilterDropdown}
-                            manageData={manageData}
-                        />
-                    </View>
-                </View>
-                {/* Year DropDown */}
-                {timeLineData != 'Select TimeLine' && (
-                    <View
-                        style={[
-                            styles.dropDownContainer,
-                            { justifyContent: 'center', flexDirection: 'row' },
-                        ]}>
+                <ScrollView style={{width:'100%'}}>
+                    {/* TimeLine DropDown  */}
+                    <View style={[styles.dropDownContainer, { alignItems: 'center'}]}>
                         <View
                             style={
-                                year1LineIsClicked == false
+                                timeLineIsClicked == false
                                     ? [
                                         styles.dropDownBox,
-                                        {
-                                            height: year1LineHeight,
-                                            marginHorizontal: 10,
-                                        },
+                                        { height: timeLineHeight, overflow: 'hidden', width: '60%' },
                                     ]
                                     : [
                                         styles.dropDownBox,
                                         {
-                                            height: year1LineHeight,
-                                            marginHorizontal: 10,
+                                            height: timeLineHeight,
+                                            overflow: 'scroll',
                                             position: 'relative',
                                             zIndex: 1,
+                                            width: '60%',
                                         },
                                     ]
                             }>
                             <DropDown
-                                id={'Y1'}
-                                data={year1Data}
-                                state={year1LineIsClicked}
-                                setState={setYear1LineIsClicked}
-                                textData={year1LineData}
-                                setTextData={setYear1LineData}
-                                handelFilterDropdown={handelFilterDropdown}
-                                manageData={manageData}
-                            />
-                        </View>
-                        <Ionicons name="git-compare" size={30} color={'black'} />
-                        <View
-                            style={
-                                year2LineIsClicked == false
-                                    ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year2LineHeight,
-                                            marginHorizontal: 10,
-                                        },
-                                    ]
-                                    : [
-                                        styles.dropDownBox,
-                                        {
-                                            height: year2LineHeight,
-                                            marginHorizontal: 10,
-                                            position: 'relative',
-                                            zIndex: 1,
-                                        },
-                                    ]
-                            }>
-                            <DropDown
-                                id={'Y2'}
-                                data={year2Data}
-                                state={year2LineIsClicked}
-                                setState={setYear2LineIsClicked}
-                                textData={year2LineData}
-                                setTextData={setYear2LineData}
+                                data={timeLine}
+                                state={timeLineIsClicked}
+                                setState={setTimeLineIsClicked}
+                                textData={timeLineData}
+                                setTextData={setTimeLineData}
                                 handelFilterDropdown={handelFilterDropdown}
                                 manageData={manageData}
                             />
                         </View>
                     </View>
-                )}
-                {/* Month DropDown */}
-                {timeLineData != 'Select TimeLine' &&
-                    (timeLineData == 'Month By Month' || timeLineData == 'Day By Day') &&
-                    year1LineData != 'Select Year' &&
-                    year2LineData != 'Select Year' && (
+                    {/* Year DropDown */}
+                    {timeLineData != 'Select TimeLine' && (
                         <View
                             style={[
                                 styles.dropDownContainer,
-                                { justifyContent: 'space-between', flexDirection: 'row' },
+                                styles.center
                             ]}>
                             <View
                                 style={
-                                    month1LineIsClicked == false
+                                    year1LineIsClicked == false
                                         ? [
                                             styles.dropDownBox,
                                             {
-                                                height: month1LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
+                                                height: year1LineHeight,
+                                                marginHorizontal: scale(10),
                                             },
                                         ]
                                         : [
                                             styles.dropDownBox,
                                             {
-                                                height: month1LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
+                                                height: year1LineHeight,
+                                                marginHorizontal: scale(10),
                                                 position: 'relative',
                                                 zIndex: 1,
                                             },
                                         ]
                                 }>
                                 <DropDown
-                                    id={'M1'}
-                                    data={month1Data}
-                                    state={month1LineIsClicked}
-                                    setState={setMonth1LineIsClicked}
-                                    textData={month1LineData}
-                                    setTextData={setMonth1LineData}
+                                    id={'Y1'}
+                                    data={year1Data}
+                                    state={year1LineIsClicked}
+                                    setState={setYear1LineIsClicked}
+                                    textData={year1LineData}
+                                    setTextData={setYear1LineData}
                                     handelFilterDropdown={handelFilterDropdown}
                                     manageData={manageData}
                                 />
@@ -453,246 +359,327 @@ function compareDataModel({
                             <Ionicons name="git-compare" size={30} color={'black'} />
                             <View
                                 style={
-                                    month2LineIsClicked == false
+                                    year2LineIsClicked == false
                                         ? [
                                             styles.dropDownBox,
                                             {
-                                                height: month2LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
+                                                height: year2LineHeight,
+                                                marginHorizontal: scale(10),
                                             },
                                         ]
                                         : [
                                             styles.dropDownBox,
                                             {
-                                                height: month2LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
+                                                height: year2LineHeight,
+                                                marginHorizontal: scale(10),
                                                 position: 'relative',
                                                 zIndex: 1,
                                             },
                                         ]
                                 }>
                                 <DropDown
-                                    id={'M2'}
-                                    data={month2Data}
-                                    state={month2LineIsClicked}
-                                    setState={setMonth2LineIsClicked}
-                                    textData={month2LineData}
-                                    setTextData={setMonth2LineData}
+                                    id={'Y2'}
+                                    data={year2Data}
+                                    state={year2LineIsClicked}
+                                    setState={setYear2LineIsClicked}
+                                    textData={year2LineData}
+                                    setTextData={setYear2LineData}
                                     handelFilterDropdown={handelFilterDropdown}
                                     manageData={manageData}
                                 />
                             </View>
                         </View>
                     )}
-                {/* Date DropDown */}
-                {timeLineData != 'Select TimeLine' &&
-                    timeLineData == 'Day By Day' &&
-                    month1LineData != 'Select Month' &&
-                    month2LineData != 'Select Month' && (
-                        <View
-                            style={[
-                                styles.dropDownContainer,
-                                { justifyContent: 'space-between', flexDirection: 'row' },
-                            ]}>
-                            <View
-                                style={
-                                    day1LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: day1LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: day1LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    id={'D1'}
-                                    data={day1Data}
-                                    state={day1LineIsClicked}
-                                    setState={setDay1LineIsClicked}
-                                    textData={day1LineData}
-                                    setTextData={setDay1LineData}
-                                    handelFilterDropdown={handelFilterDropdown}
-                                    manageData={manageData}
-                                />
-                            </View>
-                            <Ionicons name="git-compare" size={30} color={'black'} />
-                            <View
-                                style={
-                                    day2LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: day2LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: day2LineHeight,
-                                                maxHeight: 150,
-                                                marginHorizontal: 10,
-                                                overflow: 'hidden',
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    id={'D2'}
-                                    data={day2Data}
-                                    state={day2LineIsClicked}
-                                    setState={setDay2LineIsClicked}
-                                    textData={day2LineData}
-                                    setTextData={setDay2LineData}
-                                    handelFilterDropdown={handelFilterDropdown}
-                                    manageData={manageData}
-                                />
-                            </View>
-                        </View>
-                    )}
-                {/* Type DropDown */}
-                {timeLineData != 'Select TimeLine' &&
-                    ((timeLineData == 'Year By Year' &&
+                    {/* Month DropDown */}
+                    {timeLineData != 'Select TimeLine' &&
+                        (timeLineData == 'Month By Month' || timeLineData == 'Day By Day') &&
                         year1LineData != 'Select Year' &&
-                        year2LineData != 'Select Year') ||
-                        (timeLineData == 'Month By Month' &&
-                            month1LineData != 'Select Month' &&
-                            month2LineData != 'Select Month') ||
-                        (timeLineData == 'Day By Day' &&
-                            day1LineData != 'Select Date' &&
-                            day2LineData != 'Select Date')) && (
-                        <View
-                            style={[
-                                styles.dropDownContainer,
-                                { justifyContent: 'space-between', flexDirection: 'row' },
-                            ]}>
+                        year2LineData != 'Select Year' && (
                             <View
-                                style={
-                                    type1LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: type1LineHeight,
-                                                marginHorizontal: 10,
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: type1LineHeight,
-                                                marginHorizontal: 10,
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    data={type1Data}
-                                    state={type1LineIsClicked}
-                                    setState={setType1LineIsClicked}
-                                    textData={type1LineData}
-                                    setTextData={setType1LineData}
-                                    handelFilterDropdown={handelFilterDropdown}
-                                    manageData={manageData}
-                                />
+                                style={[
+                                    styles.dropDownContainer,
+                                    styles.center
+                                ]}>
+                                <View
+                                    style={
+                                        month1LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: month1LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: month1LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        id={'M1'}
+                                        data={month1Data}
+                                        state={month1LineIsClicked}
+                                        setState={setMonth1LineIsClicked}
+                                        textData={month1LineData}
+                                        setTextData={setMonth1LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
+                                <Ionicons name="git-compare" size={30} color={'black'} />
+                                <View
+                                    style={
+                                        month2LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: month2LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: month2LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        id={'M2'}
+                                        data={month2Data}
+                                        state={month2LineIsClicked}
+                                        setState={setMonth2LineIsClicked}
+                                        textData={month2LineData}
+                                        setTextData={setMonth2LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
                             </View>
-                            <Ionicons name="git-compare" size={30} color={'black'} />
+                        )}
+                    {/* Date DropDown */}
+                    {timeLineData != 'Select TimeLine' &&
+                        timeLineData == 'Day By Day' &&
+                        month1LineData != 'Select Month' &&
+                        month2LineData != 'Select Month' && (
                             <View
-                                style={
-                                    type2LineIsClicked == false
-                                        ? [
-                                            styles.dropDownBox,
-                                            {
-                                                height: type2LineHeight,
-                                                marginHorizontal: 10,
-                                            },
-                                        ]
-                                        : [
-                                            styles.dropDownBox,
-                                            {
-                                                height: type2LineHeight,
-                                                marginHorizontal: 10,
-                                                position: 'relative',
-                                                zIndex: 1,
-                                            },
-                                        ]
-                                }>
-                                <DropDown
-                                    data={type2Data}
-                                    state={type2LineIsClicked}
-                                    setState={setType2LineIsClicked}
-                                    textData={type2LineData}
-                                    setTextData={setType2LineData}
-                                    handelFilterDropdown={handelFilterDropdown}
-                                    manageData={manageData}
-                                />
+                                style={[
+                                    styles.dropDownContainer,
+                                    styles.center
+                                ]}>
+                                <View
+                                    style={
+                                        day1LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day1LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day1LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        id={'D1'}
+                                        data={day1Data}
+                                        state={day1LineIsClicked}
+                                        setState={setDay1LineIsClicked}
+                                        textData={day1LineData}
+                                        setTextData={setDay1LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
+                                <Ionicons name="git-compare" size={30} color={'black'} />
+                                <View
+                                    style={
+                                        day2LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day2LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day2LineHeight,
+                                                    maxHeight: 150,
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        id={'D2'}
+                                        data={day2Data}
+                                        state={day2LineIsClicked}
+                                        setState={setDay2LineIsClicked}
+                                        textData={day2LineData}
+                                        setTextData={setDay2LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
                             </View>
-                        </View>
-                    )}
-                <TouchableOpacity
-                    disabled={
-                        timeLineData == 'Year By Year'
-                            ? year1LineData != 'Select Year' &&
-                                year2LineData != 'Select Year' &&
-                                type1LineData != 'Select Type' &&
-                                type2LineData != 'Select Type'
-                                ? false
-                                : true
-                            : timeLineData == 'Month By Month'
-                                ? month1LineData != 'Select Year' &&
-                                    month2LineData != 'Select Year' &&
+                        )}
+                    {/* Type DropDown */}
+                    {timeLineData != 'Select TimeLine' &&
+                        ((timeLineData == 'Year By Year' &&
+                            year1LineData != 'Select Year' &&
+                            year2LineData != 'Select Year') ||
+                            (timeLineData == 'Month By Month' &&
+                                month1LineData != 'Select Month' &&
+                                month2LineData != 'Select Month') ||
+                            (timeLineData == 'Day By Day' &&
+                                day1LineData != 'Select Date' &&
+                                day2LineData != 'Select Date')) && (
+                            <View
+                                style={[
+                                    styles.dropDownContainer,
+                                    styles.center
+                                ]}>
+                                <View
+                                    style={
+                                        type1LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type1LineHeight,
+                                                    marginHorizontal: scale(10),
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type1LineHeight,
+                                                    marginHorizontal: scale(10),
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        data={type1Data}
+                                        state={type1LineIsClicked}
+                                        setState={setType1LineIsClicked}
+                                        textData={type1LineData}
+                                        setTextData={setType1LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
+                                <Ionicons name="git-compare" size={30} color={'black'} />
+                                <View
+                                    style={
+                                        type2LineIsClicked == false
+                                            ? [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type2LineHeight,
+                                                    marginHorizontal: scale(10),
+                                                },
+                                            ]
+                                            : [
+                                                styles.dropDownBox,
+                                                {
+                                                    height: type2LineHeight,
+                                                    marginHorizontal: scale(10),
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                },
+                                            ]
+                                    }>
+                                    <DropDown
+                                        data={type2Data}
+                                        state={type2LineIsClicked}
+                                        setState={setType2LineIsClicked}
+                                        textData={type2LineData}
+                                        setTextData={setType2LineData}
+                                        handelFilterDropdown={handelFilterDropdown}
+                                        manageData={manageData}
+                                    />
+                                </View>
+                            </View>
+                        )}
+                    <TouchableOpacity
+                        disabled={
+                            timeLineData == 'Year By Year'
+                                ? year1LineData != 'Select Year' &&
+                                    year2LineData != 'Select Year' &&
                                     type1LineData != 'Select Type' &&
                                     type2LineData != 'Select Type'
                                     ? false
                                     : true
-                                : day1LineData != 'Select Year' &&
-                                    day2LineData != 'Select Year' &&
-                                    type1LineData != 'Select Type' &&
-                                    type2LineData != 'Select Type'
-                                    ? false
-                                    : true
-                    }
-                    style={{
-                        backgroundColor: '#00BF00',
-                        width: '70%',
-                        height: 60,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 50,
-                        borderWidth: 2,
-                        borderColor: 'white',
-                    }}
-                    onPress={async() => {
-                        let res = await evaluateCompareDataGraphData(year1LineData,year2LineData,month1LineData,month2LineData,day1LineData,day2LineData,type1LineData,type2LineData);
-                        if (res == 'success') {
-                            setCompareDataModelVisible(false);
+                                : timeLineData == 'Month By Month'
+                                    ? month1LineData != 'Select Year' &&
+                                        month2LineData != 'Select Year' &&
+                                        type1LineData != 'Select Type' &&
+                                        type2LineData != 'Select Type'
+                                        ? false
+                                        : true
+                                    : day1LineData != 'Select Year' &&
+                                        day2LineData != 'Select Year' &&
+                                        type1LineData != 'Select Type' &&
+                                        type2LineData != 'Select Type'
+                                        ? false
+                                        : true
                         }
-                    }}>
-                    <Text style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>
-                        A P P L Y
-                    </Text>
-                </TouchableOpacity>
+                        style={{
+                            backgroundColor: '#00BF00',
+                            width: '70%',
+                            height: scale(60),
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 50,
+                            borderWidth: 2,
+                            borderColor: 'white',
+                            alignSelf: 'center'
+                        }}
+                        onPress={async () => {
+                            let res = await evaluateCompareDataGraphData(year1LineData, year2LineData, month1LineData, month2LineData, day1LineData, day2LineData, type1LineData, type2LineData);
+                            if (res == 'success') {
+                                setCompareDataModelVisible(false);
+                            }
+                        }}>
+                        <Text style={{ fontSize: scale(40), color: 'white', fontWeight: 'bold' }}>
+                            A P P L Y
+                        </Text>
+                    </TouchableOpacity>
+                </ScrollView>
             </View>
         </View>
     );
@@ -710,22 +697,18 @@ const styles = StyleSheet.create({
     },
     dropDownBox: {
         width: '40%',
-        // height: 140,
         backgroundColor: '#FFFFFF',
-        // position: 'relative',
         alignItems: 'center',
         borderRadius: 5,
-        // zIndex: 1
     },
     dropDownContainer: {
         width: '100%',
-        // flex: 1,
-        height: 60,
-        // alignItems: 'center',
-        // backgroundColor:'black',
-        // justifyContent:'center',
-        marginBottom: 10,
+        height: scale(35),
+        marginBottom: scale(25),
     },
+    center: {
+        flexDirection: 'row',
+    }
 });
 
 export default compareDataModel;

@@ -1,10 +1,12 @@
 import { Text, View, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
 import moment from 'moment-timezone';
+import { ScrollView } from 'react-native-virtualized-view';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { scale } from 'react-native-size-matters';
 
 import DropDown from './dropDown.js';
 import { useDataContext } from '../context/dataContext';
@@ -20,6 +22,9 @@ function advancedFilterModel({
     let dates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
 
     let { manageAdvancedData } = useDataContext();
+
+    const year1Input = useRef(null);
+    const year2Input = useRef(null);
 
     const [year1Data, setYear1Data] = useState([]);
     const [month1Data, setMonth1Data] = useState([]);
@@ -137,7 +142,6 @@ function advancedFilterModel({
     }
 
     let handelFilterDropdown = (data) => {
-        console.log('handelFilterDropdown', data);
         if (data == count) {
             setTimeLineIsClicked(false);
             setType1LineIsClicked(false);
@@ -196,7 +200,6 @@ function advancedFilterModel({
     }
 
     let manageData = (data, id) => {
-        console.log('manageData', data, id);
         if (timeLine[1].includes(data)) {
             let res = manageAdvancedData(data);
             setYear1Data(res.year);
@@ -205,39 +208,20 @@ function advancedFilterModel({
         switch (id) {
             case 'Y1':
                 {
-                    console.log('Y1');
                     let res = manageAdvancedData('', data);
                     setMonth1Data(res.month);
                     setType1Data(res.type);
                     return 'success';
                 }
-            // case 'Y2':
-            //     {
-            //         console.log('Y2');
-            //         let res = manageAdvancedData('', data);
-            //         setMonth2Data(res.month);
-            //         setType2Data(res.type);
-            //         return 'success';
-            //     }
             case 'M1':
                 {
-                    console.log('M1');
                     let res = manageAdvancedData('', year1LineData, data);
                     setDay1Data(res.day);
                     setType1Data(res.type);
                     return 'success';
                 }
-            // case 'M2':
-            //     {
-            //         console.log('M2');
-            //         let res = manageAdvancedData('', year2LineData, data);
-            //         setDay2Data(res.day);
-            //         setType2Data(res.type);
-            //         return 'success';
-            //     }
             case 'D1':
                 {
-                    console.log('D1');
                     let res = manageAdvancedData('', year1LineData, month1LineData, data);
                     setType1Data(res.type);
                     return 'success';
@@ -282,8 +266,8 @@ function advancedFilterModel({
             setDay1LineData('Select Date');
             setDay2LineData('Select Date');
             if (countData == 'Range(From)') {
-                this.year1Input.clear();
-                this.year2Input.clear();
+                year1Input.current.clear();
+                year2Input.current.clear();
                 setYear1Check(false);
                 setYear2Check(false);
             }
@@ -455,7 +439,6 @@ function advancedFilterModel({
                 return;
             }
             if (timeLineData == 'Year By Year') {
-                console.log(1);
                 if (year2LineData == year1LineData) {
                     Alert.alert(
                         'Invalid Year!',
@@ -493,7 +476,6 @@ function advancedFilterModel({
                 return;
             }
             if (timeLineData == 'Year By Year') {
-                console.log(1);
                 if (year2LineData == year1LineData) {
                     Alert.alert(
                         'Invalid Year!',
@@ -526,14 +508,14 @@ function advancedFilterModel({
                                             styles.dropDownBox,
                                             {
                                                 height: year1LineHeight,
-                                                marginHorizontal: 10,
+                                                marginHorizontal: scale(10),
                                             },
                                         ]
                                         : [
                                             styles.dropDownBox,
                                             {
                                                 height: year1LineHeight,
-                                                marginHorizontal: 10,
+                                                marginHorizontal: scale(10),
                                                 position: 'relative',
                                                 zIndex: 1,
                                             },
@@ -568,7 +550,7 @@ function advancedFilterModel({
                                                 {
                                                     height: month1LineHeight,
                                                     maxHeight: 150,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     overflow: 'hidden',
                                                 },
                                             ]
@@ -577,7 +559,7 @@ function advancedFilterModel({
                                                 {
                                                     height: month1LineHeight,
                                                     maxHeight: 150,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     overflow: 'hidden',
                                                     position: 'relative',
                                                     zIndex: 1,
@@ -612,7 +594,7 @@ function advancedFilterModel({
                                             {
                                                 height: day1LineHeight,
                                                 maxHeight: 150,
-                                                marginHorizontal: 10,
+                                                marginHorizontal: scale(10),
                                                 overflow: 'hidden',
                                             },
                                         ]
@@ -621,7 +603,7 @@ function advancedFilterModel({
                                             {
                                                 height: day1LineHeight,
                                                 maxHeight: 150,
-                                                marginHorizontal: 10,
+                                                marginHorizontal: scale(10),
                                                 overflow: 'hidden',
                                                 position: 'relative',
                                                 zIndex: 1,
@@ -662,14 +644,14 @@ function advancedFilterModel({
                                                 styles.dropDownBox,
                                                 {
                                                     height: type1LineHeight,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                 },
                                             ]
                                             : [
                                                 styles.dropDownBox,
                                                 {
                                                     height: type1LineHeight,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     position: 'relative',
                                                     zIndex: 1,
                                                 },
@@ -714,10 +696,11 @@ function advancedFilterModel({
                                     <TextInput
                                         style={{
                                             color: 'black',
-                                            fontSize: 20,
+                                            fontSize: scale(18),
                                             marginLeft: 10,
                                         }}
-                                        ref={input => { this.year1Input = input }}
+                                        ref={year1Input}
+                                        // ref={input => { this.year1Input = input }}
                                         maxLength={4}
                                         textAlign="center"
                                         keyboardType="number-pad"
@@ -746,10 +729,11 @@ function advancedFilterModel({
                                     <TextInput
                                         style={{
                                             color: 'black',
-                                            fontSize: 20,
+                                            fontSize: scale(18),
                                             marginLeft: 10,
                                         }}
-                                        ref={input => { this.year2Input = input }}
+                                        ref={year2Input}
+                                        // ref={input => { this.year2Input = '' }}
                                         maxLength={4}
                                         textAlign="center"
                                         keyboardType="number-pad"
@@ -780,7 +764,7 @@ function advancedFilterModel({
                                                     height: month1LineHeight + 10,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     overflow: 'hidden',
                                                     justifyContent: 'center'
                                                 },
@@ -791,7 +775,7 @@ function advancedFilterModel({
                                                     height: month1LineHeight,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     overflow: 'hidden',
                                                     position: 'relative',
                                                     zIndex: 1,
@@ -824,7 +808,7 @@ function advancedFilterModel({
                                                     height: month2LineHeight + 10,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     justifyContent:'center'
                                                 },
                                             ]
@@ -834,7 +818,7 @@ function advancedFilterModel({
                                                     height: month2LineHeight,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     position: 'relative',
                                                     zIndex: 1,
                                                     justifyContent: 'center'
@@ -870,9 +854,9 @@ function advancedFilterModel({
                                         styles.dropDownBox,
                                         {
                                             height: day1LineHeight,
-                                                    maxHeight: 150,
+                                            maxHeight: 150,
                                             width: '40%',
-                                            marginHorizontal: 10,
+                                            marginHorizontal: scale(10),
                                             overflow: 'hidden',
                                         },
                                     ]
@@ -882,7 +866,7 @@ function advancedFilterModel({
                                                     height: day1LineHeight,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     overflow: 'hidden',
                                                     position: 'relative',
                                                     zIndex: 1,
@@ -911,9 +895,9 @@ function advancedFilterModel({
                                         styles.dropDownBox,
                                         {
                                             height: day2LineHeight,
-                                                    maxHeight: 150,
+                                            maxHeight: 150,
                                             width: '40%',
-                                            marginHorizontal: 10,
+                                            marginHorizontal: scale(10),
                                             },
                                             ]
                                             : [
@@ -922,7 +906,7 @@ function advancedFilterModel({
                                                     height: day2LineHeight,
                                                     maxHeight: 150,
                                                     width: '40%',
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     position: 'relative',
                                                     zIndex: 1,
                                                 },
@@ -968,14 +952,14 @@ function advancedFilterModel({
                                                 styles.dropDownBox,
                                                 {
                                                     height: type2LineHeight,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                 },
                                             ]
                                             : [
                                                 styles.dropDownBox,
                                                 {
                                                     height: type2LineHeight,
-                                                    marginHorizontal: 10,
+                                                    marginHorizontal: scale(10),
                                                     position: 'relative',
                                                     zIndex: 1,
                                                 },
@@ -1009,11 +993,11 @@ function advancedFilterModel({
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}>
-                    <Text style={{ fontSize: 30, color: 'black', marginVertical: 10 }}>
+                    <Text style={{ fontSize: scale(28), color: 'black', marginVertical: 10 }}>
                         Advanced Filters
                     </Text>
                     <TouchableOpacity
-                        style={{ left: 40 }}
+                        style={{ left: scale(35) }}
                         onPress={() => {
                             setAdvancedFilterModelVisible(false);
                         }}>
@@ -1021,101 +1005,103 @@ function advancedFilterModel({
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: '100%', borderWidth: 1, marginBottom: 10 }}></View>
-                {/* Count DropDown */}
-                <View
-                    style={[
-                        styles.dropDownContainer,
-                        { justifyContent: 'center', flexDirection: 'row' },
-                    ]}>
+                <ScrollView style={{width: '100%'}}>
+                    {/* Count DropDown */}
                     <View
-                        style={
-                            countIsClicked == false
-                                ? [
-                                    styles.dropDownBox,
-                                    {
-                                        height: countHeight,
-                                        maxHeight: 150,
-                                        marginHorizontal: 10,
-                                        overflow: 'hidden',
-                                    },
-                                ]
-                                : [
-                                    styles.dropDownBox,
-                                    {
-                                        height: countHeight,
-                                        maxHeight: 150,
-                                        marginHorizontal: 10,
-                                        overflow: 'hidden',
-                                        position: 'relative',
-                                        zIndex: 1,
-                                    },
-                                ]
-                        }>
-                        <DropDown
-                            data={count}
-                            state={countIsClicked}
-                            setState={setCountIsClicked}
-                            textData={countData}
-                            setTextData={setCountData}
-                            handelFilterDropdown={handelFilterDropdown.bind(1)}
-                            manageData={manageData}
-                        />
-                    </View>
-                </View>
-                {/* TimeLine DropDown  */}
-                {countData != 'Select Count' && (
-                    <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
+                        style={[
+                            styles.dropDownContainer,
+                            { justifyContent: 'center', flexDirection: 'row' },
+                        ]}>
                         <View
                             style={
-                                timeLineIsClicked == false
+                                countIsClicked == false
                                     ? [
                                         styles.dropDownBox,
-                                        { height: timeLineHeight, overflow: 'hidden' },
+                                        {
+                                            height: countHeight,
+                                            maxHeight: 150,
+                                            marginHorizontal: scale(10),
+                                            overflow: 'hidden',
+                                        },
                                     ]
                                     : [
                                         styles.dropDownBox,
                                         {
-                                            height: timeLineHeight,
-                                            overflow: 'scroll',
+                                            height: countHeight,
+                                            maxHeight: 150,
+                                            marginHorizontal: scale(10),
+                                            overflow: 'hidden',
                                             position: 'relative',
                                             zIndex: 1,
                                         },
                                     ]
                             }>
                             <DropDown
-                                data={countData == 'Single(One)' ? timeLine[1] : timeLine[0]}
-                                state={timeLineIsClicked}
-                                setState={setTimeLineIsClicked}
-                                textData={timeLineData}
-                                setTextData={setTimeLineData}
-                                handelFilterDropdown={handelFilterDropdown.bind(2)}
+                                data={count}
+                                state={countIsClicked}
+                                setState={setCountIsClicked}
+                                textData={countData}
+                                setTextData={setCountData}
+                                handelFilterDropdown={handelFilterDropdown.bind(1)}
                                 manageData={manageData}
                             />
                         </View>
                     </View>
-                )}
-                {ContentDecider()}
-                <TouchableOpacity
-                    disabled={setApplyButtonActive()}
-                    onPress={() => {
-                        console.log('press');
-                        evaluateAdvancedFilterGraphData(year1LineData, year2LineData, month1LineData, month2LineData, day1LineData, day2LineData, type1LineData, type2LineData);
-                        setAdvancedFilterModelVisible(false);
-                    }}
-                    style={{
-                        backgroundColor: '#00BF00',
-                        width: '70%',
-                        height: 60,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 50,
-                        borderWidth: 2,
-                        borderColor: 'white',
-                    }}>
-                    <Text style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>
-                        A P P L Y
-                    </Text>
-                </TouchableOpacity>
+                    {/* TimeLine DropDown  */}
+                    {countData != 'Select Count' && (
+                        <View style={[styles.dropDownContainer, { alignItems: 'center' }]}>
+                            <View
+                                style={
+                                    timeLineIsClicked == false
+                                        ? [
+                                            styles.dropDownBox,
+                                            { height: timeLineHeight, overflow: 'hidden' },
+                                        ]
+                                        : [
+                                            styles.dropDownBox,
+                                            {
+                                                height: timeLineHeight,
+                                                overflow: 'scroll',
+                                                position: 'relative',
+                                                zIndex: 1,
+                                            },
+                                        ]
+                                }>
+                                <DropDown
+                                    data={countData == 'Single(One)' ? timeLine[1] : timeLine[0]}
+                                    state={timeLineIsClicked}
+                                    setState={setTimeLineIsClicked}
+                                    textData={timeLineData}
+                                    setTextData={setTimeLineData}
+                                    handelFilterDropdown={handelFilterDropdown.bind(2)}
+                                    manageData={manageData}
+                                />
+                            </View>
+                        </View>
+                    )}
+                    {ContentDecider()}
+                    <TouchableOpacity
+                        disabled={setApplyButtonActive()}
+                        onPress={() => {
+                            evaluateAdvancedFilterGraphData(year1LineData, year2LineData, month1LineData, month2LineData, day1LineData, day2LineData, type1LineData, type2LineData);
+                            setAdvancedFilterModelVisible(false);
+                        }}
+                        style={{
+                            backgroundColor: '#00BF00',
+                            width: '70%',
+                            height: scale(60),
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 50,
+                            borderWidth: 2,
+                            borderColor: 'white',
+                            alignSelf: 'center'
+                        }}>
+                        <Text style={{ fontSize: scale(40), color: 'white', fontWeight: 'bold' }}>
+                            A P P L Y
+                        </Text>
+                    </TouchableOpacity>
+                </ScrollView>
             </View>
         </View>
     );
@@ -1133,20 +1119,14 @@ const styles = StyleSheet.create({
     },
     dropDownBox: {
         width: '60%',
-        // height: 140,
         backgroundColor: '#FFFFFF',
-        // position: 'relative',
         alignItems: 'center',
         borderRadius: 5,
-        // zIndex: 1
     },
     dropDownContainer: {
         width: '100%',
         height: 60,
-        // alignItems: 'center',
-        // backgroundColor:'black',
-        // justifyContent:'center',
-        marginBottom: 10,
+        marginBottom: scale(10),
     },
 });
 
