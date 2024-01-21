@@ -309,6 +309,17 @@ function GraphScreen({ route, navigation }) {
 
     const [graphData, setGraphData] = useState(evaluateCustomFilterGraphData());
 
+    function setMessageActive() {
+        setSelectedTime();
+        setSelectedTimeValue({});
+        setSelectedType();
+        setSelectedTypeValue({});
+        setMessageFlag(true);
+        setTimeout(() => {
+            setMessageFlag(false);
+        }, 10000);
+    }
+
     function evaluateAdvancedFilterGraphData(
         year1,
         year2,
@@ -319,7 +330,7 @@ function GraphScreen({ route, navigation }) {
         type1,
         type2,
     ) {
-        let data;
+        let data, time, type;
         //single
         if (
             year1 != 'Select Year' &&
@@ -331,8 +342,8 @@ function GraphScreen({ route, navigation }) {
             type1 != 'Select Type' &&
             type2 == 'Select Type'
         ) {
-            setSelectedTime(year1);
-            setSelectedType(type1);
+            time = year1;
+            type = type1;
             data = _.filter(mainData, data => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1;
@@ -350,8 +361,8 @@ function GraphScreen({ route, navigation }) {
             type1 != 'Select Type' &&
             type2 == 'Select Type'
         ) {
-            setSelectedTime(`${month1}/${year1}`);
-            setSelectedType(type1);
+            time = `${month1}/${year1}`;
+            type = type1;
             data = _.filter(mainData, data => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1 && data.dateMonthString == month1;
@@ -373,8 +384,8 @@ function GraphScreen({ route, navigation }) {
             type1 != 'Select Type' &&
             type2 == 'Select Type'
         ) {
-            setSelectedTime(`${day1}/${month1}/${year1}`);
-            setSelectedType(type1);
+            time = `${day1}/${month1}/${year1}`;
+            type = type1;
             data = _.filter(mainData, data => {
                 if (type1 == 'BOTH') {
                     return data.dateYear == year1 && data.dateMonthString == month1;
@@ -398,8 +409,8 @@ function GraphScreen({ route, navigation }) {
             type1 == 'Select Type' &&
             type2 != 'Select Type'
         ) {
-            setSelectedTime(`${year1}\nto\n${year2}`);
-            setSelectedType(type2);
+            time = `${year1}\nto\n${year2}`;
+            type = type2;
             data = _.filter(mainData, data => {
                 if (type2 == 'BOTH') {
                     return data.dateYear >= year1 && data.dateYear <= year2;
@@ -419,8 +430,8 @@ function GraphScreen({ route, navigation }) {
             type1 == 'Select Type' &&
             type2 != 'Select Type'
         ) {
-            setSelectedTime(`${month1}/${year1}\nto\n${month2}/${year2}`);
-            setSelectedType(type2);
+            time = `${month1}/${year1}\nto\n${month2}/${year2}`;
+            type = type2;
             data = _.filter(mainData, data => {
                 if (type2 == 'BOTH') {
                     return (
@@ -445,10 +456,8 @@ function GraphScreen({ route, navigation }) {
             type1 == 'Select Type' &&
             type2 != 'Select Type'
         ) {
-            setSelectedTime(
-                `${day1}/${month1}/${year1}\nto\n${day2}/${month2}/${year2}`,
-            );
-            setSelectedType(type2);
+            time = `${day1}/${month1}/${year1}\nto\n${day2}/${month2}/${year2}`;
+            type = type2;
             data = _.filter(mainData, data => {
                 if (type2 == 'BOTH') {
                     return (
@@ -468,21 +477,27 @@ function GraphScreen({ route, navigation }) {
             });
         }
         if (data == undefined || data.length == 0) {
-            setMessage('* Noo Data Find for the Selected Match.');
+            setMessage('* Noo Data Find for the Selected Match *');
+            setMessageActive();
         } else if (data.length == 1) {
             setMessage(
-                '* Only Single Entry Found For the Data.\n*(Required at least two Entries for a Graph)*',
+                '* Only Single Entry Found For the Data*\n*(Required at least two Entries for a Graph)*',
             );
+            setMessageActive();
         } else if (data.length > 1) {
             let graph = customDataChecker(data);
             if (graph == undefined) {
-                setMessage('* Noo Data Find for the Selected Match.');
+                setMessage('* Noo Data Find for the Selected Match *');
+                setMessageActive();
             } else if (graph.labels.length == 1) {
                 setMessage(
-                    '* Only Single Entry Found For the Data\n(Required at least two Entries for a Graph).',
+                    '* Only Single Entry Found For the Data*\n*(Required at least two Entries for a Graph)*',
                 );
+                setMessageActive();
             } else if (graph.labels.length > 1) {
                 setGraphData(graph);
+                setSelectedTime(time);
+                setSelectedType(type);
             }
         }
     }
@@ -493,20 +508,13 @@ function GraphScreen({ route, navigation }) {
             setMessage('* Noo Data Find for the Selected Match.');
         } else if (data.labels.length == 1) {
             setMessage(
-                '* Only Single Entry Found For the Data\n(Required at least two Entries for a Graph).',
+                '* Only Single Entry Found For the Data*\n*(Required at least two Entries for a Graph)*',
             );
         } else if (data.labels.length > 1) {
             setGraphData(data);
             return 'success';
         }
-        setSelectedTime();
-        setSelectedTimeValue({});
-        setSelectedType();
-        setSelectedTypeValue({});
-        setMessageFlag(true);
-        setTimeout(() => {
-            setMessageFlag(false);
-        }, 10000);
+        setMessageActive();
         return 'success';
     }
 
@@ -1064,8 +1072,10 @@ const styles = StyleSheet.create({
     },
     messageView: { 
         width: '90%', 
-        height: scale(30), 
-        marginTop: scale(3) 
+        height: scale(50), 
+        marginTop: scale(3),
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     messageText: { 
         alignSelf: 'center', 

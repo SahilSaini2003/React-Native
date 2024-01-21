@@ -1,8 +1,7 @@
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
 import moment from 'moment-timezone';
-import { ScrollView } from 'react-native-virtualized-view';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,8 +17,8 @@ function advancedFilterModel({
 }) {
     const count = ['Single(One)', 'Range(From)'];
     let type = ['BOTH', 'CREDIT', 'DEBIT'];
-    let months = [1,2,3,4,5,6,7,8,9,10,11,12];
-    let dates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+    let months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    let dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
     let { manageAdvancedData } = useDataContext();
 
@@ -33,7 +32,7 @@ function advancedFilterModel({
     const [day2Data, setDay2Data] = useState([]);
     const [type1Data, setType1Data] = useState([]);
     const [type2Data, setType2Data] = useState(['Both', 'CREDIT', 'DEBIT']);
-    
+
     const [countIsClicked, setCountIsClicked] = useState(false);
     const [countData, setCountData] = useState('Select Count');
     let countHeight = countIsClicked ? count.length * 30 + 50 : 40;
@@ -286,12 +285,12 @@ function advancedFilterModel({
                 if (year1LineData == moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
                     setMonth1Data(months.slice(0, moment.tz(moment(), 'Asia/Kolkata').format('MM')));
                 }
-                else{
+                else {
                     setMonth1Data(months);
                 }
                 setYear1Check(true);
             }
-            else{
+            else {
                 setYear1Check(false);
             }
         }
@@ -309,12 +308,12 @@ function advancedFilterModel({
                 if (year2LineData == moment.tz(moment(), 'Asia/Kolkata').format('YYYY')) {
                     setMonth2Data(months.slice(0, moment.tz(moment(), 'Asia/Kolkata').format('MM')));
                 }
-                else{
+                else {
                     setMonth2Data(months);
                 }
                 setYear2Check(true);
             }
-            else{
+            else {
                 setYear2Check(false);
             }
         }
@@ -325,7 +324,7 @@ function advancedFilterModel({
             setType1LineData('Select Type');
             setDay1LineData('Select Date');
         }
-        if (month1LineData != 'Select Month' &&  countData == 'Range(From)') {
+        if (month1LineData != 'Select Month' && countData == 'Range(From)') {
             if (year1LineData == year2LineData) {
                 let filteredMonth = _.filter(months, (data) => {
                     if (timeLineData == 'Month By Month') {
@@ -335,18 +334,18 @@ function advancedFilterModel({
                 })
                 setMonth2Data(filteredMonth);
             }
-            if(month1LineData == 1 || month1LineData == 3 || month1LineData == 5 || month1LineData == 7 || month1LineData == 8 || month1LineData == 10 || month1LineData == 12){
+            if (month1LineData == 1 || month1LineData == 3 || month1LineData == 5 || month1LineData == 7 || month1LineData == 8 || month1LineData == 10 || month1LineData == 12) {
                 setDay1Data(dates);
             }
             if (month1LineData == 4 || month1LineData == 6 || month1LineData == 9 || month1LineData == 11) {
-                setDay1Data(dates.slice(0,30));
+                setDay1Data(dates.slice(0, 30));
             }
             if (month1LineData == 2) {
                 if (year1LineData % 4 == 0) {
-                    setDay1Data(dates.slice(0,29));
+                    setDay1Data(dates.slice(0, 29));
                 }
                 if (year1LineData % 4 != 0) {
-                    setDay1Data(dates.slice(0,28));
+                    setDay1Data(dates.slice(0, 28));
                 }
             }
         }
@@ -357,7 +356,7 @@ function advancedFilterModel({
             setType2LineData('Select Type');
             setDay2LineData('Select Date');
         }
-        if (month2LineData != 'Select Month' &&  countData == 'Range(From)') {
+        if (month2LineData != 'Select Month' && countData == 'Range(From)') {
             if (year1LineData == year2LineData) {
                 let filteredMonth = _.filter(months, (data) => {
                     if (timeLineData == 'Month By Month') {
@@ -367,18 +366,18 @@ function advancedFilterModel({
                 })
                 setMonth1Data(filteredMonth);
             }
-            if(month2LineData == 1 || month2LineData == 3 || month2LineData == 5 || month2LineData == 7 || month2LineData == 8 || month2LineData == 10 || month2LineData == 12){
+            if (month2LineData == 1 || month2LineData == 3 || month2LineData == 5 || month2LineData == 7 || month2LineData == 8 || month2LineData == 10 || month2LineData == 12) {
                 setDay2Data(dates);
             }
             if (month2LineData == 4 || month2LineData == 6 || month2LineData == 9 || month2LineData == 11) {
-                setDay2Data(dates.slice(0,30));
+                setDay2Data(dates.slice(0, 30));
             }
             if (month2LineData == 2) {
                 if (year2LineData % 4 == 0) {
-                    setDay2Data(dates.slice(0,29));
+                    setDay2Data(dates.slice(0, 29));
                 }
                 if (year2LineData % 4 != 0) {
-                    setDay2Data(dates.slice(0,28));
+                    setDay2Data(dates.slice(0, 28));
                 }
             }
         }
@@ -412,7 +411,7 @@ function advancedFilterModel({
         }
     }, [day2LineData])
 
-    function verifyData( id ) {
+    function verifyData(id) {
         if (year1LineData.length == 4 && id == 'Y1') {
             if (year1LineData < '2000') {
                 Alert.alert(
@@ -680,7 +679,11 @@ function advancedFilterModel({
                             <View
                                 style={[
                                     styles.dropDownContainer,
-                                    { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' },
+                                    {
+                                        justifyContent: 'space-between',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    },
                                 ]}>
                                 <View
                                     style={[
@@ -700,7 +703,6 @@ function advancedFilterModel({
                                             marginLeft: 10,
                                         }}
                                         ref={year1Input}
-                                        // ref={input => { this.year1Input = input }}
                                         maxLength={4}
                                         textAlign="center"
                                         keyboardType="number-pad"
@@ -733,7 +735,6 @@ function advancedFilterModel({
                                             marginLeft: 10,
                                         }}
                                         ref={year2Input}
-                                        // ref={input => { this.year2Input = '' }}
                                         maxLength={4}
                                         textAlign="center"
                                         keyboardType="number-pad"
@@ -747,7 +748,9 @@ function advancedFilterModel({
                         )}
                     {/* Month DropDown */}
                     {year1LineData != 'Select Year' &&
-                        year2LineData != 'Select Year' && year1Check && year2Check &&
+                        year2LineData != 'Select Year' &&
+                        year1Check &&
+                        year2Check &&
                         (timeLineData == 'Month By Month' ||
                             timeLineData == 'Day By Day') && (
                             <View
@@ -766,7 +769,7 @@ function advancedFilterModel({
                                                     width: '40%',
                                                     marginHorizontal: scale(10),
                                                     overflow: 'hidden',
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
                                                 },
                                             ]
                                             : [
@@ -779,7 +782,7 @@ function advancedFilterModel({
                                                     overflow: 'hidden',
                                                     position: 'relative',
                                                     zIndex: 1,
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
                                                 },
                                             ]
                                     }>
@@ -797,7 +800,7 @@ function advancedFilterModel({
                                     name="arrow-forward-sharp"
                                     size={30}
                                     color={'black'}
-                                    style={{alignSelf: 'center'}}
+                                    style={{ alignSelf: 'center' }}
                                 />
                                 <View
                                     style={
@@ -809,7 +812,7 @@ function advancedFilterModel({
                                                     maxHeight: 150,
                                                     width: '40%',
                                                     marginHorizontal: scale(10),
-                                                    justifyContent:'center'
+                                                    justifyContent: 'center',
                                                 },
                                             ]
                                             : [
@@ -821,7 +824,7 @@ function advancedFilterModel({
                                                     marginHorizontal: scale(10),
                                                     position: 'relative',
                                                     zIndex: 1,
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
                                                 },
                                             ]
                                     }>
@@ -851,15 +854,15 @@ function advancedFilterModel({
                                     style={
                                         day1LineIsClicked == false
                                             ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: day1LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: scale(10),
-                                            overflow: 'hidden',
-                                        },
-                                    ]
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day1LineHeight,
+                                                    maxHeight: 150,
+                                                    width: '40%',
+                                                    marginHorizontal: scale(10),
+                                                    overflow: 'hidden',
+                                                },
+                                            ]
                                             : [
                                                 styles.dropDownBox,
                                                 {
@@ -892,13 +895,13 @@ function advancedFilterModel({
                                     style={
                                         day2LineIsClicked == false
                                             ? [
-                                        styles.dropDownBox,
-                                        {
-                                            height: day2LineHeight,
-                                            maxHeight: 150,
-                                            width: '40%',
-                                            marginHorizontal: scale(10),
-                                            },
+                                                styles.dropDownBox,
+                                                {
+                                                    height: day2LineHeight,
+                                                    maxHeight: 150,
+                                                    width: '40%',
+                                                    marginHorizontal: scale(10),
+                                                },
                                             ]
                                             : [
                                                 styles.dropDownBox,
@@ -925,7 +928,9 @@ function advancedFilterModel({
                             </View>
                         )}
                     {/* Type DropDown */}
-                    {(year1Check && year2Check && (timeLineData == 'Year By Year' &&
+                    {((year1Check &&
+                        year2Check &&
+                        timeLineData == 'Year By Year' &&
                         year1LineData != 'Select Year' &&
                         year2LineData != 'Select Year') ||
                         (timeLineData == 'Month By Month' &&
@@ -940,7 +945,7 @@ function advancedFilterModel({
                             month2LineData != 'Select Month' &&
                             day1LineData != 'Select Date' &&
                             day2LineData != 'Select Date')) && (
-                                <View
+                            <View
                                 style={[
                                     styles.dropDownContainer,
                                     { justifyContent: 'center', flexDirection: 'row' },
@@ -1005,7 +1010,7 @@ function advancedFilterModel({
                     </TouchableOpacity>
                 </View>
                 <View style={{ width: '100%', borderWidth: 1, marginBottom: 10 }}></View>
-                <ScrollView style={{width: '100%'}}>
+                <ScrollView style={{ width: '100%' }}>
                     {/* Count DropDown */}
                     <View
                         style={[

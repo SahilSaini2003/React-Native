@@ -46,7 +46,7 @@ function HomeScreen({ route, navigation }) {
     }, []);
 
     callGraphScreen = () => {
-        if (mainData.length <= 2) {
+        if (mainData.length < 2) {
             Alert.alert(
                 'No Transaction Found!',
                 'You require at least Two entries to access this feature.',
