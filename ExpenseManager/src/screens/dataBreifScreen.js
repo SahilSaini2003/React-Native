@@ -178,8 +178,8 @@ function DataBreifScreen({ route, navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.textView, { backgroundColor: '#B22222', height: 50 }]}
-            onPress={() => {
-              let dataCheck = deleteData(itemData[0].id);
+            onPress={async () => {
+              let dataCheck = await deleteData(itemData[0].id);
               if (dataCheck == 'success') {
                 navigation.navigate('History');
               }
