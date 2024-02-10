@@ -35,15 +35,17 @@ function DataBreifScreen({ route, navigation }) {
       setTextEditable(true);
     } else {
       let dataCheck = verifyData(amount, title, description, type.toUpperCase(), date, 2, itemData[0].id);
-      if (dataCheck == 'success') {
+      if (dataCheck.response == 'success') {
         setUpdateSave({ color: '#0000FF', text: 'UPDATE' });
         setTextEditable(false);
-        navigation.navigate('History');
+        navigation.navigate('Home', {refresh: true, data: dataCheck.data});
       }
     }
   }
 
   const [descriptionHeight, setDescriptionHeight] = useState(100);
+  const [descriptionCheck, setDescriptionCheck] = useState(description.length == 0 ? true : false);
+
   useEffect(() => {
     const descriptionHeight =
       description != null
@@ -90,6 +92,9 @@ function DataBreifScreen({ route, navigation }) {
               />
             </View>
           </View>
+          {textEditable === true && <View style={styles.lenghtBox}>
+            <Text style={styles.length}>{amount === undefined || isNaN(amount) ? 0 : amount.toString().length}/8</Text>
+          </View>}
           <View style={styles.textView}>
             <Text style={styles.textTitle}>Transacted Amount : </Text>
             <TextInput
@@ -100,9 +105,12 @@ function DataBreifScreen({ route, navigation }) {
               onChangeText={(text) => {
                 setAmount(parseInt(text));
               }}>
-              {amount}
+              {amount === undefined || isNaN(amount) ? 0 : amount}
             </TextInput>
           </View>
+          {textEditable === true && <View style={styles.lenghtBox}>
+            <Text style={styles.length}>{title === undefined ? 0 : title.length}/15</Text>
+          </View>}
           <View style={[styles.textView, { flexDirection: 'column', height: verticalScale(90) }]}>
             <Text style={styles.textTitle}>Transacted Reason</Text>
             <TextInput
@@ -115,7 +123,10 @@ function DataBreifScreen({ route, navigation }) {
               {title}
             </TextInput>
           </View>
-          {textEditable == true && description == null ? (
+          {textEditable === true && <View style={styles.lenghtBox}>
+            <Text style={styles.length}>{description === undefined ? 0 : description.length}/150</Text>
+          </View>}
+          {textEditable == true && descriptionCheck ? (
             <View
               style={[
                 styles.textView,
@@ -140,7 +151,7 @@ function DataBreifScreen({ route, navigation }) {
               </ScrollView>
             </View>
           )
-            : description != null ? (
+            : !descriptionCheck ? (
               <View
                 style={[
                   styles.textView,
@@ -180,8 +191,10 @@ function DataBreifScreen({ route, navigation }) {
             style={[styles.textView, { backgroundColor: '#B22222', height: 50 }]}
             onPress={async () => {
               let dataCheck = await deleteData(itemData[0].id);
-              if (dataCheck == 'success') {
-                navigation.navigate('History');
+              console.log(dataCheck);
+              if (dataCheck.response == 'success') {
+                console.log('innnnn');
+                navigation.navigate('Home', {refresh: true, data: dataCheck.data});
               }
             }}>
             <Text style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>
@@ -213,7 +226,7 @@ const styles = StyleSheet.create({
   textView: {
     backgroundColor: '#FFFDD0',
     width: '90%',
-    marginTop: verticalScale(20),
+    marginBottom: verticalScale(20),
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
@@ -232,7 +245,7 @@ const styles = StyleSheet.create({
   typeView: {
     width: scale(140),
     height: scale(50),
-    marginTop: scale(10),
+    marginVertical: scale(10),
     borderRadius: 50,
     borderWidth: 2,
   },
@@ -242,6 +255,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     alignItems: 'center'
+  },
+  length: { 
+    fontSize: scale(10), 
+    color: 'black',
+    alignSelf: 'flex-end'
+  },
+  lenghtBox: {
+    width: '75%'
   }
 });
 

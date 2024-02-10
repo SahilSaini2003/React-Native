@@ -94,7 +94,7 @@ function HomeScreen({ route, navigation }) {
 
     let resetVariable = () => {
         setType();
-        setDate(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss'));
+        setDate(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'));
         setAmount();
         setTitle('');
         setDescription('');
@@ -105,7 +105,7 @@ function HomeScreen({ route, navigation }) {
     const [date, setDate] = useState(
         moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss'),
     );
-    const [amount, setAmount] = useState();
+    const [amount, setAmount] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
@@ -117,16 +117,21 @@ function HomeScreen({ route, navigation }) {
     const [creditBoxCounter, setCreditBoxCounter] = useState(1);
     const [creditBoxText, setCreditBoxText] = useState('Overall');
     const [creditBoxTextFontSize, setCreditBoxTextFontSize] = useState(19);
-    const [creditBoxAmount, setCreditBoxAmount] = useState(
-        amountGenerator(mainData, 'C'),
-    );
+    const [creditBoxAmount, setCreditBoxAmount] = useState(amountGenerator(mainData, 'C'));
 
     const [debitBoxCounter, setDebitBoxCounter] = useState(1);
     const [debitBoxText, setDebitBoxText] = useState('Overall');
     const [debitBoxTextFontSize, setDebitBoxTextFontSize] = useState(19);
-    const [debitBoxAmount, setDebitBoxAmount] = useState(
-        amountGenerator(mainData, 'D'),
-    );
+    const [debitBoxAmount, setDebitBoxAmount] = useState(amountGenerator(mainData, 'D'));
+
+    useEffect(() => {
+        if (route.params?.refresh) {
+            setMainBoxAmount(amountGenerator(route.params?.data));
+            setCreditBoxAmount(amountGenerator(route.params?.data, 'C'));
+            setDebitBoxAmount(amountGenerator(route.params?.data, 'D'));
+            route.params.refresh = false;
+        }
+    }, [route.params?.refresh]);
 
     mainBoxDataChanger = (check = null) => {
         let dummyCounter = mainBoxCounter;
@@ -676,6 +681,9 @@ function HomeScreen({ route, navigation }) {
                                                 setDate(text);
                                             }}></TextInput>
                                     </View>
+                                    <View style={styles.lenghtBox}>
+                                        <Text style={styles.length}>{amount === undefined || isNaN(amount) ? 0 : amount.toString().length}/8</Text>
+                                    </View>
                                     <View style={[styles.dataBox, styles.amount]}>
                                         <TextInput
                                             placeholder="Enter Amount"
@@ -688,6 +696,9 @@ function HomeScreen({ route, navigation }) {
                                                 setAmount(parseInt(text));
                                             }}></TextInput>
                                     </View>
+                                    <View style={styles.lenghtBox}>
+                                        <Text style={styles.length}>{title === undefined ? 0 : title.length}/15</Text>
+                                    </View>
                                     <View style={[styles.dataBox, styles.title]}>
                                         <TextInput
                                             placeholder="Enter Transacted Reason"
@@ -699,8 +710,11 @@ function HomeScreen({ route, navigation }) {
                                                 setTitle(text);
                                             }}></TextInput>
                                     </View>
+                                    <View style={styles.lenghtBox}>
+                                        <Text style={styles.length}>{description === undefined ? 0 : description.length}/150</Text>
+                                    </View>
                                     <View style={[styles.dataBox, styles.description]}>
-                                        <ScrollView>
+                                        <ScrollView nestedScrollEnabled={true}>
                                             <TextInput
                                                 multiline
                                                 numberOfLines={5}
@@ -718,7 +732,7 @@ function HomeScreen({ route, navigation }) {
                                                 }}></TextInput>
                                         </ScrollView>
                                     </View>
-                                    <View style={{ flex: 1, flexDirection: 'row', marginTop: scale(20) }}>
+                                    <View style={{ flex: 1, flexDirection: 'row', marginTop: scale(10) }}>
                                         <TouchableOpacity
                                             onPress={() => {
                                                 setModelIsVisible(false);
@@ -896,7 +910,7 @@ const styles = StyleSheet.create({
     dataBox: {
         backgroundColor: '#FFFDD0',
         width: '80%',
-        marginTop: scale(18),
+        marginBottom: scale(10),
         borderBottomWidth: 2,
         height: scale(45),
     },
@@ -918,11 +932,19 @@ const styles = StyleSheet.create({
         width: scale(120),
         height: scale(35),
         alignItems: 'center',
-        marginTop: scale(10),
+        marginVertical: scale(10),
         borderRadius: 20,
         borderWidth: 2,
         borderColor: 'black',
     },
+    length: { 
+        fontSize: scale(10), 
+        color: 'black', 
+        alignSelf: 'flex-end' 
+    },
+    lenghtBox: {
+        width: '75%'
+    }
 });
 
 export default HomeScreen;

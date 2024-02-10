@@ -29,7 +29,7 @@ interface DataContextProps {
     mainData: mainType[];
     insertData: (amount: number, title: string, description: string | null, type: string, date: string, dateDay: string, dateMonth: string, dateMonthString: string, dateYear: string, dateHour: string, dateMinute: string, dateSecond: string) => void;
     deleteData: (id: number) => void;
-    verifyData: (amount: number, title: string, description: string | null, type: string, date: string, taskId: number, dataId: number) => string | undefined;
+    verifyData: (amount: number, title: string, description: string | null, type: string, date: string, taskId: number, dataId: number) => string | object | undefined;
     manageAdvancedData: (timeLine: string, year1: string, month1: string, date1: string) => void;
     yearData: String[];
     monthData: String[];
@@ -213,7 +213,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const deleteData = async (id: number) => {
-        return new Promise((reslove) => {
+        return new Promise((reslove: any) => {
             Alert.alert('Alert!', 'Do You want to Delete this Record?', [
                 {
                     text: 'Yes',
@@ -223,13 +223,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                         })
                         setMainData(newData);
                         manageHistoryScreenFilterData(newData);
-                        reslove('success');
+                        reslove({response: 'success', data: newData});
                     }
                 },
                 {
                     text: 'No',
                     onPress: () => {
-                        reslove(false);
+                        reslove({response: false});
                     },
                     style: 'cancel',
                 }
@@ -253,13 +253,19 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dataToBeUpdated[0].dateHour = dateHour;
         dataToBeUpdated[0].dateMinute = dateMinute;
         dataToBeUpdated[0].dateSecond = dateSecond;
-        let data = sortData(mainData);
-        setMainData(data.reverse());
+        let data = sortData(mainData).reverse();
+        setMainData(data);
+        uploadData(data);
+        return data
     }
 
     let verifyData = (amount: number, title: string, description: string | null = null, type: string, date: string, taskId: number, dataId: number) => {
         if (!date) {
             Alert.alert('Invalid Date!', 'Date Required!', [{ text: 'Okay!' },]);
+            return;
+        }
+        if (type.toUpperCase() != 'DEBIT' && type.toUpperCase() != 'CREDIT') {
+            Alert.alert('Invalid Type!', 'Only DEBIT & CREDIT allowded!', [{ text: 'Okay!' },]);
             return;
         }
         const dateTimeParts = date.split(' ');
@@ -273,7 +279,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         let minute: any = timePart[1] != undefined && timePart[1] != null ? timePart[1] : [];
         let second: any = timePart[2] != undefined && timePart[2] != null ? timePart[2] : [];
         if (year.length != 4 || month.length != 2 || day.length != 2 || hour.length != 2 || minute.length != 2 || second.length != 2) {
-            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD hh-mm-ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss')}`, [{ text: 'Okay!' },]);
+            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD hh-mm-ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')}`, [{ text: 'Okay!' },]);
             return;
         }
         if (month > 12 || month < 1) {
@@ -320,7 +326,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             Alert.alert('Invalid Second!', 'We only have 60 Seconds in a Day!', [{ text: 'Okay!' },]);
             return;
         }
-        if (date > moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh:mm:ss')) {
+        if (date > moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')) {
             Alert.alert('Invalid Date!', 'Sorry! But You can\'t add Future Transactions!', [{ text: 'Okay!' },]);
             return;
         }
@@ -339,11 +345,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return;
         }
         if (taskId == 1) {
-            return insertData(amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
+            return insertData(amount, title, description == undefined ? null : description, type.toUpperCase(), date, day, month, textMonth, year, hour, minute, second);
         }
         if (taskId == 2) {
-            updateData(dataId, amount, title, description == undefined ? null : description, type, date, day, month, textMonth, year, hour, minute, second);
-            return 'success';
+            let data = updateData(dataId, amount, title, description == undefined ? null : description, type.toUpperCase(), date, day, month, textMonth, year, hour, minute, second);
+            return {response: 'success', data: data};
         }
     }
 
