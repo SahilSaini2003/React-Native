@@ -102,9 +102,7 @@ function HomeScreen({ route, navigation }) {
 
     const [modelIsVisible, setModelIsVisible] = useState(false);
     const [type, setType] = useState();
-    const [date, setDate] = useState(
-        moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD hh-mm-ss'),
-    );
+    const [date, setDate] = useState(moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'));
     const [amount, setAmount] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -778,6 +776,7 @@ function HomeScreen({ route, navigation }) {
                     </View>
                 </KeyboardAvoidingView>
             </Modal>
+            
         </View>
     );
 }

@@ -279,7 +279,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         let minute: any = timePart[1] != undefined && timePart[1] != null ? timePart[1] : [];
         let second: any = timePart[2] != undefined && timePart[2] != null ? timePart[2] : [];
         if (year.length != 4 || month.length != 2 || day.length != 2 || hour.length != 2 || minute.length != 2 || second.length != 2) {
-            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD hh-mm-ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')}`, [{ text: 'Okay!' },]);
+            Alert.alert('Invalid Date!', `Please Enter a valid Date! \n\t\t\tFormat(YYYY-MM-DD HH:mm:ss) \n\t\t\tExample :- ${moment.tz(moment(), 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')}`, [{ text: 'Okay!' },]);
             return;
         }
         if (month > 12 || month < 1) {
